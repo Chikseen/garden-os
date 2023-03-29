@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using server.Hubs;
 
 namespace main_service.Controllers;
 
@@ -13,14 +15,19 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    private readonly IHubContext<MainHub> hubContext;
+    public WeatherForecastController(IHubContext<MainHub> questionHub)
     {
-        _logger = logger;
+        this.hubContext = questionHub;
     }
 
     [HttpGet()]
     public String GetS()
     {
-      return "This is the main-service";
+        this.hubContext
+            .Clients
+            .All
+            .SendAsync("QuestionScoreChange", "hi", "sub");
+        return "This is the main-service";
     }
 }
