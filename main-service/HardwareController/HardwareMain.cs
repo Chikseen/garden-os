@@ -41,13 +41,15 @@ namespace main_service.Hardware
 
                /* try
                 {
-
+                    var c = new GpioController();
+                    c.OpenPin(24, PinMode.Output);
                     var i2cSetting = new I2cConnectionSettings(0, 0x48)
                     {
                     };
                     var i = I2cDevice.Create(i2cSetting);
                     byte[] buffer = new byte[3];
                     i.Read(buffer);
+                    c.Dispose();
                 }
                 catch (System.Exception e)
                 {
