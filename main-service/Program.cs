@@ -1,3 +1,4 @@
+using main_service.Hardware;
 using server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,4 +32,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MainHub>("/question-hub");
+
+Hardware.Init();
+
 app.Run();
