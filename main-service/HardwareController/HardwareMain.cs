@@ -1,3 +1,5 @@
+using System.Device.Gpio;
+using System.Device.I2c;
 
 namespace main_service.Hardware
 {
@@ -30,12 +32,28 @@ namespace main_service.Hardware
 
                 if (num > 0.3f) // Just simulating a non constant value change
                 {
-                    _testValue = num + 4.5f;
+                    _testValue = 5 * num;
                 }
 
                 // Just for some cool randomnis
                 Random sleepRnd = new Random();
-                Thread.Sleep(sleepRnd.Next(100, 1000));
+                Thread.Sleep(sleepRnd.Next(1000, 3000));
+
+               /* try
+                {
+
+                    var i2cSetting = new I2cConnectionSettings(0, 0x48)
+                    {
+                    };
+                    var i = I2cDevice.Create(i2cSetting);
+                    byte[] buffer = new byte[3];
+                    i.Read(buffer);
+                }
+                catch (System.Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }*/
             }
         }
 
