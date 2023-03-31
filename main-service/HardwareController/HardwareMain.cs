@@ -1,5 +1,7 @@
 using System.Device.Gpio;
 using System.Device.I2c;
+using Iot.Device.CharacterLcd;
+using Iot.Device.Pcx857x;
 
 namespace main_service.Hardware
 {
@@ -29,10 +31,23 @@ namespace main_service.Hardware
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
+		// SetUp Value Read
                 I2cConnectionSettings i2cSettings = new I2cConnectionSettings(1, 0x4B);
                 I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
+		
+		// SetUp LCD Write
+		using I2cDevice i3c = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
+		using var driver = new Pcf8574(i3c);
+		using var lcd = new Lcd2004(registerSelectPin: 0, 
+                        enablePin: 2, 
+                        dataPins: new int[] { 4, 5, 6, 7 }, 
+                        backlightPin: 3, 
+                        backlightBrightness: 0.1f, 
+                        readWritePin: 1, 
+                        controller: new GpioController(PinNumberingScheme.Logical, driver));
+
                 while (true)
-                    DataHandler(i2cSettings, i2cDevice);
+                    DataHandler(i2cSettings, i2cDevice, lcd);
             }
             else
                 while (true)
@@ -47,7 +62,7 @@ namespace main_service.Hardware
 
         public static event ValueChange? ProcessCompleted; // event
 
-        public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice)
+        public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice, Lcd2004 lcd)
         {
             // Read analog data from channel 0 of the ADC
             byte[] readBuffer = new byte[2];
@@ -61,8 +76,12 @@ namespace main_service.Hardware
             // Print the result on the console
             Console.WriteLine($"Analog value: {voltage:F2}V");
             _testValue = (float)voltage;
+	    
+	    // Write Value to LCD
+    	    lcd.SetCursorPosition(0,0);
+    	    lcd.Write(_testValue.ToString());
 
-            Thread.Sleep(500);
+            Thread.Sleep(100);
         }
 
         // you cannot use the datahandler on windos thats why i try to fake it here
