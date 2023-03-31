@@ -25,38 +25,18 @@ namespace main_service.Hardware
 
         private static Task mainLoop()
         {
-            while (true)
+
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                Random rnd = new Random();
-                float num = ((float)rnd.NextDouble());
-
-                if (num > 0.3f) // Just simulating a non constant value change
-                {
-                    _testValue = 5 * num;
-                }
-
-                // Just for some cool randomnis
-                Random sleepRnd = new Random();
-                Thread.Sleep(sleepRnd.Next(1000, 3000));
-
-               /* try
-                {
-                    var c = new GpioController();
-                    c.OpenPin(24, PinMode.Output);
-                    var i2cSetting = new I2cConnectionSettings(0, 0x48)
-                    {
-                    };
-                    var i = I2cDevice.Create(i2cSetting);
-                    byte[] buffer = new byte[3];
-                    i.Read(buffer);
-                    c.Dispose();
-                }
-                catch (System.Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }*/
+                I2cConnectionSettings i2cSettings = new I2cConnectionSettings(1, 0x4B);
+                I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
+                while (true)
+                    DataHandler(i2cSettings, i2cDevice);
             }
+            else
+                while (true)
+                    DataFaker();
         }
 
         protected static void OnProcessCompleted()
@@ -66,5 +46,39 @@ namespace main_service.Hardware
         }
 
         public static event ValueChange? ProcessCompleted; // event
+
+        public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice)
+        {
+            // Read analog data from channel 0 of the ADC
+            byte[] readBuffer = new byte[2];
+
+            i2cDevice.WriteByte(0x8C); // Start ADC conversion on channel 0
+
+            i2cDevice.Read(readBuffer); // Read the conversion result
+            int rawValue = (readBuffer[0] << 8) + readBuffer[1]; // Combine the two bytes
+            double voltage = (rawValue / 32767.0) * 5.0; // Convert to voltage (assuming Vref = 5V)
+
+            // Print the result on the console
+            Console.WriteLine($"Analog value: {voltage:F2}V");
+            _testValue = (float)voltage;
+
+            Thread.Sleep(500);
+        }
+
+        // you cannot use the datahandler on windos thats why i try to fake it here
+        public static void DataFaker()
+        {
+            Random rnd = new Random();
+            float num = ((float)rnd.NextDouble());
+
+            if (num > 0.3f) // Just simulating a non constant value change
+            {
+                _testValue = 5 * num;
+            }
+
+            Thread.Sleep(500);
+        }
     }
 }
+
+/**/
