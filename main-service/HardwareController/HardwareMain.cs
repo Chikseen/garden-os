@@ -71,7 +71,7 @@ namespace main_service.Hardware
 
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue = (readBuffer[0] << 8) + readBuffer[1]; // Combine the two bytes
-            double voltage = (rawValue / 32767.0) * 5.0; // Convert to voltage (assuming Vref = 5V)
+            double voltage = (rawValue / 32767) * 3.3; // Convert to voltage (assuming Vref = 5V)
 
             // Print the result on the console
             Console.WriteLine($"Analog value: {voltage:F2}V");
