@@ -4,10 +4,10 @@ using System.Device.I2c;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
-namespace main_service.Hardware
+namespace MainService.Hardware
 {
     public delegate void ValueChange();  // delegate
-    public class Hardware
+    public class MainHardware
     {
         private static HardwareData __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _testValue
         public static HardwareData _data
@@ -55,6 +55,11 @@ namespace main_service.Hardware
                     DataFaker();
         }
 
+        public static void ManuelSend()
+        {
+            OnProcessCompleted();
+        }
+
         protected static void OnProcessCompleted()
         {
             //if ProcessCompleted is not null then call delegate -> is null if "no one" gives a sub
@@ -65,15 +70,13 @@ namespace main_service.Hardware
 
         public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice, Lcd2004 lcd)
         {
-            lcd.Clear();
             byte[] readBuffer = new byte[1];
             // Start ADC conversion on channel 
             i2cDevice.WriteByte(0x8c); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue1 = readBuffer[0]; // Set rawValue from ReadBuffer
-            Console.WriteLine($"RawValue 1: {rawValue1}");
             lcd.SetCursorPosition(0, 0);
-            lcd.Write(rawValue1.ToString());
+            lcd.Write(rawValue1.ToString("000"));
 
             // Reset readBuffer and read Channel 1
             readBuffer = new byte[1];
@@ -81,17 +84,20 @@ namespace main_service.Hardware
             i2cDevice.WriteByte(0xcc); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue2 = readBuffer[0]; // Set rawValue from ReadBuffer
-            Console.WriteLine($"RawValue 2: {rawValue2}");
             lcd.SetCursorPosition(0, 1);
-            lcd.Write(rawValue2.ToString());
+            lcd.Write(rawValue2.ToString("000"));
 
             HardwareData data = new();
 
             data.PotiOne = (uint)rawValue1;
             data.PotiTwo = (uint)rawValue2;
 
+            if (data != _data)
+            {
+                _data = data;
+            }
+
             // Set it like this so the update event can be triggerd
-            _data = data;
 
             /* JUST HERE FOR ARCHIV PRUPOSES
             // Read analog data from channel 0 of the ADC
@@ -123,8 +129,7 @@ namespace main_service.Hardware
             Console.WriteLine(readBuffer[1]);
 
             */
-            Console.WriteLine("______");
-            Thread.Sleep(250);
+            Thread.Sleep(25);
         }
 
         // you cannot use the datahandler on windos thats why i try to fake it here

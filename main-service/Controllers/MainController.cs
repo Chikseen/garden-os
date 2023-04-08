@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using server.Hubs;
+using MainService.Hub;
+using MainService.Hardware;
 
-namespace main_service.Controllers
+namespace MainService.Controllers
 {
     [ApiController]
     [Route("")]
@@ -15,10 +16,10 @@ namespace main_service.Controllers
         }
 
         [HttpGet()]
-        public String Get()
+        public HardwareData Get()
         {
             //_hubContext.Clients.All.SendMyEvent("hi");
-            return "This is the main-service";
+            return MainHardware._data;
         }
     }
 }

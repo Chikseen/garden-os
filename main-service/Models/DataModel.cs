@@ -13,4 +13,18 @@ public class HardwareData
      {
          Data = data;
      }*/
+
+    public static bool operator ==(HardwareData A1, HardwareData A2)
+    {
+        return !(A1 != A2);
+    }
+
+    public static bool operator !=(HardwareData A1, HardwareData A2)
+    {
+        if (Math.Abs(A1.PotiOne - A2.PotiOne) > 3)
+            return true;
+        if (Math.Abs(A1.PotiTwo - A2.PotiTwo) > 3)
+            return true;
+        return false;
+    }
 }

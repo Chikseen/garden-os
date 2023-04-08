@@ -1,5 +1,5 @@
-using main_service.Hardware;
-using server.Hubs;
+using MainService.Hardware;
+using MainService.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +33,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MainHub>("/hub");
 
-Hardware.Init();
+MainHardware.Init();
 
 app.Run();

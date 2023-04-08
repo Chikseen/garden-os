@@ -41,5 +41,12 @@ export default {
       this.values = e;
     });
   },
+  async mounted() {
+    console.log("data");
+    // Get init value
+    const data = await fetch("http://93.201.163.148:5082");
+    console.log(data);
+    this.values = data;
+  },
 };
 </script>

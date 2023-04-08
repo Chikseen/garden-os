@@ -1,8 +1,7 @@
-using System.Text.Json;
-using main_service.Hardware;
+using MainService.Hardware;
 using Microsoft.AspNetCore.SignalR;
 
-namespace server.Hubs
+namespace MainService.Hub
 {
     public interface IMainHub
     {
@@ -30,18 +29,18 @@ namespace server.Hubs
         public void Init()
         {
             Console.WriteLine("Main Hub Init");
-            Hardware.ProcessCompleted += PrepareEventToSend; // register with an event
+            MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
         ~MainHub()
         {
-            Hardware.ProcessCompleted -= PrepareEventToSend;
+            MainHardware.ProcessCompleted -= PrepareEventToSend;
         }
 
         public void PrepareEventToSend()
         {
-            string jsonString = JsonSerializer.Serialize<HardwareData>(Hardware._data);
-            _hubContext.Clients.All.SendMyEvent(Hardware._data);
+            Console.WriteLine($"Send!");
+            _hubContext.Clients.All.SendMyEvent(MainHardware._data);
         }
     }
 }
