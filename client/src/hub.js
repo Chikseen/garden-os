@@ -3,7 +3,7 @@ import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr'
 export default {
   install(Vue) {
     const connection = new HubConnectionBuilder()
-      .withUrl('http://192.168.2.189:5082/question-hub')
+      .withUrl('http://93.201.163.148:5082/question-hub')
       .configureLogging(LogLevel.Information)
       .build()
 

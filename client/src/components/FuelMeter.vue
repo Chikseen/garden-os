@@ -1,6 +1,6 @@
 <template>
   <div class="fuelMeter_wrapper">
-    <span class="fuelMeter_wrapper_background" :style="`bottom: ${(value * 100) / 5}%`"></span>
+    <span class="fuelMeter_wrapper_background" :style="`bottom: ${(value * 100) / 255}%`"></span>
     <p class="fuelMeter_text">{{ value }}</p>
   </div>
 </template>
