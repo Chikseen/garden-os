@@ -85,6 +85,8 @@ namespace main_service.Hardware
             lcd.SetCursorPosition(0, 1);
             lcd.Write(rawValue2.ToString());
 
+            lcd.SetCursorPosition(5, 1);
+            lcd.Write("TEST");
             _testValue = (float)rawValue1;
 
             /* JUST HERE FOR ARCHIV PRUPOSES
