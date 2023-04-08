@@ -65,6 +65,7 @@ namespace main_service.Hardware
 
         public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice, Lcd2004 lcd)
         {
+            lcd.Clear();
             byte[] readBuffer = new byte[1];
             // Start ADC conversion on channel 
             i2cDevice.WriteByte(0x8c); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
