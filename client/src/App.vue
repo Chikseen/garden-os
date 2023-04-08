@@ -4,7 +4,8 @@
     <div>
       <h3>MY LIVE DATA</h3>
       <div style="width: 300px; height: 300px; resize: horizontal">
-        <FuelMeter :value="testEvent"></FuelMeter>
+        <FuelMeter :value="values.potiOne"></FuelMeter>
+        <FuelMeter :value="values.potiTwo"></FuelMeter>
       </div>
     </div>
   </div>
@@ -26,7 +27,7 @@ export default {
   },
   data: function () {
     return {
-      testEvent: null,
+      values: null,
     };
   },
   methods: {
@@ -35,8 +36,9 @@ export default {
     },
   },
   created() {
-    this.emitter.on("test", (e) => {
-      this.testEvent = (e.replace(",", ".") * 1).toFixed(1) * 1;
+    this.emitter.on("Event", (e) => {
+      console.log(e);
+      this.values = e;
     });
   },
 };

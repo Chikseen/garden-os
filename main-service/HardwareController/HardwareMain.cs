@@ -9,13 +9,13 @@ namespace main_service.Hardware
     public delegate void ValueChange();  // delegate
     public class Hardware
     {
-        private static float __testValue; // need this hack due recurisons of static propertys on call ->it is kinda proxy for _testValue
-        public static float _testValue
+        private static HardwareData __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _testValue
+        public static HardwareData _data
         {
-            get => __testValue;
+            get => __data;
             set
             {
-                __testValue = value;
+                __data = value;
                 OnProcessCompleted(); // This is a supercool event listner only sends an event to ALL subs if this value is actually changed
             }
         }
@@ -85,9 +85,13 @@ namespace main_service.Hardware
             lcd.SetCursorPosition(0, 1);
             lcd.Write(rawValue2.ToString());
 
-            lcd.SetCursorPosition(5, 1);
-            lcd.Write("TEST");
-            _testValue = (float)rawValue1;
+            HardwareData data = new();
+
+            data.PotiOne = (uint)rawValue1;
+            data.PotiTwo = (uint)rawValue2;
+
+            // Set it like this so the update event can be triggerd
+            _data = data;
 
             /* JUST HERE FOR ARCHIV PRUPOSES
             // Read analog data from channel 0 of the ADC
@@ -120,7 +124,7 @@ namespace main_service.Hardware
 
             */
             Console.WriteLine("______");
-            Thread.Sleep(1000);
+            Thread.Sleep(250);
         }
 
         // you cannot use the datahandler on windos thats why i try to fake it here
@@ -131,7 +135,7 @@ namespace main_service.Hardware
 
             if (num > 0.3f) // Just simulating a non constant value change
             {
-                _testValue = 5 * num;
+                _data.PotiOne = (uint)(5 * num + 20);
             }
 
             Thread.Sleep(500);

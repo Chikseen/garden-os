@@ -31,7 +31,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<MainHub>("/question-hub");
+app.MapHub<MainHub>("/hub");
 
 Hardware.Init();
 

@@ -17,7 +17,7 @@ namespace main_service.Controllers
         [HttpGet()]
         public String Get()
         {
-            _hubContext.Clients.All.SendMyEvent("hi");
+            //_hubContext.Clients.All.SendMyEvent("hi");
             return "This is the main-service";
         }
     }
