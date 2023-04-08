@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Device.Gpio;
 using System.Device.I2c;
 using Iot.Device.CharacterLcd;
@@ -31,20 +32,20 @@ namespace main_service.Hardware
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-		// SetUp Value Read
+                // SetUp Value Read
                 I2cConnectionSettings i2cSettings = new I2cConnectionSettings(1, 0x4B);
                 I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
-		
-		// SetUp LCD Write
-		using I2cDevice i3c = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-		using var driver = new Pcf8574(i3c);
-		using var lcd = new Lcd2004(registerSelectPin: 0, 
-                        enablePin: 2, 
-                        dataPins: new int[] { 4, 5, 6, 7 }, 
-                        backlightPin: 3, 
-                        backlightBrightness: 0.1f, 
-                        readWritePin: 1, 
-                        controller: new GpioController(PinNumberingScheme.Logical, driver));
+
+                // SetUp LCD Write
+                using I2cDevice i3c = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
+                using var driver = new Pcf8574(i3c);
+                using var lcd = new Lcd2004(registerSelectPin: 0,
+                                enablePin: 2,
+                                dataPins: new int[] { 4, 5, 6, 7 },
+                                backlightPin: 3,
+                                backlightBrightness: 0.1f,
+                                readWritePin: 1,
+                                controller: new GpioController(PinNumberingScheme.Logical, driver));
 
                 while (true)
                     DataHandler(i2cSettings, i2cDevice, lcd);
@@ -64,6 +65,28 @@ namespace main_service.Hardware
 
         public static void DataHandler(I2cConnectionSettings i2cSettings, I2cDevice i2cDevice, Lcd2004 lcd)
         {
+            byte[] readBuffer = new byte[1];
+            // Start ADC conversion on channel 
+            i2cDevice.WriteByte(0x8c); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
+            i2cDevice.Read(readBuffer); // Read the conversion result
+            int rawValue1 = readBuffer[0]; // Set rawValue from ReadBuffer
+            Console.WriteLine($"RawValue 1: {rawValue1}");
+            lcd.SetCursorPosition(0, 0);
+            lcd.Write(rawValue1.ToString());
+
+            // Reset readBuffer and read Channel 1
+            readBuffer = new byte[1];
+            // Start ADC conversion on channel 
+            i2cDevice.WriteByte(0xcc); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
+            i2cDevice.Read(readBuffer); // Read the conversion result
+            int rawValue2 = readBuffer[0]; // Set rawValue from ReadBuffer
+            Console.WriteLine($"RawValue 2: {rawValue2}");
+            lcd.SetCursorPosition(0, 1);
+            lcd.Write(rawValue2.ToString());
+
+            _testValue = (float)rawValue1;
+
+            /* JUST HERE FOR ARCHIV PRUPOSES
             // Read analog data from channel 0 of the ADC
             byte[] readBuffer = new byte[2];
 
@@ -71,17 +94,30 @@ namespace main_service.Hardware
 
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue = (readBuffer[0] << 8) + readBuffer[1]; // Combine the two bytes
-            double voltage = (rawValue / 32767) * 3.3; // Convert to voltage (assuming Vref = 5V)
+            double voltage = (rawValue / 32767.0) * 3.3; // Convert to voltage (assuming Vref = 5V)
 
             // Print the result on the console
             Console.WriteLine($"Analog value: {voltage:F2}V");
             _testValue = (float)voltage;
-	    
-	    // Write Value to LCD
-    	    lcd.SetCursorPosition(0,0);
-    	    lcd.Write(_testValue.ToString());
 
-            Thread.Sleep(100);
+            // Write Value to LCD
+            lcd.SetCursorPosition(0, 0);
+            lcd.Write(_testValue.ToString());
+
+            Console.WriteLine("READ BUFFER ONE");
+            Console.WriteLine(readBuffer[0]);
+            Console.WriteLine(readBuffer[1]);
+
+            i2cDevice.WriteByte(0xCC);
+            readBuffer = new byte[2];
+            i2cDevice.Read(readBuffer);
+            Console.WriteLine("READ BUFFER TWO");
+            Console.WriteLine(readBuffer[0]);
+            Console.WriteLine(readBuffer[1]);
+
+            */
+            Console.WriteLine("______");
+            Thread.Sleep(1000);
         }
 
         // you cannot use the datahandler on windos thats why i try to fake it here
