@@ -1,11 +1,17 @@
 import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr'
 
 export default {
-  install(Vue) {
+  async install(Vue) {
     const connection = new HubConnectionBuilder()
-      .withUrl('http://93.201.163.148:5082/hub')
+      .withUrl(`http://${process.env.VUE_APP_PI_HOST}:${process.env.VUE_APP_PI_PORT}/hub`)
       .configureLogging(LogLevel.Information)
       .build()
+
+
+    // get and set Init Values
+    const initData = await fetch(`http://${process.env.VUE_APP_PI_HOST}:${process.env.VUE_APP_PI_PORT}`)
+      .then(response => response.json());
+    Vue.config.globalProperties.emitter.emit("Event", initData)
 
     Vue.config.globalProperties.emitter.on("closeConnection", () => {
       connection.stop

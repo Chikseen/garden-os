@@ -3,7 +3,7 @@
     <h1>This is a websocket test for now</h1>
     <div>
       <h3>MY LIVE DATA</h3>
-      <div style="width: 300px; height: 300px; resize: horizontal">
+      <div v-if="values != null" style="width: 300px; height: 300px; resize: horizontal">
         <FuelMeter :value="values.potiOne"></FuelMeter>
         <FuelMeter :value="values.potiTwo"></FuelMeter>
       </div>
@@ -30,23 +30,11 @@ export default {
       values: null,
     };
   },
-  methods: {
-    onScoreChanged(data) {
-      console.log(data);
-    },
-  },
   created() {
     this.emitter.on("Event", (e) => {
       console.log(e);
       this.values = e;
     });
-  },
-  async mounted() {
-    console.log("data");
-    // Get init value
-    const data = await fetch("http://93.201.163.148:5082");
-    console.log(data);
-    this.values = data;
   },
 };
 </script>

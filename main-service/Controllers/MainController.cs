@@ -19,6 +19,7 @@ namespace MainService.Controllers
         public HardwareData Get()
         {
             //_hubContext.Clients.All.SendMyEvent("hi");
+            Console.WriteLine("GetReq");
             return MainHardware._data;
         }
     }
