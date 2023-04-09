@@ -28,7 +28,7 @@ namespace MainService.Hardware
 
         private static Task mainLoop()
         {
-
+            getLastEntryforMachines();
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -144,6 +144,13 @@ namespace MainService.Hardware
             }
 
             Thread.Sleep(500);
+        }
+
+        private static DevicesData getLastEntryforMachines()
+        {
+            // GET ALL DEVICE DATA HERE
+            // ToDo Finsh Model
+            return new DevicesData();
         }
     }
 }

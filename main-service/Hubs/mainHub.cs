@@ -39,7 +39,6 @@ namespace MainService.Hub
 
         public void PrepareEventToSend()
         {
-            Console.WriteLine($"Send!");
             _hubContext.Clients.All.SendMyEvent(MainHardware._data);
         }
     }

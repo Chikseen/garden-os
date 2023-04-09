@@ -32,7 +32,6 @@ export default {
   },
   created() {
     this.emitter.on("Event", (e) => {
-      console.log(e);
       this.values = e;
     });
   },
