@@ -10,6 +10,7 @@
     "@dreamonkey/vue-signalr": "^1.0.1",
     "@microsoft/signalr": "^5.0.17",
     "mitt": "^3.0.0",
+    "ol": "^7.3.0",
     "register-service-worker": "^1.7.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
