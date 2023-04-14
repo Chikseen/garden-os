@@ -117,6 +117,21 @@ export default {
       //console.log("hi", event);
       event;
       map.render();
+      let dynamicStyle = {
+        polygon: new Style({
+          stroke: new Stroke({
+            color: [255, 204, 0, 1],
+            width: 10,
+          }),
+          fill: new Fill({
+            color: [255, 0, 51, 0.4],
+          }),
+        }),
+      };
+
+      vectorLayer.setStyle((e) => {
+        return dynamicStyle["polygon"];
+      });
     });
   },
 };
