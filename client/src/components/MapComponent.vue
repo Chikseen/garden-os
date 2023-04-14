@@ -8,7 +8,9 @@ import Map from "ol/Map.js";
 import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
 import View from "ol/View.js";
-import { Fill, Stroke, Style } from "ol/style.js";
+import { Fill, Icon, Stroke, Style } from "ol/style.js";
+import Feature from "ol/Feature";
+import { Point } from "ol/geom";
 
 export default {
   components: {},
@@ -22,6 +24,35 @@ export default {
         color: "#eeeeee",
       }),
     });
+
+    //
+    var iconFeature = new Feature({
+      geometry: new Point([0, 0]),
+    });
+
+    var svg =
+      '<svg viewBox="-1194.11 -7880.94 13300 11380" width="500" height="500" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="red">' +
+      '<path fill="red" d="M 0 0 A 1 1 0 0 0 1188 3371 A 1 1 0 0 0 2508 -1 L 2535 -6537 A 1 1 0 0 0 -82 -6605" />' +
+      "</svg>";
+
+    var SVGstyle = new Style({
+      image: new Icon({
+        opacity: 0.75,
+        src: "data:image/svg+xml;utf8," + svg,
+        scale: 0.25,
+      }),
+    });
+
+    iconFeature.setStyle(SVGstyle);
+
+    var vectorSource = new VectorSource({
+      features: [iconFeature],
+    });
+
+    var svgLayer = new VectorLayer({
+      source: vectorSource,
+    });
+    //
 
     const vectorLayer = new VectorLayer({
       background: "#1a2b39",
@@ -37,7 +68,7 @@ export default {
     });
 
     const map = new Map({
-      layers: [vectorLayer],
+      layers: [vectorLayer, svgLayer],
       target: "map",
       view: new View({
         center: [0, 0],
@@ -82,6 +113,11 @@ export default {
     });
 
     //map.on("click", (evt) => this.test(evt.target));
+    map.on("postrender", function (event) {
+      //console.log("hi", event);
+      event;
+      map.render();
+    });
   },
 };
 </script>
