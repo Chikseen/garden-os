@@ -10,7 +10,9 @@ import VectorSource from "ol/source/Vector.js";
 import View from "ol/View.js";
 import { Fill, Icon, Stroke, Style } from "ol/style.js";
 import Feature from "ol/Feature";
-import { Point } from "ol/geom";
+import { Geometry, Point } from "ol/geom.js";
+
+import _marker from "@/assets/map/markers.json";
 
 export default {
   components: {},
@@ -25,34 +27,7 @@ export default {
       }),
     });
 
-    //
-    var iconFeature = new Feature({
-      geometry: new Point([0, 0]),
-    });
-
-    var svg =
-      '<svg viewBox="-1194.11 -7880.94 13300 11380" width="500" height="500" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="red">' +
-      '<path fill="red" d="M 0 0 A 1 1 0 0 0 1188 3371 A 1 1 0 0 0 2508 -1 L 2535 -6537 A 1 1 0 0 0 -82 -6605" />' +
-      "</svg>";
-
-    var SVGstyle = new Style({
-      image: new Icon({
-        opacity: 0.75,
-        src: "data:image/svg+xml;utf8," + svg,
-        scale: 0.25,
-      }),
-    });
-
-    iconFeature.setStyle(SVGstyle);
-
-    var vectorSource = new VectorSource({
-      features: [iconFeature],
-    });
-
-    var svgLayer = new VectorLayer({
-      source: vectorSource,
-    });
-    //
+    var svg = _marker.RainCollector.svg;
 
     const vectorLayer = new VectorLayer({
       background: "#1a2b39",
@@ -61,14 +36,43 @@ export default {
         format: new GeoJSON(),
       }),
       style: function (feature) {
-        const color = feature.get("COLOR") || "#eeeeee";
+        const color = feature.get("color") || "#eeeeee";
         style.getFill().setColor(color);
         return style;
       },
     });
 
+    var iconFeature = new Feature({
+      type: "icon",
+      geometry: new Point([0, 0]),
+      name: "Null Island",
+    });
+
+    var markerStyle = new Style({
+      image: new Icon({
+        anchor: [0.25, 0],
+        anchorXUnits: "fraction",
+        anchorYUnits: "pixels",
+        opacity: 0.5,
+        width: 100,
+        height: 100,
+        //scale: 0.25
+        offset: [0, 0],
+        src: "data:image/svg+xml;utf8," + svg,
+        geometry: new Geometry(new Point([1150, 1150])),
+      }),
+    });
+
+    iconFeature.setStyle(markerStyle);
+
+    var markerLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [iconFeature],
+      }),
+    });
+
     const map = new Map({
-      layers: [vectorLayer, svgLayer],
+      layers: [vectorLayer, markerLayer],
       target: "map",
       view: new View({
         center: [0, 0],
@@ -112,12 +116,18 @@ export default {
       displayFeatureInfo(pixel);
     });
 
-    //map.on("click", (evt) => this.test(evt.target));
+    map.on("click", (e) =>
+      console.log(
+        map.forEachFeatureAtPixel(map.getEventPixel(e.originalEvent), function (feature) {
+          return feature;
+        })?.ol_uid
+      )
+    );
     map.on("postrender", function (event) {
       //console.log("hi", event);
       event;
       map.render();
-      let dynamicStyle = {
+      /* let dynamicStyle = {
         polygon: new Style({
           stroke: new Stroke({
             color: [255, 204, 0, 1],
@@ -131,7 +141,7 @@ export default {
 
       vectorLayer.setStyle((e) => {
         return dynamicStyle["polygon"];
-      });
+      });*/
     });
   },
 };

@@ -1,0 +1,34 @@
+[
+  {
+    "properties": {
+      "id": "main",
+      "color": "#27ba53"
+    },
+    "measurements": [
+      [0, 0],
+      [12, 0],
+      [12, 30],
+      [0, 30],
+      [0, 0]
+    ],
+    "position": null
+  },
+  {
+    "properties": {
+      "id": "house",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [8, 0],
+      [8, -6],
+      [0, -6],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [2, -2.5],
+      "parent": "main"
+    }
+  }
+]
