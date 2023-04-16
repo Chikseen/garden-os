@@ -1,5 +1,6 @@
 <template>
   <div id="map"></div>
+  <Overlay :data="overlayData" @close="overlayData = null" />
 </template>
 
 <script>
@@ -13,13 +14,43 @@ import Feature from "ol/Feature";
 import { Geometry, Point } from "ol/geom.js";
 
 import _marker from "@/assets/map/markers.json";
+import { fromLonLat } from "ol/proj";
+import Overlay from "@/components/Overlay.vue";
 
 export default {
-  components: {},
+  components: { Overlay },
   data() {
-    return {};
+    return {
+      overlayData: null,
+    };
   },
-  methods: {},
+  methods: {
+    RainCollectorMarker() {
+      var rainCollector = _marker.RainCollector.svg;
+
+      var rainCollectorFeature = new Feature({
+        type: "Feature",
+        geometry: new Point(fromLonLat([11, 48])),
+      });
+
+      rainCollectorFeature.setProperties({ id: "rain_collector" });
+
+      var rainCollectorStyle = new Style({
+        image: new Icon({
+          anchor: [100, 100],
+          anchorXUnits: "pixels",
+          anchorYUnits: "pixels",
+          opacity: 0.5,
+          width: 100,
+          height: 100,
+          src: "data:image/svg+xml;utf8," + rainCollector,
+        }),
+      });
+
+      rainCollectorFeature.setStyle(rainCollectorStyle);
+      return rainCollectorFeature;
+    },
+  },
   mounted() {
     const style = new Style({
       fill: new Fill({
@@ -27,9 +58,8 @@ export default {
       }),
     });
 
-    var svg = _marker.RainCollector.svg;
-
-    const vectorLayer = new VectorLayer({
+    // Set static main map
+    const mainMapLayer = new VectorLayer({
       background: "#1a2b39",
       source: new VectorSource({
         url: "/map.json",
@@ -42,44 +72,25 @@ export default {
       },
     });
 
-    var iconFeature = new Feature({
-      type: "icon",
-      geometry: new Point([0, 0]),
-      name: "Null Island",
-    });
-
-    var markerStyle = new Style({
-      image: new Icon({
-        anchor: [0.25, 0],
-        anchorXUnits: "fraction",
-        anchorYUnits: "pixels",
-        opacity: 0.5,
-        width: 100,
-        height: 100,
-        //scale: 0.25
-        offset: [0, 0],
-        src: "data:image/svg+xml;utf8," + svg,
-        geometry: new Geometry(new Point([1150, 1150])),
-      }),
-    });
-
-    iconFeature.setStyle(markerStyle);
-
-    var markerLayer = new VectorLayer({
+    // Put all marker in one layer
+    const markerLayer = new VectorLayer({
       source: new VectorSource({
-        features: [iconFeature],
+        features: [this.RainCollectorMarker()],
       }),
     });
 
+    // create map with Map and Marker layer
     const map = new Map({
-      layers: [vectorLayer, markerLayer],
+      layers: [mainMapLayer, markerLayer],
       target: "map",
       view: new View({
         center: [0, 0],
-        zoom: 3,
+        zoom: 3.2,
+        minZoom: 3.1,
       }),
     });
 
+    // Add userInteraction
     const featureOverlay = new VectorLayer({
       source: new VectorSource(),
       map: map,
@@ -92,7 +103,12 @@ export default {
     });
 
     let highlight;
-    const displayFeatureInfo = function (pixel) {
+    map.on("pointermove", (evt) => {
+      if (evt.dragging) {
+        return;
+      }
+      const pixel = map.getEventPixel(evt.originalEvent);
+
       const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
         return feature;
       });
@@ -106,28 +122,24 @@ export default {
         }
         highlight = feature;
       }
-    };
-
-    map.on("pointermove", function (evt) {
-      if (evt.dragging) {
-        return;
-      }
-      const pixel = map.getEventPixel(evt.originalEvent);
-      displayFeatureInfo(pixel);
     });
 
-    map.on("click", (e) =>
-      console.log(
-        map.forEachFeatureAtPixel(map.getEventPixel(e.originalEvent), function (feature) {
-          return feature;
-        })?.ol_uid
-      )
-    );
-    map.on("postrender", function (event) {
-      //console.log("hi", event);
-      event;
+    // Add map Event listner
+    map.on("click", (e) => {
+      this.overlayData = null;
+      map.forEachFeatureAtPixel(map.getEventPixel(e.originalEvent), (feature) => {
+        console.log(feature);
+        this.overlayData = {
+          id: feature.values_.id,
+        };
+        return feature;
+      });
+    });
+    map.on("postrender", (e) => {
+      /*
+      e;
       map.render();
-      /* let dynamicStyle = {
+      let dynamicStyle = {
         polygon: new Style({
           stroke: new Stroke({
             color: [255, 204, 0, 1],
@@ -139,7 +151,7 @@ export default {
         }),
       };
 
-      vectorLayer.setStyle((e) => {
+      mainMapLayer.setStyle((e) => {
         return dynamicStyle["polygon"];
       });*/
     });

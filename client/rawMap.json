@@ -2,7 +2,7 @@
   {
     "properties": {
       "id": "main",
-      "color": "#27ba53"
+      "color": "#207d3c"
     },
     "measurements": [
       [0, 0],
@@ -20,7 +20,7 @@
   {
     "properties": {
       "id": "veranda",
-      "color": "#ba9129"
+      "color": "#bdae4d"
     },
     "measurements": [
       [0, 0],
@@ -31,14 +31,14 @@
     ],
     "position": {
       "alignment": ["top", "left"],
-      "margin": [10.5, -11],
+      "margin": [10.5, -11.5],
       "parent": "main"
     }
   },
   {
     "properties": {
-      "id": "house",
-      "color": "#ff9129"
+      "id": "flowerbed_veranda",
+      "color": "#c44fc0"
     },
     "measurements": [
       [0, 0],
@@ -55,8 +55,8 @@
   },
   {
     "properties": {
-      "id": "root1",
-      "color": "#ba9129"
+      "id": "house",
+      "color": "#bd834d"
     },
     "measurements": [
       [0, 0],
@@ -73,8 +73,8 @@
   },
   {
     "properties": {
-      "id": "root2",
-      "color": "#ba9129"
+      "id": "green_house",
+      "color": "#647a67"
     },
     "measurements": [
       [0, 0],
@@ -91,8 +91,8 @@
   },
   {
     "properties": {
-      "id": "sittingareaoot1",
-      "color": "#ba9129"
+      "id": "outside_area",
+      "color": "#bdae4d"
     },
     "measurements": [
       [0, 0],
@@ -109,7 +109,7 @@
   },
   {
     "properties": {
-      "id": "root2",
+      "id": "producebed_1",
       "color": "#ba9129"
     },
     "measurements": [
@@ -127,7 +127,7 @@
   },
   {
     "properties": {
-      "id": "root3",
+      "id": "producebed_2",
       "color": "#ba9129"
     },
     "measurements": [
@@ -145,7 +145,7 @@
   },
   {
     "properties": {
-      "id": "root4",
+      "id": "producebed_3",
       "color": "#ba9129"
     },
     "measurements": [
@@ -163,8 +163,8 @@
   },
   {
     "properties": {
-      "id": "entryleft",
-      "color": "#ba9129"
+      "id": "flowerbed_entry_left",
+      "color": "#c44fc0"
     },
     "measurements": [
       [0, 0],
@@ -181,8 +181,8 @@
   },
   {
     "properties": {
-      "id": "entryright",
-      "color": "#ba9129"
+      "id": "flowerbed_entry_right",
+      "color": "#c44fc0"
     },
     "measurements": [
       [0, 0],
@@ -199,8 +199,8 @@
   },
   {
     "properties": {
-      "id": "rootway",
-      "color": "#ba9129"
+      "id": "flowerbed_left_long",
+      "color": "#c44fc0"
     },
     "measurements": [
       [0, 0],

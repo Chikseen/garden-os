@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <MapComponent/>
+    <MapComponent />
     <!--
       <div>
         <h3>MY LIVE DATA</h3>
@@ -49,6 +49,7 @@ html {
   width: 100vw;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 #app {
