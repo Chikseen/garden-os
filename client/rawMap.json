@@ -6,28 +6,214 @@
     },
     "measurements": [
       [0, 0],
-      [12, 0],
-      [12, 30],
-      [0, 30],
+      [6.5, 0],
+      [7.5, 1.8],
+      [8.5, 1.8],
+      [9.5, 0],
+      [15, 0],
+      [15, 33],
+      [0, 33],
       [0, 0]
     ],
     "position": null
   },
   {
     "properties": {
-      "id": "house",
+      "id": "veranda",
       "color": "#ba9129"
     },
     "measurements": [
       [0, 0],
-      [8, 0],
-      [8, -6],
-      [0, -6],
+      [6.7, 0],
+      [6.7, -2.4],
+      [0, -2.4],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [10.5, -11],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "house",
+      "color": "#ff9129"
+    },
+    "measurements": [
+      [0, 0],
+      [7.5, 0],
+      [7.5, -3.2],
+      [0, -3.2],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [0, -23],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "root1",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [8.4, 0],
+      [8.4, -2.4],
+      [0, -2.4],
       [0, 0]
     ],
     "position": {
       "alignment": ["top", "left"],
       "margin": [2, -2.5],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "root2",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [3, 0],
+      [3, -3],
+      [0, -3],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [55, -7.5],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "sittingareaoot1",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [7.5, 0],
+      [7.5, -4.4],
+      [0, -4.4],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [0, -34],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "root2",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [6.4, 0],
+      [6.4, -4],
+      [0, -4],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [43, -59],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "root3",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [6.4, 0],
+      [6.4, -2.5],
+      [0, -2.5],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [43, -72],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "root4",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [6.4, 0],
+      [6.4, -4],
+      [0, -4],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [43, -82],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "entryleft",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [7.5, 0],
+      [6.5, -0.5],
+      [0, -0.5],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [0, -95],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "entryright",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [6.6, 0],
+      [6.6, -0.5],
+      [1, -0.5],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [42, -95],
+      "parent": "main"
+    }
+  },
+  {
+    "properties": {
+      "id": "rootway",
+      "color": "#ba9129"
+    },
+    "measurements": [
+      [0, 0],
+      [6, 0],
+      [6, 13.5],
+      [7.5, 13.5],
+      [7.5, -1],
+      [0, -1],
+      [0, 0]
+    ],
+    "position": {
+      "alignment": ["top", "left"],
+      "margin": [0, -89],
       "parent": "main"
     }
   }
