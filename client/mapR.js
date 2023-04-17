@@ -2,7 +2,6 @@
 // # MapRefiner.js
 // Script to refine the garden to realstic scaled map for client
 
-const { registerRuntimeCompiler } = require("vue");
 const map = require("./rawMap.json");
 const fs = require('fs');
 

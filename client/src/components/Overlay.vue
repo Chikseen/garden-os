@@ -4,6 +4,7 @@
       <h1>{{ data?.name }}</h1>
       <h1 @click="$emit('close')">X</h1>
     </div>
+    <h2 @click="$emit('fake', Math.floor(Math.random() * 100))">FAKE</h2>
     <p>{{ data }}</p>
     <p>{{ addCoordinateTransforms }}</p>
   </div>

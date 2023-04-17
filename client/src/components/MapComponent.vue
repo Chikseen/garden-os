@@ -1,6 +1,14 @@
 <template>
   <div id="map"></div>
-  <Overlay :data="overlayData" @close="overlayData = null" />
+  <Overlay
+    :data="overlayData"
+    @close="overlayData = null"
+    @fake="
+      (e) => {
+        fake = e;
+      }
+    "
+  />
 </template>
 
 <script>
@@ -24,11 +32,12 @@ export default {
   data() {
     return {
       overlayData: null,
+      fake: 0,
     };
   },
   methods: {
-    RainCollectorMarker(fill = 100) {
-      var rainCollector = _marker.RainCollector.svg;
+    RainCollectorMarker() {
+      var rainCollector = _marker.RainCollector.init;
 
       var rainCollectorFeature = new Feature({
         type: "Feature",
@@ -39,14 +48,13 @@ export default {
 
       var rainCollectorStyle = new Style({
         image: new Icon({
-          anchor: [fill, fill],
+          anchor: [100, 100],
           anchorXUnits: "pixels",
           anchorYUnits: "pixels",
           opacity: 0.5,
           width: 100,
           height: 100,
           src: "data:image/svg+xml;utf8," + rainCollector,
-          className: "icon--blue",
         }),
       });
 
@@ -146,22 +154,25 @@ export default {
       }
 
       if (feature?.get("id") === "rain_collector") {
-        /*var rainCollector = _marker.RainCollector.svg;
+        console.log(this.fake);
+        var rainCollector = _marker.RainCollector.data[this.fake];
 
-        feature.getStyle().setImage(
-          new Icon({
-            anchor: [100, 100],
-            anchorXUnits: "pixels",
-            anchorYUnits: "pixels",
-            opacity: 0.5,
-            width: 100,
-            height: 50,
-            src: "data:image/svg+xml;utf8," + rainCollector,
+        feature.setStyle(
+          new Style({
+            image: new Icon({
+              anchor: [100, 100],
+              anchorXUnits: "pixels",
+              anchorYUnits: "pixels",
+              opacity: 0.5,
+              width: 100,
+              height: 100,
+              src: "data:image/svg+xml;utf8," + rainCollector,
+            }),
           })
         );
-        
+        /*
                   console.log("hi", feature.getStyle().getImage());
-          
+
                   feature.getStyle().getImage().setAnchor([25, -150]);
                   feature.getStyle().getImage().setHeight(50);
                   feature.getStyle().getImage().setWidth(75);*/
