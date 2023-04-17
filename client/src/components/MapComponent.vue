@@ -9,9 +9,11 @@ import Map from "ol/Map.js";
 import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
 import View from "ol/View.js";
-import { Fill, Icon, Stroke, Style } from "ol/style.js";
+import { Fill, Icon, Stroke, Style, Text } from "ol/style.js";
 import Feature from "ol/Feature";
 import { Geometry, Point } from "ol/geom.js";
+import Layer from "ol/layer/Layer.js";
+import { composeCssTransform } from "ol/transform";
 
 import _marker from "@/assets/map/markers.json";
 import { fromLonLat } from "ol/proj";
@@ -25,7 +27,7 @@ export default {
     };
   },
   methods: {
-    RainCollectorMarker() {
+    RainCollectorMarker(fill = 100) {
       var rainCollector = _marker.RainCollector.svg;
 
       var rainCollectorFeature = new Feature({
@@ -33,17 +35,18 @@ export default {
         geometry: new Point(fromLonLat([11, 48])),
       });
 
-      rainCollectorFeature.setProperties({ id: "rain_collector" });
+      rainCollectorFeature.setProperties({ id: "rain_collector", name: "Regentonnen" });
 
       var rainCollectorStyle = new Style({
         image: new Icon({
-          anchor: [100, 100],
+          anchor: [fill, fill],
           anchorXUnits: "pixels",
           anchorYUnits: "pixels",
           opacity: 0.5,
           width: 100,
           height: 100,
           src: "data:image/svg+xml;utf8," + rainCollector,
+          className: "icon--blue",
         }),
       });
 
@@ -65,9 +68,28 @@ export default {
         url: "/map.json",
         format: new GeoJSON(),
       }),
-      style: function (feature) {
-        const color = feature.get("color") || "#eeeeee";
+      style: (feature) => {
+        let color = feature.get("color") || "#eeeeee";
+        let name = feature.get("name") || "";
+
+        if (feature.get("id") === "main") name = "";
+
         style.getFill().setColor(color);
+        style.setText(
+          new Text({
+            font: "16px sans-serif",
+            textAlign: "center",
+            justify: "left",
+            text: `${name}`,
+            fill: new Fill({
+              color: [255, 255, 255, 1],
+            }),
+            /*backgroundFill: new Fill({
+              color: [168, 50, 153, 0.6],
+            }),*/
+            padding: [5, 5, 5, 5],
+          })
+        );
         return style;
       },
     });
@@ -122,6 +144,28 @@ export default {
         }
         highlight = feature;
       }
+
+      if (feature?.get("id") === "rain_collector") {
+        /*var rainCollector = _marker.RainCollector.svg;
+
+        feature.getStyle().setImage(
+          new Icon({
+            anchor: [100, 100],
+            anchorXUnits: "pixels",
+            anchorYUnits: "pixels",
+            opacity: 0.5,
+            width: 100,
+            height: 50,
+            src: "data:image/svg+xml;utf8," + rainCollector,
+          })
+        );
+        
+                  console.log("hi", feature.getStyle().getImage());
+          
+                  feature.getStyle().getImage().setAnchor([25, -150]);
+                  feature.getStyle().getImage().setHeight(50);
+                  feature.getStyle().getImage().setWidth(75);*/
+      }
     });
 
     // Add map Event listner
@@ -131,6 +175,7 @@ export default {
         console.log(feature);
         this.overlayData = {
           id: feature.values_.id,
+          name: feature.values_.name,
         };
         return feature;
       });
@@ -163,5 +208,29 @@ export default {
 #map {
   height: 100%;
   max-width: 100%;
+}
+
+svg {
+  width: 25%;
+}
+circle {
+  fill: green;
+  stroke: red;
+}
+#outer {
+  fill: blue;
+}
+.inner {
+  fill: red;
+}
+.hidden {
+  display: none;
+}
+
+.icon--blue circle {
+  fill: #0000ff !important;
+}
+.icon--blue .cat {
+  display: none;
 }
 </style>

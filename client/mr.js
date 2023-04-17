@@ -28,6 +28,7 @@ map.forEach(area => {
     var feature = JSON.parse(JSON.stringify(baseFeature))
     var currentFeatures = []
     feature.properties.id = area.properties.id
+    feature.properties.name = area.properties.name
     feature.properties.color = area.properties.color
 
     const points = area.measurements
