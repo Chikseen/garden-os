@@ -1,0 +1,33 @@
+[
+  {
+    "properties": {
+      "id": "seat",
+      "name": "Seat",
+      "color": "#ffffff"
+    },
+    "measurements": [
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [-5, 5],
+          [-6, 5],
+          [-6, 7],
+          [-5, 7],
+          [-5, 5]
+        ]
+      },
+      {
+        "props": {
+          "type": "pattern"
+        },
+        "data": [
+          [0, 0],
+          [0, 0]
+        ]
+      }
+    ],
+    "position": null
+  }
+]

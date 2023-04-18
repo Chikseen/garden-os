@@ -3,6 +3,8 @@
 // Script to refine the garden to realstic scaled map for client
 
 const map = require("./rawMap.json");
+const detailed = require("./rawDMap.json");
+
 const fs = require('fs');
 
 var rMap = {
@@ -19,33 +21,98 @@ var baseFeature = {
     "properties": {}
 }
 
+let dMap = JSON.parse(JSON.stringify(rMap));
+
+
 const latitudeMultiplier = 3.0;  //  |
 const longitudeMultiplier = 5.0; // ---
 const circularOffset = 1.5; // simple triangular calculation for approximite curve clac
 
+// var to save the main prop to align the details
+let main;
+
+// Refine Main Map
 map.forEach(area => {
     var feature = JSON.parse(JSON.stringify(baseFeature))
-    var currentFeatures = []
     feature.properties.id = area.properties.id
     feature.properties.name = area.properties.name
     feature.properties.color = area.properties.color
 
-    const points = area.measurements
-    const position = area.position
+    var currentFeature = []
+    var coordinates = []
 
-    const multipliedPoints = CalcMultipliePoints(points);
-    const boundaries = CalcBoundaries(multipliedPoints);
-    const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
+    area.measurements.forEach(pointsData => {
 
-    feature.geometry.coordinates.push(offsetPoints)
+        if (pointsData.props.type === "pattern") {
+            console.log("REPEAT", pointsData.data)
+        }
 
-    currentFeatures.push(feature)
+
+        const points = pointsData.data
+        const position = area.position
+        const multipliedPoints = CalcMultipliePoints(points);
+        const boundaries = CalcBoundaries(multipliedPoints);
+        const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
+        coordinates.push(offsetPoints)
+    });
+
+    feature.geometry.coordinates = coordinates
+
+    currentFeature.push(feature)
     rMap.features.push(feature)
+
+    if (feature.properties.id == "main")
+        main = feature
 });
 
-console.log("___");
-console.log(JSON.stringify(rMap));
 fs.writeFile('./public/map.json', JSON.stringify(rMap), err => {
+    if (err) {
+        console.error(err);
+    }
+});
+
+
+// Refine Detailed map
+
+detailed.forEach(area => {
+    var feature = JSON.parse(JSON.stringify(baseFeature))
+    feature.properties.id = area.properties.id
+    feature.properties.name = area.properties.name
+    feature.properties.color = area.properties.color
+
+    var currentFeature = []
+    var coordinates = []
+
+    area.measurements.forEach(pointsData => {
+
+        if (pointsData.props.type === "pattern") {
+            console.log("REPEAT", pointsData.data)
+        }
+
+
+        const points = pointsData.data
+        const position = area.position
+        const multipliedPoints = CalcMultipliePoints(points);
+        const boundaries = CalcBoundaries(multipliedPoints);
+        const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
+        coordinates.push(offsetPoints)
+    });
+
+    feature.geometry.coordinates = coordinates
+
+    currentFeature.push(feature)
+    dMap.features.push(feature)
+
+    if (feature.properties.id == "main")
+        main = feature
+});
+
+
+
+console.log("___");
+
+
+fs.writeFile('./public/detailed.json', JSON.stringify(dMap), err => {
     if (err) {
         console.error(err);
     }

@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-25,4],[-30,4],[-30,10],[-25,10],[-25,4]],[[0,0.5],[0,0.5]]]},"properties":{"id":"seat","name":"Seat","color":"#ffffff"}}]}

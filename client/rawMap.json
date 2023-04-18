@@ -3,18 +3,34 @@
     "properties": {
       "id": "main",
       "name": "Garten",
-      "color": "#207d3c"
+      "color": "#ceead6"
     },
     "measurements": [
-      [0, 0],
-      [6.5, 0],
-      [7.5, 1.8],
-      [8.5, 1.8],
-      [9.5, 0],
-      [15, 0],
-      [15, 33],
-      [0, 33],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.5, 0],
+          [7.5, 1.8],
+          [8.5, 1.8],
+          [9.5, 0],
+          [15, 0],
+          [15, 33],
+          [0, 33],
+          [0, 0]
+        ]
+      },
+      {
+        "props": {
+          "type": "pattern"
+        },
+        "data": [
+          [0, 0],
+          [0, 0]
+        ]
+      }
     ],
     "position": null
   },
@@ -22,14 +38,21 @@
     "properties": {
       "id": "veranda",
       "name": "Veranda",
-      "color": "#bdae4d"
+      "color": "#fef9e8"
     },
     "measurements": [
-      [0, 0],
-      [6.7, 0],
-      [6.7, -2.4],
-      [0, -2.4],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.7, 0],
+          [6.7, -2.4],
+          [0, -2.4],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -41,14 +64,21 @@
     "properties": {
       "id": "flowerbed_veranda",
       "name": "Blumenbeet",
-      "color": "#c44fc0"
+      "color": "#aeddba"
     },
     "measurements": [
-      [0, 0],
-      [7.5, 0],
-      [7.5, -3.2],
-      [0, -3.2],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [7.5, 0],
+          [7.5, -3.2],
+          [0, -3.2],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -60,14 +90,21 @@
     "properties": {
       "id": "house",
       "name": "Hütte",
-      "color": "#bd834d"
+      "color": "#f2f4f5"
     },
     "measurements": [
-      [0, 0],
-      [8.4, 0],
-      [8.4, -2.4],
-      [0, -2.4],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [8.4, 0],
+          [8.4, -2.4],
+          [0, -2.4],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -79,14 +116,21 @@
     "properties": {
       "id": "green_house",
       "name": "Gewächshaus",
-      "color": "#647a67"
+      "color": "#cfd1d3"
     },
     "measurements": [
-      [0, 0],
-      [3, 0],
-      [3, -3],
-      [0, -3],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [3, 0],
+          [3, -3],
+          [0, -3],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -98,14 +142,21 @@
     "properties": {
       "id": "outside_area",
       "name": "Sitzbereich",
-      "color": "#bdae4d"
+      "color": "#fef9e8"
     },
     "measurements": [
-      [0, 0],
-      [7.5, 0],
-      [7.5, -4.4],
-      [0, -4.4],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [7.5, 0],
+          [7.5, -4.4],
+          [0, -4.4],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -117,14 +168,21 @@
     "properties": {
       "id": "producebed_1",
       "name": "Nutzplfanzenbeet",
-      "color": "#ba9129"
+      "color": "#f2ead8"
     },
     "measurements": [
-      [0, 0],
-      [6.4, 0],
-      [6.4, -4],
-      [0, -4],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.4, 0],
+          [6.4, -4],
+          [0, -4],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -136,14 +194,21 @@
     "properties": {
       "id": "producebed_2",
       "name": "Nutzplfanzenbeet",
-      "color": "#ba9129"
+      "color": "#f2ead8"
     },
     "measurements": [
-      [0, 0],
-      [6.4, 0],
-      [6.4, -2.5],
-      [0, -2.5],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.4, 0],
+          [6.4, -2.5],
+          [0, -2.5],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -155,14 +220,21 @@
     "properties": {
       "id": "producebed_3",
       "name": "Nutzplfanzenbeet",
-      "color": "#ba9129"
+      "color": "#f2ead8"
     },
     "measurements": [
-      [0, 0],
-      [6.4, 0],
-      [6.4, -4],
-      [0, -4],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.4, 0],
+          [6.4, -4],
+          [0, -4],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -174,14 +246,21 @@
     "properties": {
       "id": "flowerbed_entry_left",
       "name": "Blumenbeet",
-      "color": "#c44fc0"
+      "color": "#aeddba"
     },
     "measurements": [
-      [0, 0],
-      [7.5, 0],
-      [6.5, -0.5],
-      [0, -0.5],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [7.5, 0],
+          [6.5, -0.5],
+          [0, -0.5],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -193,14 +272,21 @@
     "properties": {
       "id": "flowerbed_entry_right",
       "name": "Blumenbeet",
-      "color": "#c44fc0"
+      "color": "#aeddba"
     },
     "measurements": [
-      [0, 0],
-      [6.6, 0],
-      [6.6, -0.5],
-      [1, -0.5],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6.6, 0],
+          [6.6, -0.5],
+          [1, -0.5],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],
@@ -212,16 +298,23 @@
     "properties": {
       "id": "flowerbed_left_long",
       "name": "Blumenbeet",
-      "color": "#c44fc0"
+      "color": "#aeddba"
     },
     "measurements": [
-      [0, 0],
-      [6, 0],
-      [6, 13.5],
-      [7.5, 13.5],
-      [7.5, -1],
-      [0, -1],
-      [0, 0]
+      {
+        "props": {
+          "type": "single"
+        },
+        "data": [
+          [0, 0],
+          [6, 0],
+          [6, 13.5],
+          [7.5, 13.5],
+          [7.5, -1],
+          [0, -1],
+          [0, 0]
+        ]
+      }
     ],
     "position": {
       "alignment": ["top", "left"],

@@ -1,14 +1,6 @@
 <template>
   <div id="map"></div>
-  <Overlay
-    :data="overlayData"
-    @close="overlayData = null"
-    @fake="
-      (e) => {
-        fake = e;
-      }
-    "
-  />
+  <Overlay :data="overlayData" @close="overlayData = null" @fake="mapEvent" />
 </template>
 
 <script>
@@ -19,13 +11,13 @@ import VectorSource from "ol/source/Vector.js";
 import View from "ol/View.js";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style.js";
 import Feature from "ol/Feature";
-import { Geometry, Point } from "ol/geom.js";
-import Layer from "ol/layer/Layer.js";
-import { composeCssTransform } from "ol/transform";
+import { Point } from "ol/geom.js";
 
 import _marker from "@/assets/map/markers.json";
 import { fromLonLat } from "ol/proj";
 import Overlay from "@/components/Overlay.vue";
+
+let map;
 
 export default {
   components: { Overlay },
@@ -36,9 +28,15 @@ export default {
     };
   },
   methods: {
-    RainCollectorMarker() {
-      var rainCollector = _marker.RainCollector.init;
-
+    mapEvent(e) {
+      const features = map.getAllLayers()[1].values_.source.getFeatures();
+      if (features) {
+        const feature = features.find((f) => f.values_.id === "rain_collector");
+        console.log(feature);
+        feature.setStyle(this.RainCollector(e).style);
+      }
+    },
+    RainCollector(id = 0) {
       var rainCollectorFeature = new Feature({
         type: "Feature",
         geometry: new Point(fromLonLat([11, 48])),
@@ -54,12 +52,12 @@ export default {
           opacity: 0.5,
           width: 100,
           height: 100,
-          src: "data:image/svg+xml;utf8," + rainCollector,
+          src: "data:image/svg+xml;utf8," + _marker.RainCollector.data[id],
         }),
       });
 
       rainCollectorFeature.setStyle(rainCollectorStyle);
-      return rainCollectorFeature;
+      return { feature: rainCollectorFeature, style: rainCollectorStyle };
     },
   },
   mounted() {
@@ -90,11 +88,8 @@ export default {
             justify: "left",
             text: `${name}`,
             fill: new Fill({
-              color: [255, 255, 255, 1],
+              color: [126, 128, 131],
             }),
-            /*backgroundFill: new Fill({
-              color: [168, 50, 153, 0.6],
-            }),*/
             padding: [5, 5, 5, 5],
           })
         );
@@ -105,13 +100,43 @@ export default {
     // Put all marker in one layer
     const markerLayer = new VectorLayer({
       source: new VectorSource({
-        features: [this.RainCollectorMarker()],
+        features: [this.RainCollector().feature],
       }),
     });
 
+    const detailedMaplayer = new VectorLayer({
+      background: "#1a2b39",
+      source: new VectorSource({
+        url: "/detailed.json",
+        format: new GeoJSON(),
+      }),
+      minZoom: 4.5,
+      style: (feature) => {
+        let color = feature.get("color") || "#eeeeee";
+        let name = feature.get("name") || "";
+
+        if (feature.get("id") === "main") name = "";
+
+        style.getFill().setColor(color);
+        style.setText(
+          new Text({
+            font: "16px sans-serif",
+            textAlign: "center",
+            justify: "left",
+            text: `${name}`,
+            fill: new Fill({
+              color: [126, 128, 131],
+            }),
+            padding: [5, 5, 5, 5],
+          })
+        );
+        return style;
+      },
+    });
+
     // create map with Map and Marker layer
-    const map = new Map({
-      layers: [mainMapLayer, markerLayer],
+    map = new Map({
+      layers: [mainMapLayer, markerLayer, detailedMaplayer],
       target: "map",
       view: new View({
         center: [0, 0],
@@ -126,7 +151,7 @@ export default {
       map: map,
       style: new Style({
         stroke: new Stroke({
-          color: "rgba(255, 255, 255, 0.7)",
+          color: "rgba(126, 128, 131, 0.7)",
           width: 5,
         }),
       }),
@@ -137,8 +162,8 @@ export default {
       if (evt.dragging) {
         return;
       }
-      const pixel = map.getEventPixel(evt.originalEvent);
 
+      const pixel = map.getEventPixel(evt.originalEvent);
       const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
         return feature;
       });
@@ -152,64 +177,18 @@ export default {
         }
         highlight = feature;
       }
-
-      if (feature?.get("id") === "rain_collector") {
-        console.log(this.fake);
-        var rainCollector = _marker.RainCollector.data[this.fake];
-
-        feature.setStyle(
-          new Style({
-            image: new Icon({
-              anchor: [100, 100],
-              anchorXUnits: "pixels",
-              anchorYUnits: "pixels",
-              opacity: 0.5,
-              width: 100,
-              height: 100,
-              src: "data:image/svg+xml;utf8," + rainCollector,
-            }),
-          })
-        );
-        /*
-                  console.log("hi", feature.getStyle().getImage());
-
-                  feature.getStyle().getImage().setAnchor([25, -150]);
-                  feature.getStyle().getImage().setHeight(50);
-                  feature.getStyle().getImage().setWidth(75);*/
-      }
     });
 
     // Add map Event listner
     map.on("click", (e) => {
       this.overlayData = null;
       map.forEachFeatureAtPixel(map.getEventPixel(e.originalEvent), (feature) => {
-        console.log(feature);
         this.overlayData = {
           id: feature.values_.id,
           name: feature.values_.name,
         };
         return feature;
       });
-    });
-    map.on("postrender", (e) => {
-      /*
-      e;
-      map.render();
-      let dynamicStyle = {
-        polygon: new Style({
-          stroke: new Stroke({
-            color: [255, 204, 0, 1],
-            width: 10,
-          }),
-          fill: new Fill({
-            color: [255, 0, 51, 0.4],
-          }),
-        }),
-      };
-
-      mainMapLayer.setStyle((e) => {
-        return dynamicStyle["polygon"];
-      });*/
     });
   },
 };
