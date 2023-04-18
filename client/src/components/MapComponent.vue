@@ -74,6 +74,7 @@ export default {
         url: "/map.json",
         format: new GeoJSON(),
       }),
+      renderBuffer: 9999, // Render pixels around the view -> how much : YES XD (But forreal check here if there are performance issues)
       style: (feature) => {
         let color = feature.get("color") || "#eeeeee";
         let name = feature.get("name") || "";
@@ -198,29 +199,5 @@ export default {
 #map {
   height: 100%;
   max-width: 100%;
-}
-
-svg {
-  width: 25%;
-}
-circle {
-  fill: green;
-  stroke: red;
-}
-#outer {
-  fill: blue;
-}
-.inner {
-  fill: red;
-}
-.hidden {
-  display: none;
-}
-
-.icon--blue circle {
-  fill: #0000ff !important;
-}
-.icon--blue .cat {
-  display: none;
 }
 </style>
