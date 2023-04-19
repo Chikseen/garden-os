@@ -1,195 +1,164 @@
-
 // # MapRefiner.js
 // Script to refine the garden to realstic scaled map for client
-
 const map = require("./rawMap.json");
-const detailed = require("./rawDMap.json");
 
-const fs = require('fs');
+const fs = require("fs");
 
 var rMap = {
-    "type": "FeatureCollection",
-    "features": []
-}
+  type: "FeatureCollection",
+  features: [],
+};
 
 var baseFeature = {
-    "type": "Feature",
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": []
-    },
-    "properties": {}
-}
+  type: "Feature",
+  geometry: {
+    type: "Polygon",
+    coordinates: [],
+  },
+  properties: {},
+};
 
 let dMap = JSON.parse(JSON.stringify(rMap));
 
-
-const latitudeMultiplier = 3.0;  //  |
+const latitudeMultiplier = 3.0; //  |
 const longitudeMultiplier = 5.0; // ---
 const circularOffset = 1.5; // simple triangular calculation for approximite curve clac
 
-// var to save the main prop to align the details
-let main;
-
 // Refine Main Map
-map.forEach(area => {
-    var feature = JSON.parse(JSON.stringify(baseFeature))
-    feature.properties.id = area.properties.id
-    feature.properties.name = area.properties.name
-    feature.properties.color = area.properties.color
+map.main.forEach((area) => {
+  var feature = JSON.parse(JSON.stringify(baseFeature));
+  feature.properties.id = area.properties.id;
+  feature.properties.name = area.properties.name;
+  feature.properties.color = area.properties.color;
 
-    var currentFeature = []
-    var coordinates = []
+  var currentFeature = [];
+  var coordinates = [];
 
-    area.measurements.forEach(pointsData => {
-
-        if (pointsData.props.type === "pattern") {
-            console.log("REPEAT", pointsData.data)
-        }
-
-
-        const points = pointsData.data
-        const position = area.position
-        const multipliedPoints = CalcMultipliePoints(points);
-        const boundaries = CalcBoundaries(multipliedPoints);
-        const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
-        coordinates.push(offsetPoints)
-    });
-
-    feature.geometry.coordinates = coordinates
-
-    currentFeature.push(feature)
-    rMap.features.push(feature)
-
-    if (feature.properties.id == "main")
-        main = feature
-});
-
-fs.writeFile('./public/map.json', JSON.stringify(rMap), err => {
-    if (err) {
-        console.error(err);
+  area.measurements.forEach((pointsData) => {
+    if (pointsData.props.type === "pattern") {
+      // ToDo: Do some reapting patterns here
     }
+
+    const points = pointsData.data;
+    const position = area.position;
+    const multipliedPoints = CalcMultipliePoints(points);
+    const boundaries = CalcBoundaries(multipliedPoints);
+    const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
+    coordinates.push(offsetPoints);
+  });
+
+  feature.geometry.coordinates = coordinates;
+
+  currentFeature.push(feature);
+  rMap.features.push(feature);
 });
 
+fs.writeFile("./public/map.json", JSON.stringify(rMap), (err) => {
+  if (err) {
+    console.error(err);
+  }
+});
 
 // Refine Detailed map
+map.detailed.forEach((area) => {
+  var feature = JSON.parse(JSON.stringify(baseFeature));
+  feature.properties.id = area.properties.id;
+  feature.properties.name = area.properties.name;
+  feature.properties.color = area.properties.color;
 
-detailed.forEach(area => {
-    var feature = JSON.parse(JSON.stringify(baseFeature))
-    feature.properties.id = area.properties.id
-    feature.properties.name = area.properties.name
-    feature.properties.color = area.properties.color
+  var currentFeature = [];
+  var coordinates = [];
 
-    var currentFeature = []
-    var coordinates = []
+  area.measurements.forEach((pointsData) => {
+    if (pointsData.props.type === "pattern") {
+      // ToDo: Do some reapting patterns here
+    }
 
-    area.measurements.forEach(pointsData => {
+    const points = pointsData.data;
+    const position = area.position;
+    const multipliedPoints = CalcMultipliePoints(points);
+    const boundaries = CalcBoundaries(multipliedPoints);
+    const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
+    coordinates.push(offsetPoints);
+  });
 
-        if (pointsData.props.type === "pattern") {
-            console.log("REPEAT", pointsData.data)
-        }
+  feature.geometry.coordinates = coordinates;
 
+  currentFeature.push(feature);
+  dMap.features.push(feature);
 
-        const points = pointsData.data
-        const position = area.position
-        const multipliedPoints = CalcMultipliePoints(points);
-        const boundaries = CalcBoundaries(multipliedPoints);
-        const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
-        coordinates.push(offsetPoints)
-    });
-
-    feature.geometry.coordinates = coordinates
-
-    currentFeature.push(feature)
-    dMap.features.push(feature)
-
-    if (feature.properties.id == "main")
-        main = feature
+  if (feature.properties.id == "main") main = feature;
 });
-
-
 
 console.log("___");
 
-
-fs.writeFile('./public/detailed.json', JSON.stringify(dMap), err => {
-    if (err) {
-        console.error(err);
-    }
+fs.writeFile("./public/detailed.json", JSON.stringify(dMap), (err) => {
+  if (err) {
+    console.error(err);
+  }
 });
-
-
 
 // Multiplie the points to fit in a real coord system
 function CalcMultipliePoints(points) {
-    var multipliedPoints = []
-    points.forEach(point => {
-        multipliedPoints.push([
-            point[0] * longitudeMultiplier,
-            (point[1] * latitudeMultiplier) ^ circularOffset
-        ])
-    });
-    return multipliedPoints
+  var multipliedPoints = [];
+  points.forEach((point) => {
+    multipliedPoints.push([point[0] * longitudeMultiplier, (point[1] * latitudeMultiplier) ^ circularOffset]);
+  });
+  return multipliedPoints;
 }
 
 // Applay the Offset to center
 function CalcBoundaries(points, alignment = ["top", "left"]) {
-    var X = 0;
-    var Y = 0;
+  var X = 0;
+  var Y = 0;
 
-    switch (alignment[0]) {
-        case "top": points.forEach(point => {
-            if (point[1] > Y) Y = point[1]
-        });
-            break;
+  switch (alignment[0]) {
+    case "top":
+      points.forEach((point) => {
+        if (point[1] > Y) Y = point[1];
+      });
+      break;
 
-        case "bottom": points.forEach(point => {
-            if (point[1] < Y) Y = point[1]
-        });
-            break;
-    }
+    case "bottom":
+      points.forEach((point) => {
+        if (point[1] < Y) Y = point[1];
+      });
+      break;
+  }
 
-    switch (alignment[1]) {
-        case "left": points.forEach(point => {
-            if (point[0] > X) X = point[0]
-        });
-            break;
-    }
-
-    return [X, Y]
+  switch (alignment[1]) {
+    case "left":
+      points.forEach((point) => {
+        if (point[0] > X) X = point[0];
+      });
+      break;
+  }
+  return [X, Y];
 }
 
 function CalcOffset(position, points, boundaries) {
-    var offsetPoints = []
+  var offsetPoints = [];
 
-    if (position) {
-        const parent = rMap.features.find(f => f.properties.id === position.parent)
-        if (!parent) return BaseOffset(points, boundaries)
+  if (position) {
+    const parent = rMap.features.find((f) => f.properties.id === position.parent);
+    if (!parent) return BaseOffset(points, boundaries);
 
-        const parentPoints = parent.geometry.coordinates
-        const parentBoundaries = CalcBoundaries(parentPoints[0], position.alignment)
+    const parentPoints = parent.geometry.coordinates;
+    const parentBoundaries = CalcBoundaries(parentPoints[0], position.alignment);
 
-        var offsetPoints = []
-        points.forEach(point => {
-            offsetPoints.push([
-                point[0] - parentBoundaries[0] + position.margin[0],
-                point[1] + parentBoundaries[1] + position.margin[1]
-            ])
-        });
+    var offsetPoints = [];
+    points.forEach((point) => {
+      offsetPoints.push([point[0] - parentBoundaries[0] + position.margin[0] * longitudeMultiplier, point[1] + parentBoundaries[1] + position.margin[1] * latitudeMultiplier]);
+    });
+  } else return BaseOffset(points, boundaries);
 
-    }
-    else return BaseOffset(points, boundaries)
-
-    return offsetPoints
+  return offsetPoints;
 }
 
 function BaseOffset(points, boundaries) {
-    var offsetPoints = []
-    points.forEach(point => {
-        offsetPoints.push([
-            point[0] - boundaries[0] / 2,
-            point[1] - boundaries[1] / 2
-        ])
-    });
-    return offsetPoints;
+  var offsetPoints = [];
+  points.forEach((point) => {
+    offsetPoints.push([point[0] - boundaries[0] / 2, point[1] - boundaries[1] / 2]);
+  });
+  return offsetPoints;
 }

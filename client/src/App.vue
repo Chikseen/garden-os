@@ -1,26 +1,15 @@
 <template>
   <div id="app">
     <MapComponent />
-    <!--
-      <div>
-        <h3>MY LIVE DATA</h3>
-        <div v-if="values != null" style="width: 300px; height: 300px; resize: horizontal">
-          <FuelMeter :value="values.potiOne"></FuelMeter>
-          <FuelMeter :value="values.potiTwo"></FuelMeter>
-        </div>
-      </div>
-    -->
   </div>
 </template>
 
 <script>
-import FuelMeter from "@/components/FuelMeter.vue";
 import MapComponent from "@/components/MapComponent.vue";
 
 export default {
   name: "App",
   components: {
-    FuelMeter,
     MapComponent,
   },
   props: {

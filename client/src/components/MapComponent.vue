@@ -1,6 +1,6 @@
 <template>
   <div id="map"></div>
-  <Overlay :data="overlayData" @close="overlayData = null" @fake="mapEvent" />
+  <Overlay :data="overlayData" @close="overlayData = null" @fake="fakeRC" />
 </template>
 
 <script>
@@ -24,29 +24,41 @@ export default {
   data() {
     return {
       overlayData: null,
-      fake: 0,
+      values: null,
     };
   },
   methods: {
-    mapEvent(e) {
+    fakeRC(e) {
+      // Temp method -> Will be removed later
+      this.mapEvent("rain_collector", e);
+    },
+    mapEvent(id, value) {
+      console.log(id, value);
       const features = map.getAllLayers()[1].values_.source.getFeatures();
       if (features) {
-        const feature = features.find((f) => f.values_.id === "rain_collector");
-        console.log(feature);
-        feature.setStyle(this.RainCollector(e).style);
+        const feature = features.find((f) => f.values_.id === id);
+
+        switch (id) {
+          case "rain_collector":
+            feature.setStyle(this.RainCollector(value).style);
+            break;
+          default:
+            console.error(`ID: ${id} was not found`);
+            break;
+        }
       }
     },
     RainCollector(id = 0) {
       var rainCollectorFeature = new Feature({
         type: "Feature",
-        geometry: new Point(fromLonLat([11, 48])),
+        geometry: new Point(fromLonLat([11, 47])),
       });
 
-      rainCollectorFeature.setProperties({ id: "rain_collector", name: "Regentonnen" });
+      rainCollectorFeature.setProperties({ id: "rain_collector", name: "Regentonnen", value: id });
 
       var rainCollectorStyle = new Style({
         image: new Icon({
-          anchor: [100, 100],
+          anchor: [150, 300],
           anchorXUnits: "pixels",
           anchorYUnits: "pixels",
           opacity: 0.5,
@@ -59,6 +71,12 @@ export default {
       rainCollectorFeature.setStyle(rainCollectorStyle);
       return { feature: rainCollectorFeature, style: rainCollectorStyle };
     },
+  },
+  created() {
+    this.emitter.on("Event", (e) => {
+      console.log("Incomming Event", e);
+      this.mapEvent("rain_collector", e.potiTwo);
+    });
   },
   mounted() {
     const style = new Style({
@@ -74,7 +92,7 @@ export default {
         url: "/map.json",
         format: new GeoJSON(),
       }),
-      renderBuffer: 9999, // Render pixels around the view -> how much : YES XD (But forreal check here if there are performance issues)
+      renderBuffer: 2000, // Render pixels around the view -> how much : YES XD (But forreal check here if there are performance issues)
       style: (feature) => {
         let color = feature.get("color") || "#eeeeee";
         let name = feature.get("name") || "";
@@ -100,6 +118,7 @@ export default {
 
     // Put all marker in one layer
     const markerLayer = new VectorLayer({
+      renderBuffer: 2000,
       source: new VectorSource({
         features: [this.RainCollector().feature],
       }),
@@ -111,6 +130,7 @@ export default {
         url: "/detailed.json",
         format: new GeoJSON(),
       }),
+      renderBuffer: 2000,
       minZoom: 4.5,
       style: (feature) => {
         let color = feature.get("color") || "#eeeeee";
