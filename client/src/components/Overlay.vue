@@ -4,7 +4,8 @@
       <h1>{{ data?.name }}</h1>
       <h1 @click="$emit('close')">X</h1>
     </div>
-    <h2 v-if="data?.id == 'rain_collector'" @click="$emit('fake', Math.floor(Math.random() * 100))">Fake Data</h2>
+    <h2 v-if="data?.id == 'rain_collector'" @click="$emit('fake', 'rain_collector', Math.floor(Math.random() * 100))">Fake Data</h2>
+    <h2 v-if="data?.id == 'moisture_I'" @click="$emit('fake', 'moisture_I', Math.floor(Math.random() * 100))">Fake Data</h2>
     <h2 v-if="data?.id == 'house_TV'">Play Sound Here</h2>
     <h6 style="margin: 0">{{ data }}</h6>
     <h6 style="margin: 0">{{ addCoordinateTransforms }}</h6>
@@ -20,7 +21,7 @@ export default {
     addCoordinateTransforms() {
       const mainSearch = map.main.find((i) => i.properties.id == this.data?.id);
       const detailedSearch = map.detailed.find((i) => i.properties.id == this.data?.id);
-      
+
       if (mainSearch) return mainSearch;
       return detailedSearch;
     },

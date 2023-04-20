@@ -28,9 +28,9 @@ export default {
     };
   },
   methods: {
-    fakeRC(e) {
+    fakeRC(id, e) {
       // Temp method -> Will be removed later
-      this.mapEvent("rain_collector", e);
+      this.mapEvent(id, e);
     },
     mapEvent(id, value) {
       console.log(id, value);
@@ -41,6 +41,9 @@ export default {
         switch (id) {
           case "rain_collector":
             feature.setStyle(this.RainCollector(value).style);
+            break;
+          case "moisture_I":
+            feature.setStyle(this.Moisture_I(value).style);
             break;
           default:
             console.error(`ID: ${id} was not found`);
@@ -70,6 +73,29 @@ export default {
 
       rainCollectorFeature.setStyle(rainCollectorStyle);
       return { feature: rainCollectorFeature, style: rainCollectorStyle };
+    },
+    Moisture_I(id = 0) {
+      var moisture_IFeature = new Feature({
+        type: "Feature",
+        geometry: new Point(fromLonLat([-7,21.5])),
+      });
+
+      moisture_IFeature.setProperties({ id: "moisture_I", name: "Bodenfeuchte Sensor am Verande Beet", value: id });
+
+      var moisture_IStyle = new Style({
+        image: new Icon({
+          anchor: [150, 300],
+          anchorXUnits: "pixels",
+          anchorYUnits: "pixels",
+          opacity: 0.5,
+          width: 100,
+          height: 100,
+          src: "data:image/svg+xml;utf8," + _marker.Moisture_I.data[id],
+        }),
+      });
+
+      moisture_IFeature.setStyle(moisture_IStyle);
+      return { feature: moisture_IFeature, style: moisture_IStyle };
     },
   },
   created() {
@@ -120,7 +146,7 @@ export default {
     const markerLayer = new VectorLayer({
       renderBuffer: 2000,
       source: new VectorSource({
-        features: [this.RainCollector().feature],
+        features: [this.RainCollector().feature, this.Moisture_I().feature],
       }),
     });
 
@@ -207,6 +233,7 @@ export default {
         this.overlayData = {
           id: feature.values_.id,
           name: feature.values_.name,
+          value: feature.values_.value,
         };
         return feature;
       });
