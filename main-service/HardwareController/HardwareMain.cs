@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Device.Gpio;
 using System.Device.I2c;
+using System.Net;
+using System.Net.Sockets;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -9,6 +11,10 @@ namespace MainService.Hardware
     public delegate void ValueChange();  // delegate
     public class MainHardware
     {
+        private static string _localIPAdress = "NO IP";
+        private static GpioController? _controller { get; set; }
+        private static bool ledOn { get; set; }
+
         private static HardwareData __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _testValue
         public static HardwareData _data
         {
@@ -29,6 +35,7 @@ namespace MainService.Hardware
         private static Task mainLoop()
         {
             getLastEntryforMachines();
+            SetIpAdress();
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -75,8 +82,8 @@ namespace MainService.Hardware
             i2cDevice.WriteByte(0x8c); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue1 = readBuffer[0]; // Set rawValue from ReadBuffer
-            lcd.SetCursorPosition(0, 0);
-            lcd.Write(rawValue1.ToString("000"));
+            lcd.SetCursorPosition(0, 1);
+            lcd.Write($"VI: {rawValue1.ToString("000")}");
 
             // Reset readBuffer and read Channel 1
             readBuffer = new byte[1];
@@ -84,8 +91,8 @@ namespace MainService.Hardware
             i2cDevice.WriteByte(0xcc); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue2 = readBuffer[0]; // Set rawValue from ReadBuffer
-            lcd.SetCursorPosition(0, 1);
-            lcd.Write(rawValue2.ToString("000"));
+            lcd.SetCursorPosition(8, 1);
+            lcd.Write($"VII: {rawValue2.ToString("000")}");
 
             HardwareData data = new();
 
@@ -97,38 +104,10 @@ namespace MainService.Hardware
                 _data = data;
             }
 
-            // Set it like this so the update event can be triggerd
-
-            /* JUST HERE FOR ARCHIV PRUPOSES
-            // Read analog data from channel 0 of the ADC
-            byte[] readBuffer = new byte[2];
-
-            i2cDevice.WriteByte(0x8C); // Start ADC conversion on channel 0
-
-            i2cDevice.Read(readBuffer); // Read the conversion result
-            int rawValue = (readBuffer[0] << 8) + readBuffer[1]; // Combine the two bytes
-            double voltage = (rawValue / 32767.0) * 3.3; // Convert to voltage (assuming Vref = 5V)
-
-            // Print the result on the console
-            Console.WriteLine($"Analog value: {voltage:F2}V");
-            _testValue = (float)voltage;
-
-            // Write Value to LCD
             lcd.SetCursorPosition(0, 0);
-            lcd.Write(_testValue.ToString());
+            lcd.Write(_localIPAdress);
 
-            Console.WriteLine("READ BUFFER ONE");
-            Console.WriteLine(readBuffer[0]);
-            Console.WriteLine(readBuffer[1]);
 
-            i2cDevice.WriteByte(0xCC);
-            readBuffer = new byte[2];
-            i2cDevice.Read(readBuffer);
-            Console.WriteLine("READ BUFFER TWO");
-            Console.WriteLine(readBuffer[0]);
-            Console.WriteLine(readBuffer[1]);
-
-            */
             Thread.Sleep(25);
         }
 
@@ -151,6 +130,29 @@ namespace MainService.Hardware
             // GET ALL DEVICE DATA HERE
             // ToDo Finsh Model
             return new DevicesData();
+        }
+
+        public static void SetIpAdress()
+        {
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            Console.WriteLine(hostName);
+            // Get the IP
+            string myIP = Dns.GetHostEntry(hostName).AddressList.Where(e => e.ToString().Contains("192.")).ToList()[0].ToString();
+
+
+            if (!String.IsNullOrEmpty(myIP))
+                _localIPAdress = myIP;
+
+            Console.WriteLine($"Ip Adress: {_localIPAdress}");
+        }
+
+        public static void toggleLed()
+        {
+            var controller = new GpioController();
+            controller.OpenPin(18, PinMode.Output);
+            controller.Write(18, ((ledOn) ? PinValue.High : PinValue.Low));
+            ledOn = !ledOn;
+            controller.ClosePin(18);
         }
     }
 }

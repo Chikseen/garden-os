@@ -101,7 +101,8 @@ export default {
   created() {
     this.emitter.on("Event", (e) => {
       console.log("Incomming Event", e);
-      this.mapEvent("rain_collector", e.potiTwo);
+      this.mapEvent("rain_collector", e.potiOne);
+      this.mapEvent("moisture_I", e.potiTwo);
     });
   },
   mounted() {

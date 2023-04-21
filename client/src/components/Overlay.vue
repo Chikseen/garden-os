@@ -6,7 +6,7 @@
     </div>
     <h2 v-if="data?.id == 'rain_collector'" @click="$emit('fake', 'rain_collector', Math.floor(Math.random() * 100))">Fake Data</h2>
     <h2 v-if="data?.id == 'moisture_I'" @click="$emit('fake', 'moisture_I', Math.floor(Math.random() * 100))">Fake Data</h2>
-    <h2 v-if="data?.id == 'house_TV'">Play Sound Here</h2>
+    <h2 v-if="data?.id == 'house_TV'" @click="APITest">Play Sound Here</h2>
     <h6 style="margin: 0">{{ data }}</h6>
     <h6 style="margin: 0">{{ addCoordinateTransforms }}</h6>
   </div>
@@ -24,6 +24,19 @@ export default {
 
       if (mainSearch) return mainSearch;
       return detailedSearch;
+    },
+  },
+  methods: {
+    async APITest() {
+      // No Worries this will be unified soon
+      console.log("test");
+      let res;
+      try {
+        res = await fetch(`http://${process.env.VUE_APP_PI_HOST}:${process.env.VUE_APP_PI_PORT}/ledToggle`).then((response) => response.json());
+      } catch (error) {
+        res = await fetch(`http://192.168.8.100:${process.env.VUE_APP_PI_PORT}/ledToggle`).then((response) => response.json());
+      }
+      console.log(res);
     },
   },
 };

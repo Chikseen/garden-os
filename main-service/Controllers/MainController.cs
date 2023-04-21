@@ -26,5 +26,11 @@ namespace MainService.Controllers
             //_db.query("SELECT * FROM datalog;");
             return MainHardware._data;
         }
+        [HttpGet("ledToggle")]
+        public OkResult ledToggle()
+        {
+            MainHardware.toggleLed();
+            return Ok();
+        }
     }
 }
