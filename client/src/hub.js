@@ -49,6 +49,13 @@ export default {
       Vue.config.globalProperties.emitter.emit("Event", payload);
     });
 
+    connection.disconnected(function () {
+      setTimeout(() => {
+        console.log("try to reconnect");
+        this.CheckConnection();
+      }, 1000);
+    });
+
     Vue.provide("$hub", connection);
     console.log("Connection succed");
   },

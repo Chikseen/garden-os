@@ -29,7 +29,7 @@ namespace MainService.Controllers
         [HttpGet("ledToggle")]
         public OkResult ledToggle()
         {
-            MainHardware.toggleLed();
+            WebInput.toggleLed();
             return Ok();
         }
     }
