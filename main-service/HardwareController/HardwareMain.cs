@@ -82,8 +82,7 @@ namespace MainService.Hardware
             i2cDevice.WriteByte(0x8c); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue1 = readBuffer[0]; // Set rawValue from ReadBuffer
-            lcd.SetCursorPosition(0, 1);
-            lcd.Write($"VI: {rawValue1.ToString("000")}");
+
 
             // Reset readBuffer and read Channel 1
             readBuffer = new byte[1];
@@ -91,13 +90,16 @@ namespace MainService.Hardware
             i2cDevice.WriteByte(0xcc); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
             i2cDevice.Read(readBuffer); // Read the conversion result
             int rawValue2 = readBuffer[0]; // Set rawValue from ReadBuffer
-            lcd.SetCursorPosition(8, 1);
-            lcd.Write($"VII: {rawValue2.ToString("000")}");
 
             HardwareData data = new();
 
-            data.PotiOne = (uint)rawValue1;
-            data.PotiTwo = (uint)rawValue2;
+            data.PotiOne = (uint)Math.Round(((decimal)rawValue1 / 255 * 100));
+            data.PotiTwo = (uint)Math.Round(((decimal)rawValue2 / 255 * 100));
+
+            lcd.SetCursorPosition(8, 1);
+            lcd.Write($"VII: {data.PotiOne.ToString("000")}");
+            lcd.SetCursorPosition(0, 1);
+            lcd.Write($"VI: {data.PotiTwo.ToString("000")}");
 
             if (data != _data)
             {
