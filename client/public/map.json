@@ -1,1 +1,207 @@
-{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-37.5,-48],[-5,-48],[0,-45],[5,-45],[10,-48],[37.5,-48],[37.5,49],[-37.5,49],[-37.5,-48]],[[0,0.5],[0,0.5]]]},"properties":{"id":"main","name":"Garten","color":"#ceead6"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-27,38.51],[6.5,38.51],[6.5,29.509999999999998],[-27,29.509999999999998],[-27,38.51]]]},"properties":{"id":"veranda","name":"Veranda","color":"#fef9e8"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-37.5,27.02],[0,27.02],[0,16.02],[-37.5,16.02],[-37.5,27.02]]]},"properties":{"id":"flowerbed_veranda","name":"Blumenbeet","color":"#aeddba"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-35.5,47.51],[6.5,47.51],[6.5,38.51],[-35.5,38.51],[-35.5,47.51]]]},"properties":{"id":"house","name":"Hütte","color":"#f2f4f5"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[17.5,42.5],[32.5,42.5],[32.5,31.5],[17.5,31.5],[17.5,42.5]]]},"properties":{"id":"green_house","name":"Gewächshaus","color":"#cfd1d3"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-37.5,16.009999999999998],[0,16.009999999999998],[0,1.009999999999998],[-37.5,1.009999999999998],[-37.5,16.009999999999998]]]},"properties":{"id":"outside_area","name":"Sitzbereich","color":"#fef9e8"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[5.5,-8.980000000000004],[37.5,-8.980000000000004],[37.5,-20.980000000000004],[5.5,-20.980000000000004],[5.5,-8.980000000000004]]]},"properties":{"id":"producebed_1","name":"Nutzplfanzenbeet","color":"#f2ead8"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[5.5,-22],[37.5,-22],[37.5,-31],[5.5,-31],[5.5,-22]]]},"properties":{"id":"producebed_2","name":"Nutzplfanzenbeet","color":"#f2ead8"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[5.5,-31.989999999999995],[37.5,-31.989999999999995],[37.5,-43.989999999999995],[5.5,-43.989999999999995],[5.5,-31.989999999999995]]]},"properties":{"id":"producebed_3","name":"Nutzplfanzenbeet","color":"#f2ead8"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-37.5,-44.980000000000004],[0,-44.980000000000004],[-5,-47.980000000000004],[-37.5,-47.980000000000004],[-37.5,-44.980000000000004]]]},"properties":{"id":"flowerbed_entry_left","name":"Blumenbeet","color":"#aeddba"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[4.5,-44.980000000000004],[37.5,-44.980000000000004],[37.5,-47.980000000000004],[9.5,-47.980000000000004],[4.5,-44.980000000000004]]]},"properties":{"id":"flowerbed_entry_right","name":"Blumenbeet","color":"#aeddba"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-37.5,-38.980000000000004],[-7.5,-38.980000000000004],[-7.5,1.019999999999996],[0,1.019999999999996],[0,-43.980000000000004],[-37.5,-43.980000000000004],[-37.5,-38.980000000000004]]]},"properties":{"id":"flowerbed_left_long","name":"Blumenbeet","color":"#aeddba"}}]}
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-37.5, -48],
+            [-5, -48],
+            [0, -45],
+            [5, -45],
+            [10, -48],
+            [37.5, -48],
+            [37.5, 49],
+            [-37.5, 49],
+            [-37.5, -48]
+          ],
+          [
+            [0, 0.5],
+            [0, 0.5]
+          ]
+        ]
+      },
+      "properties": { "id": "main", "name": "Garten", "color": "#ceead6", "area": 491.4 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-27, 38.51],
+            [6.5, 38.51],
+            [6.5, 29.509999999999998],
+            [-27, 29.509999999999998],
+            [-27, 38.51]
+          ]
+        ]
+      },
+      "properties": { "id": "veranda", "name": "Veranda", "color": "#fef9e8", "area": 16.08 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-37.5, 27.02],
+            [0, 27.02],
+            [0, 16.02],
+            [-37.5, 16.02],
+            [-37.5, 27.02]
+          ]
+        ]
+      },
+      "properties": { "id": "flowerbed_veranda", "name": "Blumenbeet", "color": "#aeddba", "area": 24 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-35.5, 47.51],
+            [6.5, 47.51],
+            [6.5, 38.51],
+            [-35.5, 38.51],
+            [-35.5, 47.51]
+          ]
+        ]
+      },
+      "properties": { "id": "house", "name": "Hütte", "color": "#f2f4f5", "area": 20.16 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [17.5, 42.5],
+            [32.5, 42.5],
+            [32.5, 31.5],
+            [17.5, 31.5],
+            [17.5, 42.5]
+          ]
+        ]
+      },
+      "properties": { "id": "green_house", "name": "Gewächshaus", "color": "#cfd1d3", "area": 9 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-37.5, 16.009999999999998],
+            [0, 16.009999999999998],
+            [0, 1.009999999999998],
+            [-37.5, 1.009999999999998],
+            [-37.5, 16.009999999999998]
+          ]
+        ]
+      },
+      "properties": { "id": "outside_area", "name": "Sitzbereich", "color": "#fef9e8", "area": 33 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.5, -8.980000000000004],
+            [37.5, -8.980000000000004],
+            [37.5, -20.980000000000004],
+            [5.5, -20.980000000000004],
+            [5.5, -8.980000000000004]
+          ]
+        ]
+      },
+      "properties": { "id": "producebed_1", "name": "Nutzplfanzenbeet", "color": "#f2ead8", "area": 25.6 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.5, -22],
+            [37.5, -22],
+            [37.5, -31],
+            [5.5, -31],
+            [5.5, -22]
+          ]
+        ]
+      },
+      "properties": { "id": "producebed_2", "name": "Nutzplfanzenbeet", "color": "#f2ead8", "area": 16 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [5.5, -31.989999999999995],
+            [37.5, -31.989999999999995],
+            [37.5, -43.989999999999995],
+            [5.5, -43.989999999999995],
+            [5.5, -31.989999999999995]
+          ]
+        ]
+      },
+      "properties": { "id": "producebed_3", "name": "Nutzplfanzenbeet", "color": "#f2ead8", "area": 25.6 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-37.5, -44.980000000000004],
+            [0, -44.980000000000004],
+            [-5, -47.980000000000004],
+            [-37.5, -47.980000000000004],
+            [-37.5, -44.980000000000004]
+          ]
+        ]
+      },
+      "properties": { "id": "flowerbed_entry_left", "name": "Blumenbeet", "color": "#aeddba", "area": 3.5 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [4.5, -44.980000000000004],
+            [37.5, -44.980000000000004],
+            [37.5, -47.980000000000004],
+            [9.5, -47.980000000000004],
+            [4.5, -44.980000000000004]
+          ]
+        ]
+      },
+      "properties": { "id": "flowerbed_entry_right", "name": "Blumenbeet", "color": "#aeddba", "area": 3.05 }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-37.5, -38.980000000000004],
+            [-7.5, -38.980000000000004],
+            [-7.5, 1.019999999999996],
+            [0, 1.019999999999996],
+            [0, -43.980000000000004],
+            [-37.5, -43.980000000000004],
+            [-37.5, -38.980000000000004]
+          ]
+        ]
+      },
+      "properties": { "id": "flowerbed_left_long", "name": "Blumenbeet", "color": "#aeddba", "area": 27.75 }
+    }
+  ]
+}

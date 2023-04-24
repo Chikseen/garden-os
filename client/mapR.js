@@ -34,6 +34,7 @@ map.main.forEach((area) => {
   var currentFeature = [];
   var coordinates = [];
 
+  let totalArea = 0;
   area.measurements.forEach((pointsData) => {
     if (pointsData.props.type === "pattern") {
       // ToDo: Do some reapting patterns here
@@ -45,9 +46,12 @@ map.main.forEach((area) => {
     const boundaries = CalcBoundaries(multipliedPoints);
     const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
     coordinates.push(offsetPoints);
+
+    totalArea += CalcArea(points);
   });
 
   feature.geometry.coordinates = coordinates;
+  feature.properties.area = Math.abs(totalArea);
 
   currentFeature.push(feature);
   rMap.features.push(feature);
@@ -69,6 +73,7 @@ map.detailed.forEach((area) => {
   var currentFeature = [];
   var coordinates = [];
 
+  let totalArea = 0;
   area.measurements.forEach((pointsData) => {
     if (pointsData.props.type === "pattern") {
       // ToDo: Do some reapting patterns here
@@ -80,9 +85,12 @@ map.detailed.forEach((area) => {
     const boundaries = CalcBoundaries(multipliedPoints);
     const offsetPoints = CalcOffset(position, multipliedPoints, boundaries);
     coordinates.push(offsetPoints);
+
+    totalArea += CalcArea(points);
   });
 
   feature.geometry.coordinates = coordinates;
+  feature.properties.area = Math.abs(totalArea);
 
   currentFeature.push(feature);
   dMap.features.push(feature);
@@ -161,4 +169,15 @@ function BaseOffset(points, boundaries) {
     offsetPoints.push([point[0] - boundaries[0] / 2, point[1] - boundaries[1] / 2]);
   });
   return offsetPoints;
+}
+
+function CalcArea(points) {
+  let totalLength = 0;
+  for (i = 0; i < points.length - 1; i++) {
+    const height = (points[i][1] + points[i + 1][1]) / 2;
+    const width = points[i + 1][0] - points[i][0];
+    const area = height * width;
+    totalLength += area;
+  }
+  return totalLength;
 }
