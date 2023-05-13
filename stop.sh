@@ -1,6 +1,6 @@
 #!/bin/sh
 
-host=pirg
+host=piR
 
 help()
 {
