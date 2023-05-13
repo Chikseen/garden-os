@@ -7,28 +7,7 @@ export default {
       await this.CheckConnection(Vue, process.env.VUE_APP_PI_HOST);
     } catch (e) {
       console.log(e);
-      // Try connection to last known Ip
-      try {
-        await this.CheckConnection(Vue, localStorage.getItem("lastWorkingSubIp"));
-      } catch (e) {
-        console.log(e);
-        // Try search new Ip
-        let hasConnection = false;
-        let subIp = 100;
-        while (!hasConnection) {
-          try {
-            const ip = `192.168.8.${subIp}`;
-            await this.CheckConnection(Vue, ip);
-            hasConnection = true;
-            localStorage.setItem("lastWorkingSubIp", subIp);
-          } catch (e) {
-            console.log(e);
-            subIp++;
-            if (subIp > 255) subIp = 100;
-            console.error(`Could not connect to any service`);
-          }
-        }
-      }
+      console.log("BE Service not avaliable"); 
     }
   },
 
