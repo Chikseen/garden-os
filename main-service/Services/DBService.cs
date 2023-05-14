@@ -3,11 +3,11 @@ using dotenv.net;
 
 namespace MainService.DB
 {
-    public class MainDB
+    public static class MainDB
     {
-        String _connString = "";
+        static String _connString = "";
 
-        public MainDB()
+        public static void Init()
         {
             DotEnv.Load();
             String host = Environment.GetEnvironmentVariable("PI_DB_HOST")!;
@@ -18,31 +18,36 @@ namespace MainService.DB
             _connString = $"Host={host};Port={port};Username={user};Password={password};Database={database};";
         }
 
-        public List<List<String>> query(String sql)
+        public static List<Dictionary<String, String>> query(String sql)
         {
-            using (NpgsqlConnection con = new NpgsqlConnection(_connString))
+            try
             {
-                var columns = new List<List<String>>();
-                if (con.State != System.Data.ConnectionState.Open)
-                    con.Open();
-
-                //Console.WriteLine(sql);
-                NpgsqlCommand command = new NpgsqlCommand(sql, con);
-                NpgsqlDataReader dr = command.ExecuteReader();
-
-                List<Dictionary<String, String>> results = new();
-                while (dr.Read())
+                using (NpgsqlConnection con = new NpgsqlConnection(_connString))
                 {
-                    Dictionary<String, String> cells = new();
+                    if (con.State != System.Data.ConnectionState.Open)
+                        con.Open();
 
-                    for (int i = 0; i < dr.FieldCount; i++)
-                        cells.Add(dr.GetName(i).ToString(), dr[i].ToString()!);
+                    NpgsqlCommand command = new NpgsqlCommand(sql, con);
+                    NpgsqlDataReader dr = command.ExecuteReader();
 
-                    results.Add(cells);
+                    List<Dictionary<String, String>> results = new();
+                    while (dr.Read())
+                    {
+                        Dictionary<String, String> cells = new();
+
+                        for (int i = 0; i < dr.FieldCount; i++)
+                            cells.Add(dr.GetName(i).ToString(), dr[i].ToString()!);
+
+                        results.Add(cells);
+                    }
+
+                    con.Close();
+                    return results;
                 }
-
-                con.Close();
-                return columns;
+            }
+            catch (System.Exception)
+            {
+                return new List<Dictionary<String, String>>();
             }
         }
     }

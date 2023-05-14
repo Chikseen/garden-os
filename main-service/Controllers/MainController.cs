@@ -11,15 +11,14 @@ namespace MainService.Controllers
     public class MainController : ControllerBase
     {
         private readonly IHubContext<MainHub, IMainHub> _hubContext;
-        private readonly MainDB _db;
+
         public MainController(IHubContext<MainHub, IMainHub> questionHub)
         {
             _hubContext = questionHub;
-            _db = new MainDB();
         }
 
         [HttpGet()]
-        public HardwareData Get()
+        public DevicesData Get()
         {
             //_hubContext.Clients.All.SendMyEvent("hi");
             //_db.query("INSERT INTO datalog (deviceid, rawvalue) VALUES ('550e8400-e29b-11d4-a716-446655440000', 255);");

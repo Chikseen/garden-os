@@ -4,10 +4,13 @@ export default {
   async install(Vue) {
     // Try connection to remote
     try {
+      console.log("Try Remote connection");
       await this.CheckConnection(Vue, process.env.VUE_APP_PI_HOST);
     } catch (e) {
+      console.log("Remote connection failed");
+      console.log("Try Local Connection");
       console.log(e);
-      console.log("BE Service not avaliable"); 
+      await this.CheckConnection(Vue, "192.168.1.100");
     }
   },
 
@@ -28,10 +31,10 @@ export default {
       Vue.config.globalProperties.emitter.emit("Event", payload);
     });
 
-    connection.disconnected(function () {
-      setTimeout(() => {
+    connection.disconnected(() => {
+      setTimeout(async () => {
         console.log("try to reconnect");
-        this.CheckConnection();
+        await this.CheckConnection(Vue, ip);
       }, 1000);
     });
 

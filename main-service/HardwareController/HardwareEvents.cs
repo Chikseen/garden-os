@@ -2,7 +2,6 @@ using System.Device.Gpio;
 
 namespace MainService.Hardware
 {
-
     public static class WebInput
     {
         // Mabe Using Events here

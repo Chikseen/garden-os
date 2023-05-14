@@ -34,7 +34,7 @@ export default {
       try {
         res = await fetch(`http://${process.env.VUE_APP_PI_HOST}:${process.env.VUE_APP_PI_PORT}/ledToggle`).then((response) => response.json());
       } catch (error) {
-        res = await fetch(`http://192.168.8.100:${process.env.VUE_APP_PI_PORT}/ledToggle`).then((response) => response.json());
+        res = await fetch(`http://192.168.1.100:${process.env.VUE_APP_PI_PORT}/ledToggle`).then((response) => response.json());
       }
       console.log(res);
     },

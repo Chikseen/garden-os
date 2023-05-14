@@ -5,7 +5,7 @@ namespace MainService.Hub
 {
     public interface IMainHub
     {
-        public Task SendMyEvent(HardwareData message);
+        public Task SendMyEvent(DevicesData message);
     }
 
     // I have the assumbtion that clients are not disconnected in the correct manner

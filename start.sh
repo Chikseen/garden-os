@@ -1,6 +1,6 @@
 #!/bin/sh
 
-host=piR
+host=piL
 
 help()
 {
@@ -13,6 +13,7 @@ help()
 start_main()
 {
     echo "Starting MainService"
+    ssh $host "pkill -f main-service"
     ssh $host "cd ./garden-os/ms && ./main-service &"
 }
 
@@ -20,6 +21,12 @@ start_docker()
 {
     echo "Starting Docker"
     ssh $host "cd ./garden-os && docker-compose up -d"
+}
+
+start_docker-build()
+{
+    echo "Starting Docker"
+    ssh $host "cd ./garden-os && docker-compose up -d --build"
 }
 
 while [ -n "$1" ]; do
@@ -35,6 +42,10 @@ while [ -n "$1" ]; do
         exit 0 ;;
     -docker) 
         start_docker $1 
+        read  -n 1 -p "Press any key to continue \n"
+        exit 0 ;;
+    -docker-build) 
+        start_docker-build $1 
         read  -n 1 -p "Press any key to continue \n"
         exit 0 ;;
 	*) 

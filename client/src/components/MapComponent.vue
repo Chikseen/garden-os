@@ -77,7 +77,7 @@ export default {
     Moisture_I(id = 0) {
       var moisture_IFeature = new Feature({
         type: "Feature",
-        geometry: new Point(fromLonLat([-7,21.5])),
+        geometry: new Point(fromLonLat([-7, 21.5])),
       });
 
       moisture_IFeature.setProperties({ id: "moisture_I", name: "Bodenfeuchte Sensor am Verande Beet", value: id });
@@ -100,9 +100,9 @@ export default {
   },
   created() {
     this.emitter.on("Event", (e) => {
-      console.log("Incomming Event", e);
-      this.mapEvent("rain_collector", e.potiOne);
-      this.mapEvent("moisture_I", e.potiTwo);
+      e.devices.forEach((device) => {
+        this.mapEvent(device.displayId, device.value);
+      });
     });
   },
   mounted() {
