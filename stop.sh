@@ -1,6 +1,6 @@
 #!/bin/sh
 
-host=piR
+host=piL
 
 help()
 {

@@ -1,7 +1,9 @@
 using System.Device.Gpio;
 using System.Device.I2c;
+using System.Runtime.InteropServices;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
+using MainService.DB;
 
 namespace MainService.Hardware
 {
@@ -17,37 +19,40 @@ namespace MainService.Hardware
 
         public static void Start()
         {
-            try
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
-                _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-
-                _LCD = new Lcd2004(registerSelectPin: 0,
-                                enablePin: 2,
-                                dataPins: new int[] { 4, 5, 6, 7 },
-                                backlightPin: 3,
-                                backlightBrightness: 0.1f,
-                                readWritePin: 1,
-                                controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
-
-                while (true && !_recivedStop)
+                // Make a plan how to fake data
+                try
                 {
-                    Loop();
-                    Thread.Sleep(_loopDelay);
+                    _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
+                    _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
 
-                    if (_recivedStop)
+                    _LCD = new Lcd2004(registerSelectPin: 0,
+                                    enablePin: 2,
+                                    dataPins: new int[] { 4, 5, 6, 7 },
+                                    backlightPin: 3,
+                                    backlightBrightness: 0.1f,
+                                    readWritePin: 1,
+                                    controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
+
+                    while (true && !_recivedStop)
                     {
-                        _LCD.Dispose();
+                        Loop();
+                        Thread.Sleep(_loopDelay);
+
+                        if (_recivedStop)
+                        {
+                            _LCD.Dispose();
+                        }
                     }
                 }
+                catch (System.Exception)
+                { }
             }
-            catch (System.Exception)
-            { }
         }
 
         public static void Loop()
         {
-            // DIFIR HEEHRERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if (_i2c_LCD_Device == null || _LCD == null)
                 return;
 
@@ -82,6 +87,7 @@ namespace MainService.Hardware
                         if (Math.Abs(device.Value - value) > 1)
                         {
                             triggerUpdate = true;
+                            SaveDataToDatabase(device, value);
                         }
 
                         device.Value = value;
@@ -91,7 +97,28 @@ namespace MainService.Hardware
 
             // Trigger only on change to spare performance
             if (triggerUpdate)
+            {
                 MainHardware._data = data;
+            }
+        }
+
+        private static void SaveDataToDatabase(Device device, int value)
+        {
+
+            Device? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.Id == device.Id);
+            if (originalDevice == null)
+                return;
+
+            DateTime lastEntry = originalDevice.LastEntry;
+            TimeSpan interval = originalDevice.DataUpdateInterval;
+
+            if (lastEntry < DateTime.Now - interval)
+            {
+                MainDB.query(@$"
+                    INSERT INTO datalog (value, deviceid)
+                    VALUES ({value}, '{device.Id}')");
+                originalDevice.LastEntry = DateTime.Now;
+            }
         }
     }
 }

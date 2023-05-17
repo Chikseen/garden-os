@@ -24,7 +24,6 @@ namespace MainService.Hardware
         {
             SetDeviceData();
             Task.Run(() => MainLoop.Start());
-            SetIpAdress();
         }
 
         protected static void OnProcessCompleted()
@@ -40,18 +39,6 @@ namespace MainService.Hardware
             var data = MainDB.query("SELECT * FROM devices");
             DevicesData devicesData = new(data);
             _data = devicesData;
-        }
-
-        private static void SetIpAdress()
-        {
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-            // Get the IP
-            string myIP = Dns.GetHostEntry(hostName).AddressList.Where(e => e.ToString().Contains("192.")).ToList()[0].ToString();
-
-            if (!String.IsNullOrEmpty(myIP))
-                _localIPAdress = myIP;
-
-            Console.WriteLine($"Ip Adress: {_localIPAdress}");
         }
     }
 }

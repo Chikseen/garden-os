@@ -7,7 +7,7 @@ public class Device
 
     [JsonInclude]
     public String Id = String.Empty;
-        
+
     [JsonInclude]
     public String DisplayId = String.Empty;
 
@@ -23,6 +23,8 @@ public class Device
     public int? SerialId = 0;
     public String DeviceTyp = String.Empty;
     public Byte Address = 0x00;
+    public TimeSpan DataUpdateInterval = new TimeSpan(24, 24, 24);
+    public DateTime LastEntry = DateTime.Now.AddYears(-1);
 
     public Device(Dictionary<String, String> deviceDictionary)
     {
@@ -34,5 +36,6 @@ public class Device
         DeviceTyp = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceTyp);
         Address = DeviceStatic.GetByte(deviceDictionary, DeviceStatic.Address);
         SerialId = DeviceStatic.GetInt(deviceDictionary, DeviceStatic.SerialId);
+        DataUpdateInterval = DeviceStatic.GetTimeSpan(deviceDictionary, DeviceStatic.DataUpdateInterval);
     }
 }

@@ -12,6 +12,8 @@ public static class DeviceStatic
     public readonly static String SerialId = "serial_id";
     public readonly static String ADC7080 = "i2c_adc_7080";
     public readonly static String DisplayId = "display_id";
+    public readonly static String DataUpdateInterval = "data_update_interval";
+    public readonly static String LastEntry = "logdate";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {
@@ -47,5 +49,14 @@ public static class DeviceStatic
             return Convert.ToByte(dict[key], 16);
         }
         return 0x00;
+    }
+
+    public static TimeSpan GetTimeSpan(Dictionary<String, String> dict, String key)
+    {
+        if (dict.ContainsKey(key) && dict[key] != String.Empty)
+        {
+            return TimeSpan.Parse(dict[key]);
+        }
+        return new TimeSpan(0, 10, 0);
     }
 }

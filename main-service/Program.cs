@@ -1,6 +1,7 @@
 using MainService.Hardware;
 using MainService.Hub;
 using MainService.DB;
+using MainService.Network;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,5 +37,6 @@ app.MapHub<MainHub>("/hub");
 
 MainDB.Init();
 MainHardware.Init();
+new Network();
 
 app.Run();
