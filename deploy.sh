@@ -23,3 +23,14 @@ ssh $1 "sudo chmod u+x ${path}/main-service"
 
 echo Run Programm 
 ./start.sh -main
+
+POSTGRES_PORT=5432
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=SuperHighSecurePasswort
+POSTGRES_DATABASE=main
+
+PI_DB_HOST=localhost
+PI_DB_PORT=5432
+PI_DB_USER=admin
+PI_DB_PASSWORD=SuperHighSecurePasswort
+PI_DB_DATABASE=main

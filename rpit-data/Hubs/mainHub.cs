@@ -1,3 +1,4 @@
+using MainService.Hardware;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MainService.Hub
@@ -28,17 +29,17 @@ namespace MainService.Hub
         public void Init()
         {
             Console.WriteLine("Main Hub Init");
-            //MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
+            MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
         ~MainHub()
         {
-           // MainHardware.ProcessCompleted -= PrepareEventToSend;
+            MainHardware.ProcessCompleted -= PrepareEventToSend;
         }
 
         public void PrepareEventToSend()
         {
-            //_hubContext.Clients.All.SendMyEvent(MainHardware._data);
+            _hubContext.Clients.All.SendMyEvent(MainHardware._data);
         }
     }
 }

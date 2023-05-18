@@ -7,6 +7,6 @@ namespace MainService.Hardware
 {
     public static class DeviceHandler
     {
-        
-     }
+
+    }
 }

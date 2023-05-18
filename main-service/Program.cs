@@ -1,4 +1,3 @@
-using MainService.Hardware;
 using MainService.Hub;
 using MainService.DB;
 using MainService.Network;
@@ -36,7 +35,6 @@ app.MapControllers();
 app.MapHub<MainHub>("/hub");
 
 MainDB.Init();
-MainHardware.Init();
 new Network();
 
 app.Run();

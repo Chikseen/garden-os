@@ -4,14 +4,18 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>web_proxy</RootNamespace>
-    <ContainerImageName>web-proxy</ContainerImageName>
+    <RootNamespace>main_service</RootNamespace>
+    <ContainerImageName>main-service</ContainerImageName>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iot.Device.Bindings" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.Device.Gpio" Version="2.2.0" />
+    <PackageReference Include="Npgsql" Version="7.0.2" />
+    <PackageReference Include="dotenv.net" Version="3.1.2" />
   </ItemGroup>
 
 </Project>
