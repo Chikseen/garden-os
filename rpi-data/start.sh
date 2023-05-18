@@ -6,15 +6,15 @@ help()
 {
     echo "No Arguments given"
     echo "-a        Start all"
-    echo "-main     Start main-service"
+    echo "-main     Start rpi-data"
     echo "-docker   Start docker"
 }
 
 start_main()
 {
     echo "Starting MainService"
-    ssh $host "pkill -f main-service"
-    ssh $host "cd ./garden-os/ms && ./main-service &"
+    ssh $host "pkill -f rpi-data"
+    ssh $host "cd ./garden-os/rpi-data && ./rpi-data &"
 }
 
 start_docker()

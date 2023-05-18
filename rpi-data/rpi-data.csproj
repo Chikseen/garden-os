@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>main_service</RootNamespace>
-    <ContainerImageName>main-service</ContainerImageName>
+    <RootNamespace>rpi_data</RootNamespace>
+    <ContainerImageName>rpi-data</ContainerImageName>
   </PropertyGroup>
 
   <ItemGroup>

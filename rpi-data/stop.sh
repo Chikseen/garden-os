@@ -6,14 +6,14 @@ help()
 {
     echo "No Arguments given"
     echo "-a        Stop all"
-    echo "-main     Stop main-service"
+    echo "-main     Stop rpi-data"
     echo "-docker   Stop docker"
 }
 
 stop_main()
 {
     echo "Stoping MainService"
-    ssh $host "pkill -f main-service"
+    ssh $host "pkill -f rpi-data"
 }
 
 stop_docker()
