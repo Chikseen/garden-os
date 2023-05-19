@@ -9,4 +9,4 @@ WORKDIR /publish
 COPY --from=build-env /publish .
 ENV ASPNETCORE_URLS=http://+:5082
 EXPOSE 5082
-ENTRYPOINT ["dotnet", "main-service.dll"]
+ENTRYPOINT ["dotnet", "MainService.dll"]
