@@ -5,7 +5,7 @@ namespace MainService.Hub
     public interface IMainHub
     {
         public Task SendMyEvent(String message);
-        void HardwareRequestRPI();
+        public Task HardwareRequestRPI();
     }
 
     // I have the assumbtion that clients are not disconnected in the correct manner
