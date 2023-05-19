@@ -1,5 +1,4 @@
-using System.Net;
-using MainService.DB;
+using RPI.Connection;
 
 namespace MainService.Hardware
 {
@@ -17,11 +16,13 @@ namespace MainService.Hardware
                 OnProcessCompleted(); // This is a supercool event listner only sends an event to ALL subs if this value is actually changed
             }
         }
+        public static Connection? _connection;
 
 
         // Starts the main loop for getting Hardwaredata
-        public static void Init()
+        public static void Init(Connection connection)
         {
+            _connection = connection;
             SetDeviceData();
             Task.Run(() => MainLoop.Start());
         }
@@ -36,9 +37,9 @@ namespace MainService.Hardware
 
         private static void SetDeviceData()
         {
-            var data = MainDB.query("SELECT * FROM devices");
-            DevicesData devicesData = new(data);
-            _data = devicesData;
+           // var data = MainDB.query("SELECT * FROM devices");
+           // DevicesData devicesData = new(data);
+          //  _data = devicesData;
         }
     }
 }

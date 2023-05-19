@@ -19,7 +19,7 @@ echo Send Programm to RPI
 scp ./bin/Debug/net7.0/linux-arm64/publish/* "$1:${path}"
 
 echo Grand access 
-ssh $1 "sudo chmod u+x ${path}"
-    read -n 1 -p "Press any key to continue \n"
+ssh $1 "sudo chmod u+x ${path}/*"
 echo Run Programm 
 ./start.sh -main
+    read -n 1 -p "Press any key to continue \n"

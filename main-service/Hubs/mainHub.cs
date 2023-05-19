@@ -4,7 +4,8 @@ namespace MainService.Hub
 {
     public interface IMainHub
     {
-        public Task SendMyEvent(DevicesData message);
+        public Task SendMyEvent(String message);
+        void HardwareRequestRPI();
     }
 
     // I have the assumbtion that clients are not disconnected in the correct manner
@@ -15,6 +16,7 @@ namespace MainService.Hub
 
         public MainHub(IHubContext<MainHub, IMainHub> hubContext)
         {
+            Console.WriteLine("hi");
             if (!isInit)
             {
                 Init();
@@ -28,17 +30,22 @@ namespace MainService.Hub
         public void Init()
         {
             Console.WriteLine("Main Hub Init");
-            //MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
+            // MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
         ~MainHub()
         {
-           // MainHardware.ProcessCompleted -= PrepareEventToSend;
+            // MainHardware.ProcessCompleted -= PrepareEventToSend;
         }
 
         public void PrepareEventToSend()
         {
-            //_hubContext.Clients.All.SendMyEvent(MainHardware._data);
+            _hubContext.Clients.All.SendMyEvent("test hi");
+        }
+
+        public void Send(string name, string message)
+        {
+            Clients.All.SendMyEvent(name);
         }
     }
 }

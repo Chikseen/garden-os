@@ -14,7 +14,7 @@ start_main()
 {
     echo "Starting MainService"
     ssh $host "pkill -f rpi-data"
-    ssh $host "cd ./garden-os/rpi-data && ./rpi-data &"
+    ssh $host "cd ./garden-os/rpi-data && ./rpi-data"
 }
 
 start_docker()
@@ -23,7 +23,7 @@ start_docker()
     ssh $host "cd ./garden-os && docker-compose up -d"
 }
 
-start_docker-build()
+start_docker_build()
 {
     echo "Starting Docker"
     ssh $host "cd ./garden-os && docker-compose up -d --build"
@@ -44,7 +44,7 @@ while [ -n "$1" ]; do
         start_docker $1 
         read  -n 1 -p "Press any key to continue \n"
         exit 0 ;;
-    -docker-build) 
+    -docker_build) 
         start_docker-build $1 
         read  -n 1 -p "Press any key to continue \n"
         exit 0 ;;

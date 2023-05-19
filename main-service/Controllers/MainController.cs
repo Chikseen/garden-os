@@ -28,6 +28,8 @@ namespace MainService.Controllers
         public OkResult ledToggle()
         {
             //WebInput.toggleLed();
+            _hubContext.Clients.All.SendMyEvent("hi");
+            Console.WriteLine("pts");
             return Ok();
         }
     }

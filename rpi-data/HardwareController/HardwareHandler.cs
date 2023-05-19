@@ -3,7 +3,6 @@ using System.Device.I2c;
 using System.Runtime.InteropServices;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
-using MainService.DB;
 
 namespace MainService.Hardware
 {
@@ -114,10 +113,10 @@ namespace MainService.Hardware
 
             if (lastEntry < DateTime.Now - interval)
             {
-                MainDB.query(@$"
+                /*MainDB.query(@$"
                     INSERT INTO datalog (value, deviceid)
                     VALUES ({value}, '{device.Id}')");
-                originalDevice.LastEntry = DateTime.Now;
+                originalDevice.LastEntry = DateTime.Now;*/
             }
         }
     }

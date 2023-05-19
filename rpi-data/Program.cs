@@ -1,7 +1,5 @@
 using MainService.Hardware;
-using MainService.Hub;
-using MainService.DB;
-using MainService.Network;
+using RPI.Connection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,10 +31,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<MainHub>("/hub");
 
-MainDB.Init();
-MainHardware.Init();
-new Network();
+Connection connection = new Connection();
+MainHardware.Init(connection);
 
 app.Run();

@@ -19,7 +19,7 @@ public class Device
 
     [JsonInclude]
     public int? LowerLimit = null;
-
+    
     public int? SerialId = 0;
     public String DeviceTyp = String.Empty;
     public Byte Address = 0x00;
