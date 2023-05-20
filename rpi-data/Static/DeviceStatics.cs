@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 public static class DeviceStatic
 {
     public readonly static String DeviceId = "device_id";
@@ -14,6 +17,7 @@ public static class DeviceStatic
     public readonly static String DisplayId = "display_id";
     public readonly static String DataUpdateInterval = "data_update_interval";
     public readonly static String LastEntry = "logdate";
+    public readonly static String GardenName = "garden_name";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

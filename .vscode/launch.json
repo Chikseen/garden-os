@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "main-service DEBUG",
+            "name": "MainService DEBUG",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-main-service",
-            "program": "${workspaceFolder}/main-service/bin/Debug/net7.0/main-service.dll",
+            "program": "${workspaceFolder}/main-service/bin/Debug/net7.0/MainService.dll",
             "args": [],
             "cwd": "${workspaceFolder}/main-service",
             "stopAtEntry": false,

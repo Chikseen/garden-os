@@ -1,34 +1,51 @@
 
+using System;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace RPI.Connection
 {
     public class Connection
     {
-        Microsoft.AspNetCore.SignalR.Client.HubConnection hubConnection;
+        private Microsoft.AspNetCore.SignalR.Client.HubConnection _hubConnection { get; set; }
 
         public Connection()
         {
-            hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://157.90.170.184:9992/hub")
-                .WithAutomaticReconnect()
-                .Build();
+            _hubConnection = Connect();
+        }
 
-            hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-                {
-                    GetMessage(user, message);
-                });
-            hubConnection.On<string>("SendMyEvent", (user) =>
+        private Microsoft.AspNetCore.SignalR.Client.HubConnection Connect()
+        {
+            Console.WriteLine("Try Connect");
+            _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://gardenapi.drunc.net/hub")
+            .WithAutomaticReconnect()
+            .Build();
+
+            _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+              {
+                  GetMessage(user, message);
+              });
+            _hubConnection.On<string>("SendMyEvent", (user) =>
                 {
                     GetMessage(user, "message");
                 });
 
-            hubConnection.StartAsync().Wait();
+            _hubConnection.Closed += (exception) =>
+            {
+                if (exception == null)
+                {
+                    Console.WriteLine("Connection closed without error.");
+                }
+                else
+                {
+                    Console.WriteLine($"Connection closed due to an error: {exception}");
+                }
+                Connect();
+                return null!;
+            };
 
-            while (hubConnection.State == HubConnectionState.Connected)
-            { }
-
-            // Start Reconnect
+            _hubConnection.StartAsync().Wait();
+            return _hubConnection;
         }
 
         void GetMessage(string user, string message)

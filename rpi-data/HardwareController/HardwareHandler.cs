@@ -1,6 +1,5 @@
 using System.Device.Gpio;
 using System.Device.I2c;
-using System.Runtime.InteropServices;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -18,35 +17,43 @@ namespace MainService.Hardware
 
         public static void Start()
         {
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            // Make a plan how to fake data
+            Console.WriteLine("loopcheck");
+            try
             {
-                // Make a plan how to fake data
-                try
+                _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
+                _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
+
+                _LCD = new Lcd2004(registerSelectPin: 0,
+                                enablePin: 2,
+                                dataPins: new int[] { 4, 5, 6, 7 },
+                                backlightPin: 3,
+                                backlightBrightness: 0.1f,
+                                readWritePin: 1,
+                                controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
+
+                while (true && !_recivedStop)
                 {
-                    _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
-                    _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-
-                    _LCD = new Lcd2004(registerSelectPin: 0,
-                                    enablePin: 2,
-                                    dataPins: new int[] { 4, 5, 6, 7 },
-                                    backlightPin: 3,
-                                    backlightBrightness: 0.1f,
-                                    readWritePin: 1,
-                                    controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
-
-                    while (true && !_recivedStop)
+                    try
                     {
                         Loop();
-                        Thread.Sleep(_loopDelay);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                    
+                    Thread.Sleep(_loopDelay);
 
-                        if (_recivedStop)
-                        {
-                            _LCD.Dispose();
-                        }
+                    if (_recivedStop)
+                    {
+                        _LCD.Dispose();
                     }
                 }
-                catch (System.Exception)
-                { }
+            }
+            catch (System.Exception e)
+            {
+
             }
         }
 
@@ -56,14 +63,10 @@ namespace MainService.Hardware
                 return;
 
             ReadAndSetValues();
-            /*                        _LCD.SetCursorPosition(8, 1);
-                        _LCD.Write($"VII: {data.PotiOne.ToString("000")}");
-                        _LCD.SetCursorPosition(0, 1);
-                        _LCD.Write($"VI: {data.PotiTwo.ToString("000")}");
-*/
 
+            _LCD.Clear();
             _LCD.SetCursorPosition(0, 0);
-            _LCD.Write(MainHardware._localIPAdress);
+            _LCD.Write(MainHardware.rpiData?.GardenName!);
         }
 
         private static void ReadAndSetValues()

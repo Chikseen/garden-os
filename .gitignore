@@ -5,6 +5,7 @@
 
 # MANUEL STUFF
 main-service/.env
+rpi-data/.env
 
 # User-specific files
 *.rsuser

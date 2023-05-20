@@ -17,6 +17,7 @@ ssh $1 "rm ${path}/*"
 
 echo Send Programm to RPI
 scp ./bin/Debug/net7.0/linux-arm64/publish/* "$1:${path}"
+scp ./.env "$1:${path}"
 
 echo Grand access 
 ssh $1 "sudo chmod u+x ${path}/*"
