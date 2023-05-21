@@ -32,6 +32,7 @@ namespace Services.Device
         {
             String query = @$"
                 SELECT
+                    DEVICES.ID AS DEVICE_ID,
                     DEVICES.NAME AS DEVICE_NAME,
                     DEVICES.LOWER_LIMIT,
                     DEVICES.UPPER_LIMIT,
