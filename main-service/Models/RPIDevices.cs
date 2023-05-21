@@ -15,6 +15,9 @@ public class RPIDevices
         }
         this.Devices = devices;
     }
+
+    [JsonConstructor]
+    public RPIDevices() { }
 }
 
 public class RPIDevice
@@ -41,7 +44,7 @@ public class RPIDevice
 
     [JsonInclude]
     [JsonPropertyName("address")]
-    public String Address = String.Empty;
+    public Byte Address = 0x00;
 
     [JsonInclude]
     [JsonPropertyName("serial_id")]
@@ -55,6 +58,8 @@ public class RPIDevice
     [JsonPropertyName("data_update_interval")]
     public TimeSpan DataUpdateInterval = TimeSpan.Parse("00:00:00");
 
+    public int Value = 0;
+    public DateTime LastEntry = DateTime.Now.AddYears(-1);
 
     public RPIDevice(Dictionary<String, String> data)
     {
@@ -63,9 +68,12 @@ public class RPIDevice
         this.LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
         this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
         this.DeviceTyp = DeviceStatic.GetString(data, DeviceStatic.DeviceTyp);
-        this.Address = DeviceStatic.GetString(data, DeviceStatic.Address);
+        this.Address = DeviceStatic.GetByte(data, DeviceStatic.Address);
         this.SerialId = DeviceStatic.GetInt(data, DeviceStatic.SerialId, 0);
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
         this.DataUpdateInterval = DeviceStatic.GetTimeSpan(data, DeviceStatic.DataUpdateInterval);
     }
+
+    [JsonConstructor]
+    public RPIDevice() { }
 }

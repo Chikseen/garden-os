@@ -9,13 +9,10 @@ public class RPIDevices
     public RPIDevices(List<Dictionary<String, String>> data)
     {
         List<RPIDevice> devices = new();
-        Console.WriteLine("111");
         foreach (Dictionary<String, String> device in data)
         {
-            Console.WriteLine("222");
             devices.Add(new RPIDevice(device));
         }
-        Console.WriteLine("333");
         this.Devices = devices;
     }
 
