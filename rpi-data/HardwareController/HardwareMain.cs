@@ -6,8 +6,8 @@ namespace MainService.Hardware
     public delegate void ValueChange();  // delegate
     public class MainHardware
     {
-        private static String RpiId = "";
-        private static String RpiApiKey = "";
+        public static String RpiId = "";
+        public static String RpiApiKey = "";
         public static string _localIPAdress = "NO IP";
         public static RPIData? rpiData;
         public static RPIDevices __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _data

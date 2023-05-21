@@ -1,5 +1,7 @@
 using System.Device.Gpio;
 using System.Device.I2c;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -121,9 +123,33 @@ namespace MainService.Hardware
             if (lastEntry < DateTime.Now - interval)
             {
                 Console.WriteLine("DATA IS SAVED");
-                /*MainDB.query(@$"
-                    INSERT INTO datalog (value, deviceid)
-                    VALUES ({value}, '{device.Id}')");*/
+
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainHardware.RpiApiKey);
+
+                Console.WriteLine("111");
+                SaveDataRequest data = new();
+                data.Device_ID = device.ID;
+                data.Value = value;
+                Console.WriteLine("222");
+
+                string jsonString = JsonSerializer.Serialize(data);
+                var content = new StringContent(
+                    jsonString,
+                    System.Text.Encoding.UTF8,
+                    "application/json"
+                    );
+
+                Console.WriteLine("aaa"); 
+                Console.WriteLine(jsonString); 
+                Console.WriteLine("aaa"); 
+                Console.WriteLine(content); 
+                Console.WriteLine("aaa"); 
+
+
+                var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
+                Console.WriteLine(responseString);
+
                 originalDevice.LastEntry = DateTime.Now;
                 originalDevice.LastSavedValue = value;
             }

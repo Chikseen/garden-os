@@ -3,7 +3,9 @@ public static class DeviceStatic
     public readonly static String DeviceId = "device_id";
     public readonly static String LogId = "logid";
     public readonly static String RawValue = "rawvalue";
-    public readonly static String Date = "logdate";
+    public readonly static String Value = "value";
+    public readonly static String LogDate = "logdate";
+    public readonly static String Date = "date";
     public readonly static String DeviceName = "device_name";
     public readonly static String UpperLimit = "upper_limit";
     public readonly static String LowerLimit = "lower_limit";
@@ -14,10 +16,10 @@ public static class DeviceStatic
     public readonly static String DisplayId = "display_id";
     public readonly static String DataUpdateInterval = "data_update_interval";
     public readonly static String LastEntry = "logdate";
-    public readonly static String GardenName = "garden_name";
     public readonly static String RPIID = "rpi_id";
     public readonly static String GardenID = "garden_id";
     public readonly static String Name = "name";
+    public readonly static String ID = "id";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {
@@ -41,7 +43,7 @@ public static class DeviceStatic
     {
         if (dict.ContainsKey(key) && dict[key] != String.Empty)
         {
-            return null;
+            return Int32.Parse(dict[key]);
         }
         return null;
     }
@@ -49,7 +51,7 @@ public static class DeviceStatic
     {
         if (dict.ContainsKey(key) && dict[key] != String.Empty)
         {
-            return defaultValue;
+            return Int32.Parse(dict[key]);
         }
         return defaultValue;
     }
@@ -70,5 +72,14 @@ public static class DeviceStatic
             return TimeSpan.Parse(dict[key]);
         }
         return new TimeSpan(0, 10, 0);
+    }
+
+    public static DateTime GetDateTime(Dictionary<String, String> dict, String key)
+    {
+        if (dict.ContainsKey(key) && dict[key] != String.Empty)
+        {
+            return DateTime.Parse(dict[key]);
+        }
+        return DateTime.Now;
     }
 }
