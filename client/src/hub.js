@@ -10,16 +10,16 @@ export default {
       console.log("Remote connection failed");
       console.log("Try Local Connection");
       console.log(e);
-      await this.CheckConnection(Vue, "192.168.1.100");
+      await this.CheckConnection(Vue, "gardenos.drunc.net");
     }
   },
 
   async CheckConnection(Vue, ip) {
     console.log(`${ip}:${process.env.VUE_APP_PI_PORT}`);
-    const connection = new HubConnectionBuilder().withUrl(`http://${ip}:${process.env.VUE_APP_PI_PORT}/hub`).configureLogging(LogLevel.Information).build();
+    const connection = new HubConnectionBuilder().withUrl(`http://${ip}/hub`).configureLogging(LogLevel.Information).build();
     console.log(connection);
     // get and set Init Values
-    const initData = await fetch(`http://${ip}:${process.env.VUE_APP_PI_PORT}`).then((response) => response.json());
+    const initData = await fetch(`http://${ip}`).then((response) => response.json());
     Vue.config.globalProperties.emitter.emit("Event", initData);
 
     Vue.config.globalProperties.emitter.on("closeConnection", () => {

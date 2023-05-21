@@ -58,6 +58,8 @@ public class RPIDevice
     [JsonPropertyName("data_update_interval")]
     public TimeSpan DataUpdateInterval = TimeSpan.Parse("00:00:00");
 
+    [JsonInclude]
+    [JsonPropertyName("value")]
     public int Value = 0;
     public DateTime LastEntry = DateTime.Now.AddYears(-1);
 

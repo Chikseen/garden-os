@@ -30,7 +30,7 @@ namespace MainService.Controllers
             if (String.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
-            RPIdata? data = _deviceService.GetRPI(rpiid, apiKey!);
+            RPIdata? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
 
             if (data == null)
                 return BadRequest();
@@ -52,6 +52,27 @@ namespace MainService.Controllers
                 return BadRequest();
 
             return Ok(data);
+        }
+
+        [HttpPost("{rpiid}/save")]
+        public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
+
+            Console.WriteLine("NEW DATA SEND TO FE");
+
+
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
+
+            ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
+
+            if (response == null)
+                return BadRequest();
+
+            _hubContext.Clients.All.SendMyEvent(response);
+
+            return Ok(response);
         }
     }
 }

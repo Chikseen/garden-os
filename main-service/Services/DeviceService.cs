@@ -6,7 +6,7 @@ namespace Services.Device
 {
     public class DeviceService
     {
-        public RPIdata? GetRPI(String id, String ApiKey)
+        public RPIdata? GetRpiMeta(String id, String ApiKey)
         {
             String query = @$"
                 SELECT
@@ -54,6 +54,45 @@ namespace Services.Device
                 return null;
 
             RPIDevices devices = new(result);
+            return devices;
+        }
+
+        public ResponseDevices? SaveDataToDB(SaveDataRequest data, String id, String ApiKey)
+        {
+            String query = @$"
+                INSERT INTO DATALOG (
+                    ID,
+                    VALUE,
+                    DATE,
+                    DEVICE_ID
+                ) VALUES (
+                    GEN_RANDOM_UUID(),
+                    {data.Value},
+                    CURRENT_TIMESTAMP,
+                    '{data.Device_ID}'
+                );
+
+                SELECT
+                    DEVICES.ID AS DEVICE_ID,
+                    DATALOG.ID,
+                    DATALOG.VALUE,
+                    DATALOG.DATE,
+                    DEVICES.NAME,
+                    DEVICES.DISPLAY_ID
+                FROM
+                    DATALOG
+                    JOIN DEVICES
+                    ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
+                    ON RPIS.ID = '{id}'
+                    AND RPIS.API_KEY = '{ApiKey}'
+                    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
+                ORDER BY DATALOG.DATE DESC".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            if (result.Count == 0)
+                return null;
+
+            ResponseDevices devices = new(result);
             return devices;
         }
     }

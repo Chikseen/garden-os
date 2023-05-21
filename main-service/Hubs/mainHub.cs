@@ -4,7 +4,7 @@ namespace MainService.Hub
 {
     public interface IMainHub
     {
-        public Task SendMyEvent(String message);
+        public Task SendMyEvent(ResponseDevices message);
         public Task HardwareRequestRPI();
     }
 
@@ -38,14 +38,9 @@ namespace MainService.Hub
             // MainHardware.ProcessCompleted -= PrepareEventToSend;
         }
 
-        public void PrepareEventToSend()
+        public void Send(ResponseDevices data)
         {
-            _hubContext.Clients.All.SendMyEvent("test hi");
-        }
-
-        public void Send(string name, string message)
-        {
-            Clients.All.SendMyEvent(name);
+            _hubContext.Clients.All.SendMyEvent(data);
         }
     }
 }

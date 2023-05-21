@@ -75,19 +75,12 @@ namespace MainService.Hardware
             Boolean triggerUpdate = false;
             RPIDevices data = MainHardware._data;
 
-            Console.WriteLine("Check devicves");
-            Console.WriteLine(data.Devices.Count);
-            Console.WriteLine(MainHardware._data.Devices.Count);
-
             foreach (RPIDevice device in data.Devices)
             {
-                Console.WriteLine("Check " + device.DeviceName);
                 if (device.DeviceTyp == DeviceStatic.ADC7080)
                 {
-                    Console.WriteLine("isType ");
                     if (_i2c_ADC_Device != null)
                     {
-                        Console.WriteLine("isnotnull ");
                         byte[] readBuffer = new byte[1];
                         _i2c_ADC_Device.WriteByte(device.Address); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
                         _i2c_ADC_Device.Read(readBuffer); // Read the conversion result
@@ -97,7 +90,7 @@ namespace MainService.Hardware
                         Console.WriteLine($"DEVICE: {device.DeviceName}");
                         Console.WriteLine($"VALUE: {device.Value}");
 
-                        if (Math.Abs(device.Value - value) > 1)
+                        if (Math.Abs(device.LastSavedValue - value) > 1)
                         {
                             triggerUpdate = true;
                             SaveDataToDatabase(device, value);
@@ -130,8 +123,9 @@ namespace MainService.Hardware
                 Console.WriteLine("DATA IS SAVED");
                 /*MainDB.query(@$"
                     INSERT INTO datalog (value, deviceid)
-                    VALUES ({value}, '{device.Id}')");
-                originalDevice.LastEntry = DateTime.Now;*/
+                    VALUES ({value}, '{device.Id}')");*/
+                originalDevice.LastEntry = DateTime.Now;
+                originalDevice.LastSavedValue = value;
             }
         }
     }
