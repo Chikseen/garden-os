@@ -42,7 +42,7 @@ namespace MainService.Hardware
                     {
                         Console.WriteLine(e);
                     }
-                    
+
                     Thread.Sleep(_loopDelay);
 
                     if (_recivedStop)
@@ -53,7 +53,7 @@ namespace MainService.Hardware
             }
             catch (System.Exception e)
             {
-
+                Console.WriteLine(e);
             }
         }
 

@@ -44,6 +44,14 @@ public static class DeviceStatic
         }
         return null;
     }
+    public static int GetInt(Dictionary<String, String> dict, String key, int defaultValue)
+    {
+        if (dict.ContainsKey(key) && dict[key] != String.Empty)
+        {
+            return defaultValue;
+        }
+        return defaultValue;
+    }
 
     public static Byte GetByte(Dictionary<String, String> dict, String key)
     {
