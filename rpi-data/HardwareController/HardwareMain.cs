@@ -9,9 +9,9 @@ namespace MainService.Hardware
         private static String RpiId = "";
         private static String RpiApiKey = "";
         public static string _localIPAdress = "NO IP";
-        public static RPIdata? rpiData;
-        public static DevicesData __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _data
-        public static DevicesData _data
+        public static RPIData? rpiData;
+        public static RPIDevices __data = new(); // need this hack due recurisons of static propertys on call ->it is kinda proxy for _data
+        public static RPIDevices _data
         {
             get => __data;
             set
@@ -33,11 +33,10 @@ namespace MainService.Hardware
             // Set up Connection
             _connection = connection;
 
-            // SetUpRPI
-            rpiData = Prep.SetRPI(RpiId);
-            Console.WriteLine("RpiId: " + RpiId);
-            // Fetch Device Data
-            Prep.SetDevices();
+            Preperation prep = new(RpiApiKey);
+
+            rpiData = prep.SetRPI(RpiId);
+            _data = prep.SetDevices(RpiId);
 
             MainLoop.Start();
         }

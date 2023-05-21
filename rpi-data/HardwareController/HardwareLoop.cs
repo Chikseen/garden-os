@@ -8,7 +8,7 @@ namespace MainService.Hardware
     public static class MainLoop
     {
         public static bool _recivedStop = false;
-        public static int _loopDelay = 25;
+        public static int _loopDelay = 100;
 
         private static I2cDevice? _i2c_ADC_Device;
         private static I2cDevice? _i2c_LCD_Device;
@@ -31,6 +31,10 @@ namespace MainService.Hardware
                                 backlightBrightness: 0.1f,
                                 readWritePin: 1,
                                 controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
+
+                _LCD.Clear();
+                _LCD.SetCursorPosition(0, 0);
+                _LCD.Write(MainHardware.rpiData?.GardenName!);
 
                 while (true && !_recivedStop)
                 {
@@ -64,27 +68,34 @@ namespace MainService.Hardware
 
             ReadAndSetValues();
 
-            _LCD.Clear();
-            _LCD.SetCursorPosition(0, 0);
-            _LCD.Write(MainHardware.rpiData?.GardenName!);
         }
 
         private static void ReadAndSetValues()
         {
             Boolean triggerUpdate = false;
-            DevicesData data = MainHardware._data;
+            RPIDevices data = MainHardware._data;
 
-            foreach (Device device in data.Devices)
+            Console.WriteLine("Check devicves");
+            Console.WriteLine(data.Devices.Count);
+            Console.WriteLine(MainHardware._data.Devices.Count);
+
+            foreach (RPIDevice device in data.Devices)
             {
+                Console.WriteLine("Check " + device.DeviceName);
                 if (device.DeviceTyp == DeviceStatic.ADC7080)
                 {
+                    Console.WriteLine("isType ");
                     if (_i2c_ADC_Device != null)
                     {
+                        Console.WriteLine("isnotnull ");
                         byte[] readBuffer = new byte[1];
                         _i2c_ADC_Device.WriteByte(device.Address); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
                         _i2c_ADC_Device.Read(readBuffer); // Read the conversion result
                         int rawValue = readBuffer[0]; // Set rawValue from ReadBuffer
                         int value = (int)Math.Round(((decimal)rawValue / 255 * 100));
+
+                        Console.WriteLine($"DEVICE: {device.DeviceName}");
+                        Console.WriteLine($"VALUE: {device.Value}");
 
                         if (Math.Abs(device.Value - value) > 1)
                         {
@@ -104,10 +115,10 @@ namespace MainService.Hardware
             }
         }
 
-        private static void SaveDataToDatabase(Device device, int value)
+        private static void SaveDataToDatabase(RPIDevice device, int value)
         {
-
-            Device? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.Id == device.Id);
+            Console.WriteLine("Before Save");
+            RPIDevice? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.ID == device.ID);
             if (originalDevice == null)
                 return;
 
@@ -116,6 +127,7 @@ namespace MainService.Hardware
 
             if (lastEntry < DateTime.Now - interval)
             {
+                Console.WriteLine("DATA IS SAVED");
                 /*MainDB.query(@$"
                     INSERT INTO datalog (value, deviceid)
                     VALUES ({value}, '{device.Id}')");

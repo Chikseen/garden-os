@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-public class RPIdata
+public class RPIData
 {
     [JsonInclude]
     [JsonPropertyName("rpi_id")]
@@ -15,6 +15,6 @@ public class RPIdata
     [JsonPropertyName("garden_id")]
     public String GardenId = "";
 
-    public RPIdata()
-    { }
+    [JsonConstructor]
+    public RPIData() { }
 }

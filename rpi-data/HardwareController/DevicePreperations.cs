@@ -1,31 +1,32 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MainService.Hardware
 {
-    public static class Prep
+    public class Preperation
     {
+        private readonly HttpClient client;
 
-        private static readonly HttpClient client = new HttpClient();
-
-        public static void SetDevices()
+        public Preperation(String apiKey)
         {
-
-            // var data = MainDB.query("SELECT * FROM devices");
-            // DevicesData devicesData = new(data);
-            //  _data = devicesData;
+            client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         }
 
-        public static RPIdata SetRPI(String id)
+        public RPIDevices SetDevices(String id)
         {
-            var responseString = client.GetStringAsync($"https://gardenapi.drunc.net/devices/{id}").Result;
-            Console.WriteLine(responseString);
-            RPIdata data = JsonSerializer.Deserialize<RPIdata>(responseString)!;
-            Console.WriteLine("1" + data.GardenId);
-            Console.WriteLine("2" + data.GardenName);
-            Console.WriteLine("3" + data.Id);
+            String responseString = client.GetStringAsync($"https://gardenapi.drunc.net/devices/{id}").Result;
+            RPIDevices data = JsonSerializer.Deserialize<RPIDevices>(responseString)!;
+            return data;
+        }
+
+        public RPIData SetRPI(String id)
+        {
+            String responseString = client.GetStringAsync($"https://gardenapi.drunc.net/devices/{id}/metadata").Result;
+            RPIData data = JsonSerializer.Deserialize<RPIData>(responseString)!;
             return data;
         }
     }
