@@ -31,11 +31,9 @@ export default {
       // No Worries this will be unified soon
       console.log("test");
       let res;
-      try {
-        res = await fetch(`http://${process.env.VUE_APP_PI_HOST}/ledToggle`).then((response) => response.json());
-      } catch (error) {
-        res = await fetch(`http://${process.env.VUE_APP_PI_HOST}/ledToggle`).then((response) => response.json());
-      }
+
+      res = await fetch(`${process.env.VUE_APP_PI_HOST}ledToggle`).then((response) => response.json());
+
       console.log(res);
     },
   },

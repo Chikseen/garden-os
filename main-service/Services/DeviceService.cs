@@ -70,8 +70,44 @@ namespace Services.Device
                     {data.Value},
                     CURRENT_TIMESTAMP,
                     '{data.Device_ID}'
-                );
+                )".Clean();
 
+            ResponseDevices? devices = GetDataLog(id, ApiKey);
+            return devices;
+        }
+
+        public ResponseDevices? GetDataLog(String id, String ApiKey)
+        {
+            String query = @$"  
+                SELECT
+                    DISTINCT ON (DEVICE_ID) DATALOG.DATE,
+                    VALUE,
+                    DEVICES.ID AS DEVICE_ID,
+                    DATALOG.ID,
+                    DEVICES.NAME,
+                    DEVICES.DISPLAY_ID
+                FROM
+                    DATALOG
+                    JOIN DEVICES
+                    ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
+                    ON RPIS.ID = '{id}'
+                    AND RPIS.API_KEY = '{ApiKey}'
+                    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
+                ORDER BY
+                    DEVICE_ID,
+                    DATE DESC;".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            if (result.Count == 0)
+                return null;
+
+            ResponseDevices devices = new(result);
+            return devices;
+        }
+
+        public ResponseDevices? GetDataLog(String id, String ApiKey, TimeFrame timeframe)
+        {
+            String query = @$"  
                 SELECT
                     DEVICES.ID AS DEVICE_ID,
                     DATALOG.ID,
@@ -86,7 +122,11 @@ namespace Services.Device
                     ON RPIS.ID = '{id}'
                     AND RPIS.API_KEY = '{ApiKey}'
                     AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
-                ORDER BY DATALOG.DATE DESC".Clean();
+                    AND DATALOG.DATE 
+                        BETWEEN '{timeframe.Start.ConvertToPGString()}'
+                        AND '{timeframe.End.ConvertToPGString()}'
+                ORDER BY
+                    DATALOG.DATE DESC".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             if (result.Count == 0)

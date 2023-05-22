@@ -61,7 +61,6 @@ namespace MainService.Controllers
 
             Console.WriteLine("NEW DATA SEND TO FE");
 
-
             if (String.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
@@ -71,6 +70,28 @@ namespace MainService.Controllers
                 return BadRequest();
 
             _hubContext.Clients.All.SendMyEvent(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{rpiid}/datalog")]
+        public ActionResult<ResponseDevices> GetDataLog(String rpiid, TimeFrame? timeFrame = null)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
+
+            Console.WriteLine("NEW DATA SEND TO FE");
+
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
+
+            ResponseDevices? response;
+            if (timeFrame == null)
+                response = _deviceService.GetDataLog(rpiid, apiKey!);
+            else
+                response = _deviceService.GetDataLog(rpiid, apiKey!, timeFrame);
+
+            if (response == null)
+                return BadRequest();
 
             return Ok(response);
         }

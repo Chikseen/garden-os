@@ -101,7 +101,7 @@ export default {
   created() {
     this.emitter.on("Event", (e) => {
       e.devices.forEach((device) => {
-        this.mapEvent(device.displayId, device.value);
+        this.mapEvent(device.display_id, device.value);
       });
     });
   },

@@ -176,6 +176,28 @@ INSERT INTO DATALOG (
     '{data.Device_ID}'
 );
 
+-- Get Latest datalog
+SELECT
+    DISTINCT ON (DEVICE_ID) DATALOG.              DATE,
+    VALUE,
+    DEVICES.ID     AS DEVICE_ID,
+    DATALOG.ID,
+    DATALOG.VALUE,
+    DATALOG.DATE,
+    DEVICES.NAME,
+    DEVICES.DISPLAY_ID
+FROM
+    DATALOG
+    JOIN DEVICES
+    ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
+    ON RPIS.ID = '{id}'
+    AND RPIS.API_KEY = '{ApiKey}'
+    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
+ORDER BY
+    DEVICE_ID,
+    DATE DESC;
+
+-- Get Datalog in Timeframe
 SELECT
     DEVICES.ID AS DEVICE_ID,
     DATALOG.ID,
@@ -190,5 +212,7 @@ FROM
     ON RPIS.ID = '{id}'
     AND RPIS.API_KEY = '{ApiKey}'
     AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
+    AND DATALOG.DATE BETWEEN '{timeframe.Start.ConvertToPGString()}'
+    AND '{timeframe.End.ConvertToPGString()}'
 ORDER BY
     DATALOG.DATE DESC
