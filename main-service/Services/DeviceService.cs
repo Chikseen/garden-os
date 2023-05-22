@@ -60,17 +60,11 @@ namespace Services.Device
         public ResponseDevices? SaveDataToDB(SaveDataRequest data, String id, String ApiKey)
         {
             String query = @$"
-                INSERT INTO DATALOG (
-                    ID,
-                    VALUE,
-                    DATE,
-                    DEVICE_ID
-                ) VALUES (
-                    GEN_RANDOM_UUID(),
-                    {data.Value},
-                    CURRENT_TIMESTAMP,
-                    '{data.Device_ID}'
-                )".Clean();
+                INSERT INTO DATALOG (ID, VALUE, DATE, DEVICE_ID) 
+                VALUES (GEN_RANDOM_UUID(), {data.Value}, LOCALTIMESTAMP, '{data.Device_ID}')".Clean();
+
+
+            MainDB.query(query);
 
             ResponseDevices? devices = GetDataLog(id, ApiKey);
             return devices;
