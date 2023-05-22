@@ -10,7 +10,9 @@ export default {
     const connection = new HubConnectionBuilder().withUrl(`${ip}hub`).configureLogging(LogLevel.Information).build();
     console.log(connection);
     // get and set Init Values
-    const initData = await fetch(`${ip}`).then((response) => response.json());
+    const initData = await fetch(`${ip}devices/3c6c34fc-ff32-4419-b54b-436ab9ef2066/datalog`, {
+      method: "POST",
+    }).then((response) => response.json());
     Vue.config.globalProperties.emitter.emit("Event", initData);
 
     Vue.config.globalProperties.emitter.on("closeConnection", () => {
