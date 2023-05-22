@@ -91,6 +91,7 @@ namespace MainService.Hardware
 
                         Console.WriteLine($"DEVICE: {device.DeviceName}");
                         Console.WriteLine($"VALUE: {device.Value}");
+                                                Console.WriteLine($"DEVICE: {rawValue}");
 
                         if (Math.Abs(device.LastSavedValue - value) > 1)
                         {
@@ -112,7 +113,6 @@ namespace MainService.Hardware
 
         private static void SaveDataToDatabase(RPIDevice device, int value)
         {
-            Console.WriteLine("Before Save");
             RPIDevice? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.ID == device.ID);
             if (originalDevice == null)
                 return;
@@ -122,16 +122,12 @@ namespace MainService.Hardware
 
             if (lastEntry < DateTime.Now - interval)
             {
-                Console.WriteLine("DATA IS SAVED");
-
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainHardware.RpiApiKey);
 
-                Console.WriteLine("111");
                 SaveDataRequest data = new();
                 data.Device_ID = device.ID;
                 data.Value = value;
-                Console.WriteLine("222");
 
                 string jsonString = JsonSerializer.Serialize(data);
                 var content = new StringContent(
@@ -139,17 +135,9 @@ namespace MainService.Hardware
                     System.Text.Encoding.UTF8,
                     "application/json"
                     );
-
-                Console.WriteLine("aaa"); 
-                Console.WriteLine(jsonString); 
-                Console.WriteLine("aaa"); 
-                Console.WriteLine(content); 
-                Console.WriteLine("aaa"); 
-
-
+ 
+                Console.WriteLine(content);
                 var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
-                Console.WriteLine(responseString);
-
                 originalDevice.LastEntry = DateTime.Now;
                 originalDevice.LastSavedValue = value;
             }

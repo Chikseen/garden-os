@@ -6,6 +6,8 @@ namespace Services.Device
 {
     public class DeviceService
     {
+        private static Dictionary<String, DateTime> lastEntryList = new();
+
         public RPIdata? GetRpiMeta(String id, String ApiKey)
         {
             String query = @$"
@@ -63,8 +65,24 @@ namespace Services.Device
                 INSERT INTO DATALOG (ID, VALUE, DATE, DEVICE_ID) 
                 VALUES (GEN_RANDOM_UUID(), {data.Value}, LOCALTIMESTAMP, '{data.Device_ID}')".Clean();
 
+            RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
+            if (devicesData == null)
+                return null;
 
-            MainDB.query(query);
+            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == data.Device_ID).FirstOrDefault();
+            if (deviceData == null)
+                return null;
+
+            TimeSpan interval = deviceData.DataUpdateInterval;
+            if (!lastEntryList.ContainsKey(data.Device_ID))
+                lastEntryList.Add(data.Device_ID, DateTime.Now);
+
+            if (lastEntryList[data.Device_ID] < DateTime.Now - interval)
+            {
+                MainDB.query(query);
+                lastEntryList[data.Device_ID] = DateTime.Now;
+            }
+
 
             ResponseDevices? devices = GetDataLog(id, ApiKey);
             return devices;

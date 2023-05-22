@@ -59,8 +59,6 @@ namespace MainService.Controllers
         {
             String? apiKey = _userService.GetApiKey(Request);
 
-            Console.WriteLine("NEW DATA SEND TO FE");
-
             if (String.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
