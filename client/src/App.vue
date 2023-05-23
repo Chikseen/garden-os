@@ -33,7 +33,7 @@ export default {
   data: function () {
     return {
       values: null,
-      isAuth: true,
+      isAuth: false,
       AuthId: "",
       AuthApiKey: "",
     };
