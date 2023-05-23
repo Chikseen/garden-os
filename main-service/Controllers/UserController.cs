@@ -51,5 +51,17 @@ namespace MainService.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("{userid}/validate")]
+        public ActionResult<Boolean> ValidateUser(String userid)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
+            if (String.IsNullOrEmpty(apiKey))
+                return Ok(false);
+
+            Boolean isValidated = _userService.ValidateUser(userid, apiKey);
+
+            return Ok(isValidated);
+        }
     }
 }

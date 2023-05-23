@@ -10,9 +10,8 @@ export default {
     const connection = new HubConnectionBuilder().withUrl(`${ip}hub`).configureLogging(LogLevel.Information).build();
     console.log(connection);
 
-const userID = localStorage.getItem("id");
-const ApiKey = localStorage.getItem("apiToken");
-
+    const userID = localStorage.getItem("id");
+    const ApiKey = localStorage.getItem("apiToken");
 
     // get and set Init Values
     const initData = await fetch(`${ip}user/${userID}/datalog`, {
