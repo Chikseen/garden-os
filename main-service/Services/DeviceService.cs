@@ -88,26 +88,9 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices? GetDataLog(String id, String ApiKey)
+        public ResponseDevices? GetDataLog(String id, String ApiKey, Boolean isUser = false)
         {
-            String query = @$"  
-                SELECT
-                    DISTINCT ON (DEVICE_ID) DATALOG.DATE,
-                    VALUE,
-                    DEVICES.ID AS DEVICE_ID,
-                    DATALOG.ID,
-                    DEVICES.NAME,
-                    DEVICES.DISPLAY_ID
-                FROM
-                    DATALOG
-                    JOIN DEVICES
-                    ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
-                    ON RPIS.ID = '{id}'
-                    AND RPIS.API_KEY = '{ApiKey}'
-                    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
-                ORDER BY
-                    DEVICE_ID,
-                    DATE DESC;".Clean();
+            String query = BuildDataLogQuery(id, ApiKey, null, isUser);
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             if (result.Count == 0)
@@ -117,28 +100,10 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices? GetDataLog(String id, String ApiKey, TimeFrame timeframe)
+        public ResponseDevices? GetDataLog(String id, String ApiKey, TimeFrame timeframe, Boolean isUser = false)
         {
-            String query = @$"  
-                SELECT
-                    DEVICES.ID AS DEVICE_ID,
-                    DATALOG.ID,
-                    DATALOG.VALUE,
-                    DATALOG.DATE,
-                    DEVICES.NAME,
-                    DEVICES.DISPLAY_ID
-                FROM
-                    DATALOG
-                    JOIN DEVICES
-                    ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
-                    ON RPIS.ID = '{id}'
-                    AND RPIS.API_KEY = '{ApiKey}'
-                    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
-                    AND DATALOG.DATE 
-                        BETWEEN '{timeframe.Start.ConvertToPGString()}'
-                        AND '{timeframe.End.ConvertToPGString()}'
-                ORDER BY
-                    DATALOG.DATE DESC".Clean();
+
+            String query = BuildDataLogQuery(id, ApiKey, timeframe, isUser);
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             if (result.Count == 0)
@@ -146,6 +111,60 @@ namespace Services.Device
 
             ResponseDevices devices = new(result);
             return devices;
+        }
+
+        private String BuildDataLogQuery(String ID, String ApiKey, TimeFrame? timeFrame = null, Boolean isUser = false)
+        {
+
+            String query = "SELECT ";
+
+            if (timeFrame == null)
+                query += "DISTINCT ON (DEVICE_ID) ";
+
+            query += @$"
+                    DATALOG.DATE,
+                    VALUE,
+                    DEVICES.ID AS DEVICE_ID,
+                    DATALOG.ID,
+                    DEVICES.NAME,
+                    DEVICES.DISPLAY_ID
+                FROM
+                    DATALOG";
+
+            if (isUser)
+                // JoinUSer
+                query += @$"
+                    JOIN DEVICES
+                        ON DEVICES.ID = DATALOG.DEVICE_ID JOIN USERS
+                        ON USERS.ID = '{ID}'
+                        AND USERS.API_KEY = '{ApiKey}'
+                        AND USERS.GARDEN_ID = DEVICES.GARDEN_ID";
+
+            else
+                query += @$"
+                    JOIN DEVICES
+                        ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
+                        ON RPIS.ID = '{ID}'
+                        AND RPIS.API_KEY = '{ApiKey}'
+                        AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID";
+
+            if (timeFrame != null)
+                query += @$"
+                      AND DATALOG.DATE 
+                        BETWEEN '{timeFrame.Start.ConvertToPGString()}'
+                        AND '{timeFrame.End.ConvertToPGString()}'";
+
+            if (timeFrame == null)
+                query += @$"
+                    ORDER BY
+                        DEVICE_ID,
+                        DATE DESC; ";
+            else
+                query += @$"
+                    ORDER BY DATE DESC; ";
+
+            String cleandQuery = query.Clean();
+            return cleandQuery;
         }
     }
 }
