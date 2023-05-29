@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <!-- <div id="app">
     <MapComponent v-if="isAuth" />
     <div v-else>
       <h1>No Auth key</h1>
@@ -13,16 +13,19 @@
       </div>
       <button @click="checkUser">Login</button>
     </div>
-  </div>
+  </div>-->
+  <RenderComponent />
 </template>
 
 <script>
 import MapComponent from "@/components/MapComponent.vue";
+import RenderComponent from "@/components/RenderComponent.vue";
 
 export default {
   name: "App",
   components: {
     MapComponent,
+    RenderComponent
   },
   props: {
     question: {

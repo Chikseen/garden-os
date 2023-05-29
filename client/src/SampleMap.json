@@ -1,0 +1,72 @@
+{
+  "gardenID": "accd30d2-7392-40b7-8a08-6d9ac9cc22b6",
+  "meta": {
+    "layer": {
+      "id": "035e762f-02aa-422e-9864-51c0056f5804",
+      "name": "TestGarden_Layer_One"
+    }
+  },
+  "objects": [
+    {
+      "id": "mainGardenGroup",
+      "name": "gardenGroup",
+      "type": "group",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "childs": [
+        {
+          "id": "mainGardenArea",
+          "name": "Garden",
+          "color": "#ceead6",
+          "type": "box",
+          "scale": {
+            "x": 15,
+            "y": 30,
+            "z": 0.5
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "id": "house",
+          "name": "Haus",
+          "color": "#f2f4f5",
+          "type": "box",
+          "scale": {
+            "x": 8.4,
+            "y": 2.4,
+            "z": 2
+          },
+          "position": {
+            "x": -1.25,
+            "y": 6.5,
+            "z": 0.5
+          }
+        },
+        {
+          "id": "flowe",
+          "name": "flower111",
+          "color": "#8e9fef",
+          "type": "gltf",
+          "src": "/flower.glb",
+          "scale": {
+            "x": 0.1,
+            "y": 0.1,
+            "z": 0.1
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        }
+      ]
+    }
+  ]
+}

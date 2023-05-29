@@ -31,12 +31,12 @@ export default {
       Vue.config.globalProperties.emitter.emit("Event", payload);
     });
 
-    connection.disconnected(() => {
+    /*connection.disconnected(() => {
       setTimeout(async () => {
         console.log("try to reconnect");
         await this.CheckConnection(Vue, ip);
       }, 1000);
-    });
+    });*/
 
     Vue.provide("$hub", connection);
     console.log("Connection succed");
