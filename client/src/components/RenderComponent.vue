@@ -12,7 +12,7 @@
       </div>
     </Scene>
     <div class="editor">
-      <textarea :value="JSON.stringify(mapData, null, 2)" @change="setNewJSON" rows="30" cols="70"></textarea>
+      <textarea :value="JSON.stringify(mapData, null, 2)" @change="setNewJSON" rows="10" cols="70"></textarea>
     </div>
   </Renderer>
 </template>
