@@ -20,7 +20,6 @@
 <script>
 import { Raycaster, Vector2 } from "three-full";
 import GroupWrapper from "./Render/GroupWrapper.vue";
-import MapData from "@/SampleMap.json"
 
 let raycaster = new Raycaster();
 let pointer = new Vector2();
@@ -140,87 +139,8 @@ export default {
         console.log("mouse movment dont move block");
       }
     },
-    changePostion(box) {
-      // 0 1, - x
-      if (box.faceIndex >= 0 && box.faceIndex <= 11) {
-        const pushBy = 10;
-        if (box.faceIndex == 0 || box.faceIndex == 1) {
-          box.object.parent.position.setX(box.object.parent.position.x - pushBy);
-        }
-        // 2 3 , + x
-        else if (box.faceIndex == 2 || box.faceIndex == 3) {
-          box.object.parent.position.setX(box.object.parent.position.x + pushBy);
-        }
-        // 4 5 , - y
-        else if (box.faceIndex == 4 || box.faceIndex == 5) {
-          box.object.parent.position.setY(box.object.parent.position.y - pushBy);
-        }
-        // 6 7 , + y
-        else if (box.faceIndex == 6 || box.faceIndex == 7) {
-          box.object.parent.position.setY(box.object.parent.position.y + pushBy);
-        }
-        // 8 9 , - z
-        else if (box.faceIndex == 8 || box.faceIndex == 9) {
-          box.object.parent.position.setZ(box.object.parent.position.z - pushBy);
-        }
-        // 10 11 , + z
-        else if (box.faceIndex == 10 || box.faceIndex == 11) {
-          box.object.parent.position.setZ(box.object.parent.position.z + pushBy);
-        }
-        this.$emit("newBoxPosition", box.object);
-      }
-    },
-    changeScale(box) {
-      if (box.faceIndex >= 0 && box.faceIndex <= 11) {
-        let pushBy = 10;
-
-        if (parseInt(this.scale_selected) == 1) pushBy = parseInt(`-${pushBy}`);
-
-        let scale;
-        if (this.projectData.main.pcr[box.object.name].scale) scale = this.projectData.main.pcr[box.object.name].scale;
-        else scale = { x: 100, y: 100, z: 100 };
-
-        // 0 1, - x
-        if (box.faceIndex == 0 || box.faceIndex == 1) {
-          if (scale.x > pushBy) scale.x = scale.x - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-        }
-        // 2 3 , + x
-        else if (box.faceIndex == 2 || box.faceIndex == 3) {
-          if (scale.x > pushBy) scale.x = scale.x - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-          box.object.parent.position.setX(box.object.parent.position.x + pushBy);
-          this.$emit("newBoxPosition", box.object);
-        }
-        // 4 5 , - y
-        else if (box.faceIndex == 4 || box.faceIndex == 5) {
-          if (scale.y > pushBy) scale.y = scale.y - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-        }
-        // 6 7 , + y
-        else if (box.faceIndex == 6 || box.faceIndex == 7) {
-          if (scale.y > pushBy) scale.y = scale.y - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-          box.object.parent.position.setY(box.object.parent.position.y + pushBy);
-          this.$emit("newBoxPosition", box.object);
-        }
-        // 8 9 , - z
-        else if (box.faceIndex == 8 || box.faceIndex == 9) {
-          if (scale.z > pushBy) scale.z = scale.z - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-        }
-        // 10 11 , + z
-        else if (box.faceIndex == 10 || box.faceIndex == 11) {
-          if (scale.z > pushBy) scale.z = scale.z - pushBy;
-          this.$emit("newBoxscale", { box: box.object, scale: scale });
-          box.object.parent.position.setZ(box.object.parent.position.z + pushBy);
-          this.$emit("newBoxPosition", box.object);
-        }
-      }
-    },
   },
  async  mounted() {
-
     const initData = await fetch(`${process.env.VUE_APP_PI_HOST}maps/${"035e762f-02aa-422e-9864-51c0056f5804"}`, {
           method: "GET",
           headers: {
@@ -231,6 +151,9 @@ export default {
     const res = await initData.json()
     console.log(res)
     this.mapData = JSON.parse(res.json);
+
+    const r = this.$refs.rendererC
+    r.renderer.setPixelRatio(window.devicePixelRatio);
 
     window.addEventListener("pointermove", (event) => {
       if (this.$refs.camera) {

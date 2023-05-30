@@ -1,6 +1,7 @@
 <template>
-  <!-- <div id="app">
-    <MapComponent v-if="isAuth" />
+  <div id="app">
+    <!--<MapComponent v-if="isAuth" />-->
+    <RenderComponent v-if="isAuth" />
     <div v-else>
       <h1>No Auth key</h1>
       <div>
@@ -13,8 +14,7 @@
       </div>
       <button @click="checkUser">Login</button>
     </div>
-  </div>-->
-  <RenderComponent />
+  </div>
 </template>
 
 <script>
