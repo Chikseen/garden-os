@@ -1,25 +1,32 @@
 <template>
-  <Renderer ref="rendererC" class="render_wrapper" antialias resize :orbit-ctrl="{ enableDamping: true, dampingFactor: 0.05 }" pointer shadow>
-    <Camera ref="camera" :position="{ z: 30, x: 0, y: 0 }" :fov="80" />
-    <Scene ref="scene" background="#2b2b2b">
-      <PointLight :position="{ y: 100, z: 100, x: 100 }" :intensity="1" :cast-shadow="castShadow" :shadow-map-size="{ width: 2048, height: 2048 }" />
-      <AmbientLight color="#aaaaaa" :intensity="0.05" />
+  <div class="render_wrapper">
+    <Renderer ref="rendererC" class="render" antialias resize :orbit-ctrl="{ enableDamping: true, dampingFactor: 0.05 }"
+      pointer shadow>
+      <Camera ref="camera" :position="{ z: 30, x: 0, y: 0 }" :fov="80" />
+      <Scene ref="scene" background="#2b2b2b">
+        <PointLight :position="{ y: 100, z: 100, x: 100 }" :intensity="1" :cast-shadow="castShadow"
+          :shadow-map-size="{ width: 2048, height: 2048 }" />
+        <AmbientLight color="#aaaaaa" :intensity="0.05" />
 
-      <GroupWrapper :objects="mapData?.objects"></GroupWrapper>
+        <GroupWrapper :objects="mapData?.objects"></GroupWrapper>
 
-      <div>
-        <!-- <BoxFrame ref="boxframe" :position="{ x: -100, y: -210 }" :boxScale="{ x: 50, y: 50, z: 50 }" :setName="item" :text="'PP'" />-->
+        <div>
+          <!-- <BoxFrame ref="boxframe" :position="{ x: -100, y: -210 }" :boxScale="{ x: 50, y: 50, z: 50 }" :setName="item" :text="'PP'" />-->
+        </div>
+      </Scene>
+      <div class="editor">
+        <textarea :value="JSON.stringify(mapData, null, 2)" @change="setNewJSON" rows="10" cols="70"></textarea>
       </div>
-    </Scene>
-    <div class="editor">
-      <textarea :value="JSON.stringify(mapData, null, 2)" @change="setNewJSON" rows="10" cols="70"></textarea>
-    </div>
-  </Renderer>
+      <div class="exit" @click="$store.commit('set3dView', false)">
+        <h3>EXIT 3D VIEW</h3>
+      </div>
+    </Renderer>
+  </div>
 </template>
 
 <script>
 import { Raycaster, Vector2 } from "three-full";
-import GroupWrapper from "./Render/GroupWrapper.vue";
+import GroupWrapper from "@/components/Render/GroupWrapper.vue";
 
 let raycaster = new Raycaster();
 let pointer = new Vector2();
@@ -61,18 +68,18 @@ export default {
         const requestData = JSON.parse(e.target.value)
         const initData = await fetch(`${process.env.VUE_APP_PI_HOST}maps/${"035e762f-02aa-422e-9864-51c0056f5804"}`, {
           method: "POST",
-          body: JSON.stringify({"json": JSON.stringify(requestData)}),
+          body: JSON.stringify({ "json": JSON.stringify(requestData) }),
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-    });
-    const res = await initData.json()
-    console.log(res)
-    this.mapData = JSON.parse(res.json);
+        });
+        const res = await initData.json()
+        console.log(res)
+        this.mapData = JSON.parse(res.json);
 
-  } catch (error) {
+      } catch (error) {
         console.log("Invalid JSON File", error)
       }
     },
@@ -140,13 +147,13 @@ export default {
       }
     },
   },
- async  mounted() {
+  async mounted() {
     const initData = await fetch(`${process.env.VUE_APP_PI_HOST}maps/${"035e762f-02aa-422e-9864-51c0056f5804"}`, {
-          method: "GET",
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
-          },
-        });
+      method: "GET",
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
+      },
+    });
 
     const res = await initData.json()
     console.log(res)
@@ -209,8 +216,9 @@ export default {
 <style lang="scss">
 .render {
   &_wrapper {
-    width: 100vw;
-    height: 100vh;
+    position: relative;
+    width: 99vw;
+    height: 99vh;
   }
 }
 
@@ -220,6 +228,12 @@ export default {
   left: 5px;
 }
 
+
+.exit {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
 
 
 .mainWindow {

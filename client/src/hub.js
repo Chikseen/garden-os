@@ -6,21 +6,8 @@ export default {
   },
 
   async CheckConnection(Vue, ip) {
-    console.log(`${ip}`);
     const connection = new HubConnectionBuilder().withUrl(`${ip}hub`).configureLogging(LogLevel.Information).build();
     console.log(connection);
-
-    const userID = localStorage.getItem("id");
-    const ApiKey = localStorage.getItem("apiToken");
-
-    // get and set Init Values
-    const initData = await fetch(`${ip}user/${userID}/datalog`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${ApiKey}`,
-      },
-    }).then((response) => response.json());
-    Vue.config.globalProperties.emitter.emit("Event", initData);
 
     Vue.config.globalProperties.emitter.on("closeConnection", () => {
       connection.stop;

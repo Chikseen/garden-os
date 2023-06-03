@@ -21,6 +21,8 @@ public static class DeviceStatic
     public readonly static String Name = "name";
     public readonly static String ID = "id";
     public readonly static String JSON = "json";
+    public readonly static String UserName = "user_name";
+    public readonly static String GardenName = "garden_name";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

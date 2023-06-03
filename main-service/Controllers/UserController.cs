@@ -21,6 +21,21 @@ namespace MainService.Controllers
             _userService = new();
         }
 
+        [HttpGet("{userid}/validate")]
+        public ActionResult<Boolean> ValidateUser(String userid)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
+            if (String.IsNullOrEmpty(apiKey))
+                return Ok(false);
+
+            if (userid == "null" || apiKey == "null")
+                return Ok(false);
+
+            Boolean isValidated = _userService.ValidateUser(userid, apiKey);
+
+            return Ok(isValidated);
+        }
+
         [HttpPost("{userid}/datalog")]
         public ActionResult<ResponseDevices> GetDataLog(String userid, TimeFrame? timeFrame = null)
         {
@@ -52,16 +67,20 @@ namespace MainService.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{userid}/validate")]
-        public ActionResult<Boolean> ValidateUser(String userid)
+        [HttpGet("{userid}/garden")]
+        public ActionResult<GardenResponseModel> GetGardenData(String userid)
         {
             String? apiKey = _userService.GetApiKey(Request);
+
             if (String.IsNullOrEmpty(apiKey))
-                return Ok(false);
+                return Unauthorized();
 
-            Boolean isValidated = _userService.ValidateUser(userid, apiKey);
+            GardenResponseModel? response = _userService.GetGardenData(userid, apiKey);
 
-            return Ok(isValidated);
+            if (response == null)
+                return BadRequest();
+
+            return Ok(response);
         }
     }
 }

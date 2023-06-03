@@ -1,79 +1,37 @@
 <template>
   <div id="app">
-    <!--<MapComponent v-if="isAuth" />-->
-    <RenderComponent v-if="isAuth" />
-    <div v-else>
-      <h1>No Auth key</h1>
-      <div>
-        <h3>User ID</h3>
-        <input type="text" @change="insertID" />
-      </div>
-      <div>
-        <h3>Api Key</h3>
-        <input type="text" @change="insertApiKey" />
-      </div>
-      <button @click="checkUser">Login</button>
-    </div>
+    <Overview v-if="isAuth" />
+    <Landing v-else />
   </div>
 </template>
 
 <script>
-import MapComponent from "@/components/MapComponent.vue";
-import RenderComponent from "@/components/RenderComponent.vue";
+import Overview from "@/views/Overview.vue";
+import Landing from "@/views/Landing.vue";
+
+import { mapState } from "vuex";
 
 export default {
   name: "App",
   components: {
-    MapComponent,
-    RenderComponent
+    Overview,
+    Landing,
   },
-  props: {
-    question: {
-      type: Object,
-      required: true,
-    },
-  },
-  data: function () {
-    return {
-      values: null,
-      isAuth: false,
-      AuthId: "",
-      AuthApiKey: "",
-    };
-  },
-  methods: {
-    insertID(e) {
-      this.AuthId = e.target.value;
-    },
-    insertApiKey(e) {
-      this.AuthApiKey = e.target.value;
-    },
-    async checkUser() {
-      const json = await fetch(`${process.env.VUE_APP_PI_HOST}user/${this.AuthId}/validate`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${this.AuthApiKey}`,
-        },
-      });
-      const res = await json.json();
-      console.log(res);
-      if (res == true) {
-        localStorage.setItem("id", this.AuthId.toString());
-        localStorage.setItem("apiToken", this.AuthApiKey.toString());
-        this.isAuth = true;
-      } else this.isAuth = false;
-      console.log(this.isAuth);
-    },
-  },
-  created() {
-    this.emitter.on("Event", (e) => {
-      this.values = e;
-    });
+  computed: {
+    ...mapState({
+      isAuth: (state) => state.isAuth,
+    }),
   },
   async mounted() {
-    this.AuthId = localStorage.getItem("id");
-    this.AuthApiKey = localStorage.getItem("apiToken");
-    await this.checkUser();
+    // get and set Init Values
+    const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("apiToken")}`,
+      },
+    })
+    const res = await response.json()
+    this.$store.commit("setDeviceData", res)
   },
 };
 </script>
@@ -81,15 +39,24 @@ export default {
 <style lang="scss">
 body,
 html {
-  height: 100vh;
-  width: 100vw;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
 }
 
 #app {
-  height: 100vh;
-  width: 100vw;
+  background-color: #eae5d2;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  min-height: 100vh;
 }
 </style>
