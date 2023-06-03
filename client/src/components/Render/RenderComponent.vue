@@ -105,46 +105,43 @@ export default {
       this.mouseDown.y = event.clientY;
     },
     click(event) {
-      if (this.mouseDown.x == event.clientX && this.mouseDown.y == event.clientY) {
-        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        raycaster.setFromCamera(pointer, this.$refs.camera.camera);
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        allChilds = [];
-        if (this.$refs.scene.scene.children.length > 0) {
-          this.getAllChilds(this.$refs.scene.scene.children);
-        }
-        const intersects = raycaster.intersectObjects(allChilds);
-        const filterMesh = intersects.filter((element) => this.projectData.main.pcr[element.object.name]);
-        const result = filterMesh.filter((element) => this.projectData.main.pcr[element.object.name].level == this.level_selected);
+      raycaster.setFromCamera(pointer, this.$refs.camera.camera);
 
-        if (event.clientX > 240 || event.clientY > 270) {
-          if (result[0]) {
-            const box = result[0];
-            switch (parseInt(this.main_selected)) {
-              case 0: {
-                this.changePostion(box);
-                break;
-              }
-              case 1: {
-                this.changeScale(box);
-                break;
-              }
-              case 2: {
-                console.log("not supported yet");
-                break;
-              }
-            }
-          } else {
-            console.log("sometginh went wrong in the box replacement proccess");
+      allChilds = [];
+      if (this.$refs.scene.scene.children.length > 0) {
+        this.getAllChilds(this.$refs.scene.scene.children);
+      }
+      console.log("allChilds", allChilds)
+      const intersects = raycaster.intersectObjects(allChilds);
+      console.log("intersects", intersects)
+      const filterMesh = intersects.filter((element) => this.projectData.main.pcr[element.object.name]);
+      const result = filterMesh.filter((element) => this.projectData.main.pcr[element.object.name].level == this.level_selected);
+      console.log("result", result)
+
+      if (result[0]) {
+        const box = result[0];
+        switch (parseInt(this.main_selected)) {
+          case 0: {
+            this.changePostion(box);
+            break;
           }
-        } else {
-          console.log("box click");
+          case 1: {
+            this.changeScale(box);
+            break;
+          }
+          case 2: {
+            console.log("not supported yet");
+            break;
+          }
         }
       } else {
-        console.log("mouse movment dont move block");
+        console.log("sometginh went wrong in the box replacement proccess");
       }
+
     },
   },
   async mounted() {
