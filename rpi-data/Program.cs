@@ -37,7 +37,6 @@ MainHardware.Init(connection);
 
 app.Run();*/
 
-using System;
 using MainService.Hardware;
 using RPI.Connection;
 

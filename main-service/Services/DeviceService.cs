@@ -8,7 +8,7 @@ namespace Services.Device
     {
         private static Dictionary<String, DateTime> lastEntryList = new();
 
-        public RPIdata? GetRpiMeta(String id, String ApiKey)
+        public RPIData? GetRpiMeta(String id, String ApiKey)
         {
             String query = @$"
                 SELECT
@@ -26,7 +26,7 @@ namespace Services.Device
             if (result.Count != 1)
                 return null;
 
-            RPIdata rpi = new(result);
+            RPIData rpi = new(result);
             return rpi;
         }
 

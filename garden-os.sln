@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "main-service", "main-service\main-service.csproj", "{9179104B-8113-468F-B404-786727E57C58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainService", "main-service\MainService.csproj", "{3976F410-3A82-4AE9-B4D6-21601025019A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rpi-data", "rpi-data\rpi-data.csproj", "{789D5790-55F9-421F-BA1B-C90F95CD3559}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rpi-data", "rpi-data\rpi-data.csproj", "{8BAAC296-7535-4821-8C21-9955A8B1C682}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,13 +16,13 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9179104B-8113-468F-B404-786727E57C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9179104B-8113-468F-B404-786727E57C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9179104B-8113-468F-B404-786727E57C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9179104B-8113-468F-B404-786727E57C58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{789D5790-55F9-421F-BA1B-C90F95CD3559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{789D5790-55F9-421F-BA1B-C90F95CD3559}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{789D5790-55F9-421F-BA1B-C90F95CD3559}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{789D5790-55F9-421F-BA1B-C90F95CD3559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3976F410-3A82-4AE9-B4D6-21601025019A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3976F410-3A82-4AE9-B4D6-21601025019A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3976F410-3A82-4AE9-B4D6-21601025019A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3976F410-3A82-4AE9-B4D6-21601025019A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BAAC296-7535-4821-8C21-9955A8B1C682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BAAC296-7535-4821-8C21-9955A8B1C682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BAAC296-7535-4821-8C21-9955A8B1C682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BAAC296-7535-4821-8C21-9955A8B1C682}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

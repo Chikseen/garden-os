@@ -23,14 +23,14 @@ namespace MainService.Controllers
         }
 
         [HttpGet("{rpiid}/metadata")]
-        public ActionResult<RPIdata> GetRpiMeta(String rpiid)
+        public ActionResult<RPIData> GetRpiMeta(String rpiid)
         {
             String? apiKey = _userService.GetApiKey(Request);
 
             if (String.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
-            RPIdata? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
+            RPIData? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
 
             if (data == null)
                 return BadRequest();
