@@ -1,9 +1,6 @@
 <template>
   <Group v-for="(object, index) in objects" :key="index" :position="object.position">
-    <GroupWrapper v-if="object.type === 'group'" :objects="object.childs"></GroupWrapper>
-    <Box v-else-if="object.type === 'box'" :position="object.position" :scale="object.scale">
-      <PhongMaterial :color="object.color" />
-    </Box>
+    <GroupWrapper v-if="object.childs" :objects="object.childs"></GroupWrapper>
     <Box v-else-if="object.type === 'box'" :position="object.position" :scale="object.scale">
       <PhongMaterial :color="object.color" />
     </Box>

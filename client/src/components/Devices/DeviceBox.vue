@@ -1,12 +1,13 @@
 <template>
-  <div class="device_wrapper">
+  <div class="device_wrapper" @click="this.$router.push(`device/${device.device_id}`)">
     <p> {{ device.name }} </p>
     <p> {{ device.value }} </p>
-    <p> {{ device.date }} </p>
+    <p> {{ formatTime(device.date) }} </p>
   </div>
 </template>
 
 <script>
+import { formatToDateTime } from "@/dates.js";
 
 export default {
   props: {
@@ -14,7 +15,12 @@ export default {
       type: Object,
       default: () => { }
     }
-  }
+  },
+  methods: {
+    formatTime(d) {
+      return formatToDateTime(d)
+    }
+  },
 }
 </script>
 

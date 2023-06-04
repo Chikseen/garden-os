@@ -15,6 +15,8 @@
 import RenderComponent from "@/components/Render/RenderComponent.vue";
 import DeviceList from "@/components/Devices/DeviceList.vue"
 
+import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
+
 import { mapState } from "vuex";
 
 export default {
@@ -36,15 +38,8 @@ export default {
         }),
     },
     async mounted() {
-        const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/garden`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
-            },
-        });
-        const res = await initData.json()
-        console.log(res);
-        this.$store.commit("setGardenMeta", res)
+        this.$store.commit("setGardenMeta", await fetchGardenMeta())
+        this.$store.commit("setDeviceData", await fetchDevices())
     }
 }
 </script>

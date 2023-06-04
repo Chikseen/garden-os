@@ -15,7 +15,11 @@ export default {
 
     connection.start();
     connection.on("SendMyEvent", (payload) => {
-      Vue.config.globalProperties.emitter.emit("Event", payload);
+      Vue.config.globalProperties.emitter.emit("HubDeviceData", payload);
+    });
+
+    connection.on("SendCurrentDeviceData", (payload) => {
+      Vue.config.globalProperties.emitter.emit("HubDeviceData", payload);
     });
 
     /*connection.disconnected(() => {
