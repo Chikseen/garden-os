@@ -1,35 +1,42 @@
+using System.Text.Json.Serialization;
+
 public class TimeFrame
 {
-    public DateTime Start;
-    public DateTime End;
+  [JsonInclude]
+  [JsonPropertyName("start")]
+  public DateTime Start;
 
-    public TimeFrame()
-    {
-        this.Start = StartOfDay(DateTime.Now);
-        this.End = EndOfDay(DateTime.Now);
-    }
+  [JsonInclude]
+  [JsonPropertyName("end")]
+  public DateTime End;
 
-    public TimeFrame(DateTime start, DateTime end)
-    {
-        this.Start = start;
-        this.End = end;
-    }
+  public TimeFrame()
+  {
+    this.Start = StartOfDay(DateTime.Now);
+    this.End = EndOfDay(DateTime.Now);
+  }
 
-    private DateTime StartOfDay(DateTime theDate)
-    {
-        return theDate.Date;
-    }
+  public TimeFrame(DateTime start, DateTime end)
+  {
+    this.Start = start;
+    this.End = end;
+  }
 
-    private DateTime EndOfDay(DateTime theDate)
-    {
-        return theDate.Date.AddDays(1).AddTicks(-1);
-    }
+  private DateTime StartOfDay(DateTime theDate)
+  {
+    return theDate.Date;
+  }
+
+  private DateTime EndOfDay(DateTime theDate)
+  {
+    return theDate.Date.AddDays(1).AddTicks(-1);
+  }
 }
 
 public static class DateExtensions
 {
-    public static String ConvertToPGString(this DateTime date)
-    {
-        return date.ToString("yyyy-MM-dd HH:mm:ss.fff");
-    }
+  public static String ConvertToPGString(this DateTime date)
+  {
+    return date.ToString("yyyy-MM-dd HH:mm:ss.fff");
+  }
 }
