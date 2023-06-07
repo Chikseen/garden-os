@@ -5,6 +5,7 @@
 
 # MANUEL STUFF
 .env
+dist
 
 # User-specific files
 *.rsuser

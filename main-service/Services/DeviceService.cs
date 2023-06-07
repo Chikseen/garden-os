@@ -88,13 +88,10 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices? GetDataLog(String id, String ApiKey, Boolean isUser = false)
+        public ResponseDevices GetDataLog(String id, String ApiKey, Boolean isUser = false)
         {
             String query = BuildDataLogQuery(id, ApiKey, null, isUser);
             List<Dictionary<String, String>> result = MainDB.query(query);
-
-            if (result.Count == 0)
-                return null;
 
             ResponseDevices devices = new(result);
             return devices;

@@ -88,9 +88,6 @@ namespace MainService.Controllers
       else
         response = _deviceService.GetDataLog(rpiid, apiKey!, timeFrame);
 
-      if (response == null)
-        return BadRequest();
-
       return Ok(response);
     }
   }

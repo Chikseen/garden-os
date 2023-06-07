@@ -61,9 +61,6 @@ namespace MainService.Controllers
                     isUser: true
                 );
 
-            if (response == null)
-                return BadRequest();
-
             return Ok(response);
         }
 
