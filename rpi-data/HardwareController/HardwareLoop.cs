@@ -19,57 +19,34 @@ namespace MainService.Hardware
 
         public static void Start()
         {
-            // Make a plan how to fake data
-            Console.WriteLine("loopcheck");
-            try
+            DeviceInit();
+
+            while (true && !_recivedStop)
             {
-                _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
-                _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-
-                _LCD = new Lcd2004(registerSelectPin: 0,
-                                enablePin: 2,
-                                dataPins: new int[] { 4, 5, 6, 7 },
-                                backlightPin: 3,
-                                backlightBrightness: 0.1f,
-                                readWritePin: 1,
-                                controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
-
-                _LCD.Clear();
-                _LCD.SetCursorPosition(0, 0);
-                _LCD.Write(MainHardware.rpiData?.GardenName!);
-
-                while (true && !_recivedStop)
+                try
                 {
-                    try
-                    {
-                        Loop();
-                    }
-                    catch (System.Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-
-                    Thread.Sleep(_loopDelay);
-
-                    if (_recivedStop)
-                    {
-                        _LCD.Dispose();
-                    }
+                    Console.WriteLine("111");
+                    Loop();
+                    Console.WriteLine("222");
                 }
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e);
+                catch (System.Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                Thread.Sleep(_loopDelay);
+
+                if (_recivedStop)
+                {
+                    _LCD.Dispose();
+                }
             }
         }
 
+
         public static void Loop()
         {
-            if (_i2c_LCD_Device == null || _LCD == null)
-                return;
-
             ReadAndSetValues();
-
         }
 
         private static void ReadAndSetValues()
@@ -91,7 +68,7 @@ namespace MainService.Hardware
 
                         Console.WriteLine($"DEVICE: {device.DeviceName}");
                         Console.WriteLine($"VALUE: {device.Value}");
-                                                Console.WriteLine($"DEVICE: {rawValue}");
+                        Console.WriteLine($"DEVICE: {rawValue}");
 
                         if (Math.Abs(device.LastSavedValue - value) > 1)
                         {
@@ -135,12 +112,49 @@ namespace MainService.Hardware
                     System.Text.Encoding.UTF8,
                     "application/json"
                     );
- 
+
                 Console.WriteLine(content);
                 var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
                 originalDevice.LastEntry = DateTime.Now;
                 originalDevice.LastSavedValue = value;
             }
+        }
+
+        private static void DeviceInit()
+        {
+
+            // I 0
+            Console.WriteLine("Check Hardware Data");
+            try
+            {
+                _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("Error while ADC Setup");
+                Console.WriteLine(e);
+            }
+
+           /* // LCD
+            try
+            {
+                _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
+                _LCD = new Lcd2004(registerSelectPin: 0,
+                             enablePin: 2,
+                             dataPins: new int[] { 4, 5, 6, 7 },
+                             backlightPin: 3,
+                             backlightBrightness: 0.1f,
+                             readWritePin: 1,
+                             controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
+                _LCD.Clear();
+                _LCD.SetCursorPosition(0, 0);
+                _LCD.Write(MainHardware.rpiData?.GardenName!);
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("Error while LCD Setup");
+                Console.WriteLine(e);
+            }*/
         }
     }
 }

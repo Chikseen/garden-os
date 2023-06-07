@@ -1,10 +1,12 @@
 <template>
   <div>
-    <h1>Device: {{ currentDevice.name }}</h1>
-    <h2>Current Value: {{ currentDevice.value }}</h2>
-    <h3>ID: {{ currentDevice.device_id }}</h3>
-    <div class="lineChart_wrapper">
-      <Line :data="data" :options="options" />
+    <div v-if="currentDevice">
+      <h1>Device: {{ currentDevice.name }}</h1>
+      <h2>Current Value: {{ currentDevice.value }}</h2>
+      <h3>ID: {{ currentDevice.device_id }}</h3>
+      <div class="lineChart_wrapper">
+        <Line :data="data" :options="options" />
+      </div>
     </div>
   </div>
 </template>
@@ -18,7 +20,8 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
@@ -29,11 +32,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 )
 
 import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
-
+import { formatToDateTime } from "@/dates.js"
 import { mapState } from "vuex";
 
 export default {
@@ -44,18 +48,21 @@ export default {
     return {
       chartRawData: null,
       data: {
-        labels: ['February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [40, 39, 80, 40]
-          }
-        ]
+        labels: [],
+        datasets: []
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            time: {
+              unit: 'day',
+              parser: 'dd.MM.yyyy',
+              stepSize: 4
+            }
+          }
+        }
       }
     }
   },
@@ -68,19 +75,43 @@ export default {
 
       const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
         method: "POST",
-        body: JSON.stringify({ start: "2019-01-06T17:16:40", end: "2019-01-06T17:16:40" }),
+        body: JSON.stringify({ start: "2023-05-24T00:00:00", end: "2023-05-24T23:59:59" }),
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
       });
-      const res = await initData.json()
-      console.log(res)
+      const chartData = await initData.json()
+      console.log(chartData)
 
-      this.chartRawData = JSON.parse(res.json);
+      // Refine Chart data
+      let labels = []
+      let datasets = []
+
+      chartData.devices.forEach(device => {
+        if (!labels.includes(device.date))
+          labels.push(device.date)
+
+        if (!datasets.some(d => d.label == device.name)) {
+          const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
+          const dataForDevice = devicesInLabel.map(d => d.value)
+          // const dataForDevice = devicesInLabel.map(d => { return { y: d.value, t: d.date } })
+          datasets.push({
+            label: device.name,
+            data: dataForDevice,
+            backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+          })
+        }
+      });
+
+
+      this.data = { labels: labels, datasets: datasets }
+      console.log("data", this.data)
+
     } catch (error) {
 
+      console.log(error)
     }
   },
   computed: {
