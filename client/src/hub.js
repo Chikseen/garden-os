@@ -2,6 +2,7 @@ import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 export default {
   async install(Vue) {
+    console.log("111", process.env)
     await this.CheckConnection(Vue, process.env.VUE_APP_PI_HOST);
   },
 
