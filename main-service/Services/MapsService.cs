@@ -6,8 +6,6 @@ namespace Services.Maps
 {
     public class MapsService
     {
-
-
         public MapJSON? SaveMap(String id, MapJSON json)
         {
             String query = @$"

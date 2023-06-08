@@ -215,4 +215,17 @@ FROM
     AND DATALOG.DATE BETWEEN '{timeframe.Start.ConvertToPGString()}'
     AND '{timeframe.End.ConvertToPGString()}'
 ORDER BY
-    DATALOG.DATE DESC
+    DATALOG.DATE DESC;
+
+--
+INSERT INTO DATALOG (
+    ID,
+    VALUE,
+    DATE,
+    DEVICE_ID
+) VALUES (
+    GEN_RANDOM_UUID(),
+    75.456,
+    LOCALTIMESTAMP,
+    '877bcb9a-fefb-4bb8-97da-624e43e01ce0'
+)

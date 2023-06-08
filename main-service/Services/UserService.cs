@@ -37,7 +37,11 @@ namespace Services.User
         public GardenResponseModel? GetGardenData(String id, String apiKey)
         {
             String query = @$"
-                SELECT USERS.NAME as USER_NAME, USERS.ID as GARDEN_ID, GARDEN.NAME as GARDEN_NAME
+                SELECT 
+                    USERS.NAME as USER_NAME, 
+                    USERS.ID as GARDEN_ID, 
+                    GARDEN.NAME as GARDEN_NAME,
+                    GARDEN.weather_location_id
                 FROM USERS
                 JOIN GARDEN
                     ON USERS.ID = '{id}'

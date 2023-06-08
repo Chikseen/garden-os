@@ -1,6 +1,7 @@
 
 using MainService.DB;
 using ExtensionMethods;
+using System.Globalization;
 
 namespace Services.Device
 {
@@ -63,7 +64,7 @@ namespace Services.Device
         {
             String query = @$"
                 INSERT INTO DATALOG (ID, VALUE, DATE, DEVICE_ID) 
-                VALUES (GEN_RANDOM_UUID(), {data.Value}, LOCALTIMESTAMP, '{data.Device_ID}')".Clean();
+                VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, LOCALTIMESTAMP, '{data.Device_ID}')".Clean();
 
             RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
             if (devicesData == null)
@@ -82,7 +83,6 @@ namespace Services.Device
                 MainDB.query(query);
                 lastEntryList[data.Device_ID] = DateTime.Now;
             }
-
 
             ResponseDevices? devices = GetDataLog(id, ApiKey);
             return devices;
@@ -124,7 +124,9 @@ namespace Services.Device
                     DEVICES.ID AS DEVICE_ID,
                     DATALOG.ID,
                     DEVICES.NAME,
-                    DEVICES.DISPLAY_ID
+                    DEVICES.DISPLAY_ID,
+                    DEVICES.UPPER_LIMIT,
+                    DEVICES.LOWER_LIMIT
                 FROM
                     DATALOG";
 

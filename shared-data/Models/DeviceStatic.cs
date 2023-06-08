@@ -23,6 +23,7 @@ public static class DeviceStatic
     public readonly static String JSON = "json";
     public readonly static String UserName = "user_name";
     public readonly static String GardenName = "garden_name";
+    public readonly static String WeatherLocationId = "weather_location_id";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {
@@ -55,6 +56,15 @@ public static class DeviceStatic
         if (dict.ContainsKey(key) && dict[key] != String.Empty)
         {
             return Int32.Parse(dict[key]);
+        }
+        return defaultValue;
+    }
+
+    public static float GetFloat(Dictionary<String, String> dict, String key, float defaultValue = 0.0f)
+    {
+        if (dict.ContainsKey(key) && dict[key] != String.Empty)
+        {
+            return float.Parse(dict[key]);
         }
         return defaultValue;
     }
