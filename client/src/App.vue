@@ -35,7 +35,7 @@ p {
 }
 
 #app {
-  background-color: #eae5d2;
+  background-color: #eae5d205;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   min-height: 100vh;
 }

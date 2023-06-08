@@ -15,6 +15,18 @@
           :value="`${new Date().toISOString().replace(/T[0-9:.Z]*/, 'T23:59:59')}`">
       </div>
       <button @click="fetchData()">Fetch Timeframe</button>
+      <div>
+        <h2>Calibrate</h2>
+        <div>
+          <p>Min</p>
+          <input type="number">
+        </div>
+        <div>
+          <p>Max</p>
+          <input type="number">
+        </div>
+      </div>
+      <button @click="fetchData()">Send Calibrate</button>
       <div class="lineChart_wrapper">
         <Line :data="data" :options="options" />
       </div>
@@ -80,11 +92,11 @@ export default {
           x: {
             type: "time",
             time: {
-              minUnit: "minute"
+              minUnit: "day"
             },
             ticks: {
               autoSkip: true,
-              maxTicksLimit: 20
+              maxTicksLimit: 21
             }
           }
         },
