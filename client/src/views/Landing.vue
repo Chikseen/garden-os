@@ -1,17 +1,15 @@
 <template>
     <div class="landing_wrapper">
         <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
-        <div class="landing_login">
-            <div class="landing_login_box">
-                <h3>User ID</h3>
-                <input type="text" @change="insertID" />
-            </div>
-            <div class="landing_login_box">
-                <h3>Api Key</h3>
-                <input type="text" @change="insertApiKey" />
-            </div>
+
+        <form class="landing_login" onsubmit="return checkUser();">
+            <input type="text" @change="insertID" />
+            <input type="password" @change="insertApiKey" />
             <button @click="checkUser">Login</button>
-        </div>
+        </form>
+
+        <button @click="checkUser">Login</button>
+
         <h6>QUICK DUMMY LOGIN</h6>
         <h6 @click="ctc('1a667139-d648-4745-8529-a296c6de6f05')">
             1a667139-d648-4745-8529-a296c6de6f05</h6>

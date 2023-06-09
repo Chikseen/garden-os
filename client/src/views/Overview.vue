@@ -1,27 +1,37 @@
 <template>
     <RenderComponent v-if="is3dView" />
     <div v-else>
-        <div v-if="gardenMeta" class="overview_title">
+        <div v-if="gardenMeta" class="overview_title grid_item_titel">
             <h1>Garden: {{ gardenMeta.garden_name }}</h1>
             <h3>User: {{ gardenMeta.user_name }}</h3>
         </div>
-        <DeviceList :devices="deviceData" />
-        <p @click="$store.commit('set3dView', true)">Click here for 3d view</p>
-        <h6 @click="logout">Logout</h6>
+        <DynamicGrid>
+            <div v-if="gardenMeta?.weather_location_id" class="tomorrow grid_item grid_item_weather" data-language="DE"
+                data-unit-system="METRIC" data-skin="light" data-widget-type="upcoming"
+                style="padding-bottom: 22px; position:relative;" :data-location-id="gardenMeta.weather_location_id">
+                <a href="https://www.tomorrow.io/weather-api/" rel="nofollow noopener noreferrer" target="_blank"
+                    style="position: absolute; bottom: 0; transform: translateX(-50%); left: 50%;">
+                    <img alt="Powered by the Tomorrow.io Weather API"
+                        src="https://weather-website-client.tomorrow.io/img/powered-by.svg" width="250" height="18" />
+                </a>
+            </div>
+            <ForLoopWrapper v-if="deviceData?.devices">
+                <DeviceBox v-for="device in deviceData?.devices" :key="device.device_id" :device="device" />
+            </ForLoopWrapper>
+            <div>
+                <h3>Here is just debug info</h3>
+                <p @click="$store.commit('set3dView', true)">Click here for 3d view</p>
+                <h6 @click="logout">Logout</h6>
+            </div>
+        </DynamicGrid>
     </div>
-        <div v-if="gardenMeta?.weather_location_id" class="tomorrow" data-language="DE" data-unit-system="METRIC" data-skin="dark" data-widget-type="upcoming"
-            style="padding-bottom:22px; position:relative;" :data-location-id="gardenMeta.weather_location_id">
-            <a href="https://www.tomorrow.io/weather-api/" rel="nofollow noopener noreferrer" target="_blank"
-                style="position: absolute; bottom: 0; transform: translateX(-50%); left: 50%;">
-                <img alt="Powered by the Tomorrow.io Weather API"
-                    src="https://weather-website-client.tomorrow.io/img/powered-by.svg" width="250" height="18" />
-            </a>
-        </div>
 </template>
 
 <script>
 import RenderComponent from "@/components/Render/RenderComponent.vue";
-import DeviceList from "@/components/Devices/DeviceList.vue"
+import DynamicGrid from "@/layout/DynamicGridLayout.vue";
+import DeviceBox from "@/components/Devices/DeviceBox.vue"
+import ForLoopWrapper from "@/components/ForLoopWrapper.vue"
 
 import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
 
@@ -45,7 +55,9 @@ import { mapState } from "vuex";
 export default {
     components: {
         RenderComponent,
-        DeviceList
+        DynamicGrid,
+        DeviceBox,
+        ForLoopWrapper
     },
     methods: {
         logout() {

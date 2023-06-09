@@ -1,8 +1,8 @@
 <template>
-  <div class="device_wrapper" @click="this.$router.push(`device/${device.device_id}`)">
-    <p> {{ device.name }} </p>
-    <p> {{ device.value }} </p>
-    <p> {{ formatTime(device.date) }} </p>
+  <div class="grid_item device_wrapper" @click="this.$router.push(`device/${device.device_id}`)">
+    <h1> {{ device.name }} </h1>
+    <h2> {{ device.value }} %</h2>
+    <h5> {{ formatTime(device.date) }} </h5>
   </div>
 </template>
 
@@ -29,13 +29,14 @@ export default {
   &_wrapper {
     display: flex;
     flex-direction: column;
-    background-color: whitesmoke;
-    margin: 10px;
-    max-width: 250px;
-    border-radius: 10px;
-    box-shadow: 0 0 5px 5px #5f5e5e21;
-    padding: 5px;
+    justify-content: space-between;
+    background-color: #ffffff;
+    width: auto;
+    padding: 10px 0;
 
+    h1,
+    h2,
+    h5,
     p {
       text-align: center;
     }

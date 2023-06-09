@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="currentDevice">
+    <div v-if="currentDevice" class="data">
       <h1>Device: {{ currentDevice.name }}</h1>
       <h2>Current Value: {{ currentDevice.value }}</h2>
       <h3>ID: {{ currentDevice.device_id }}</h3>
@@ -15,21 +15,9 @@
           :value="`${new Date().toISOString().replace(/T[0-9:.Z]*/, 'T23:59:59')}`">
       </div>
       <button @click="fetchData()">Fetch Timeframe</button>
-      <div>
-        <h2>Calibrate</h2>
-        <div>
-          <p>Min</p>
-          <input type="number">
-        </div>
-        <div>
-          <p>Max</p>
-          <input type="number">
-        </div>
-      </div>
-      <button @click="fetchData()">Send Calibrate</button>
-      <div class="lineChart_wrapper">
-        <Line :data="data" :options="options" />
-      </div>
+    </div>
+    <div class="lineChart_wrapper">
+      <Line :data="data" :options="options" />
     </div>
   </div>
 </template>
@@ -168,7 +156,24 @@ export default {
 <style lang="scss">
 .lineChart {
   &_wrapper {
-    max-height: 500px;
+    height: 350px;
   }
+}
+
+@media screen and (orientation: landscape) {
+  .data {
+    display: none;
+  }
+
+  .lineChart {
+    &_wrapper {
+      height: 100vh;
+      width: 100vw;
+    }
+  }
+}
+
+@media screen and (orientation: portrait) {
+  /* portrait */
 }
 </style>
