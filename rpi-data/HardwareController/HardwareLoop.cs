@@ -16,7 +16,6 @@ namespace MainService.Hardware
         private static I2cDevice? _i2c_LCD_Device;
         private static Lcd2004? _LCD;
 
-
         public static void Start()
         {
             DeviceInit();
@@ -65,10 +64,6 @@ namespace MainService.Hardware
                         _i2c_ADC_Device.Read(readBuffer); // Read the conversion result
                         int rawValue = readBuffer[0]; // Set rawValue from ReadBuffer
                         int value = (int)Math.Round(((decimal)rawValue / 255 * 100));
-
-                        Console.WriteLine($"DEVICE: {device.DeviceName}");
-                        Console.WriteLine($"VALUE: {device.Value}");
-                        Console.WriteLine($"DEVICE: {rawValue}");
 
                         if (Math.Abs(device.LastSavedValue - value) > 1)
                         {

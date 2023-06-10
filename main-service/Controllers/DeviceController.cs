@@ -66,8 +66,7 @@ namespace MainService.Controllers
       if (response == null)
         return BadRequest();
 
-      ResponseDevices devices = _deviceService.GetDataLog(rpiid, apiKey, true)!;
-      _hubContext.Clients.All.SendCurrentDeviceData(devices);
+      _hubContext.Clients.All.SendCurrentDeviceData(response);
 
       return Ok(response);
     }
