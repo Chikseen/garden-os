@@ -1,7 +1,9 @@
 <template>
   <div class="grid_item device_wrapper" @click="this.$router.push(`device/${device.device_id}`)">
     <h1> {{ device.name }} </h1>
-    <h2> {{ device.value }} %</h2>
+    <h2> {{ device.corrected_value }} %
+      <h6> {{ device.value }} %</h6>
+    </h2>
     <h5> {{ formatTime(device.date) }} </h5>
   </div>
 </template>
