@@ -24,9 +24,7 @@ namespace MainService.Hardware
             {
                 try
                 {
-                    Console.WriteLine("111");
                     Loop();
-                    Console.WriteLine("222");
                 }
                 catch (System.Exception e)
                 {
@@ -63,7 +61,10 @@ namespace MainService.Hardware
                         _i2c_ADC_Device.WriteByte(device.Address); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
                         _i2c_ADC_Device.Read(readBuffer); // Read the conversion result
                         int rawValue = readBuffer[0]; // Set rawValue from ReadBuffer
-                        int value = (int)Math.Round(((decimal)rawValue / 255 * 100));
+
+                        float value = ((float)rawValue / 255.0f * 100.0f);
+                        Console.WriteLine(value);
+
 
                         if (Math.Abs(device.LastSavedValue - value) > 1)
                         {
@@ -83,7 +84,7 @@ namespace MainService.Hardware
             }
         }
 
-        private static void SaveDataToDatabase(RPIDevice device, int value)
+        private static void SaveDataToDatabase(RPIDevice device, float value)
         {
             RPIDevice? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.ID == device.ID);
             if (originalDevice == null)
@@ -108,7 +109,8 @@ namespace MainService.Hardware
                     "application/json"
                     );
 
-                Console.WriteLine(content);
+                Console.WriteLine("Save And Send Data");
+                Console.WriteLine(content.ToString());
                 var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
                 originalDevice.LastEntry = DateTime.Now;
                 originalDevice.LastSavedValue = value;
@@ -130,26 +132,26 @@ namespace MainService.Hardware
                 Console.WriteLine(e);
             }
 
-           /* // LCD
-            try
-            {
-                _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
-                _LCD = new Lcd2004(registerSelectPin: 0,
-                             enablePin: 2,
-                             dataPins: new int[] { 4, 5, 6, 7 },
-                             backlightPin: 3,
-                             backlightBrightness: 0.1f,
-                             readWritePin: 1,
-                             controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
-                _LCD.Clear();
-                _LCD.SetCursorPosition(0, 0);
-                _LCD.Write(MainHardware.rpiData?.GardenName!);
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine("Error while LCD Setup");
-                Console.WriteLine(e);
-            }*/
+            /* // LCD
+             try
+             {
+                 _i2c_LCD_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
+                 _LCD = new Lcd2004(registerSelectPin: 0,
+                              enablePin: 2,
+                              dataPins: new int[] { 4, 5, 6, 7 },
+                              backlightPin: 3,
+                              backlightBrightness: 0.1f,
+                              readWritePin: 1,
+                              controller: new GpioController(PinNumberingScheme.Logical, new Pcf8574(_i2c_LCD_Device)));
+                 _LCD.Clear();
+                 _LCD.SetCursorPosition(0, 0);
+                 _LCD.Write(MainHardware.rpiData?.GardenName!);
+             }
+             catch (System.Exception e)
+             {
+                 Console.WriteLine("Error while LCD Setup");
+                 Console.WriteLine(e);
+             }*/
         }
     }
 }

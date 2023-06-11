@@ -49,7 +49,7 @@ ChartJS.register(
 )
 
 import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
-import { formatToDateTime } from "@/dates.js"
+import { toUTCISOString } from "@/dates.js"
 import { mapState } from "vuex";
 
 export default {
@@ -59,8 +59,8 @@ export default {
   data() {
     return {
       timeframe: {
-        start: new Date().toISOString(),
-        end: new Date().toISOString()
+        start: null,
+        end: null
       },
       chartRawData: null,
       data: {
@@ -86,17 +86,17 @@ export default {
               autoSkip: true,
               maxTicksLimit: 21
             }
-          }
+          },
         },
       }
     }
   },
   methods: {
     setTimeFrameStart(e) {
-      this.timeframe.start = new Date(e.target.value).toISOString()
+      this.timeframe.start = toUTCISOString(new Date(e.target.value))
     },
     setTimeFrameEnd(e) {
-      this.timeframe.end = new Date(e.target.value).toISOString()
+      this.timeframe.end = toUTCISOString(new Date(e.target.value))
     },
     async fetchData() {
       try {
@@ -121,7 +121,7 @@ export default {
 
           if (!datasets.some(d => d.label == device.name)) {
             const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
-            const dataForDevice = devicesInLabel.map(d => { return { y: d.value, x: new Date(d.date) } })
+            const dataForDevice = devicesInLabel.map(d => { return { y: d.corrected_value, x: new Date(d.date) } })
             datasets.push({
               label: device.name,
               data: dataForDevice,
@@ -136,6 +136,13 @@ export default {
     }
   },
   async mounted() {
+    let dayStart = new Date().setUTCHours(0, 0, 0, 0)
+    let dayEnd = new Date().setUTCHours(23, 59, 59, 999)
+
+    // At this point i hink JS is high
+    this.timeframe.start = new Date(dayStart).toISOString()
+    this.timeframe.end = new Date(dayEnd).toISOString()
+
     this.$store.commit("setGardenMeta", await fetchGardenMeta())
     this.$store.commit("setDeviceData", await fetchDevices())
     this.fetchData()

@@ -62,7 +62,7 @@ public class RPIDevice
     [JsonPropertyName("value")]
     public float Value = 0;
 
-    public int LastSavedValue = -1;
+    public float LastSavedValue = -1;
     public DateTime LastEntry = DateTime.Now.AddYears(-1);
 
     public RPIDevice(Dictionary<String, String> data)
