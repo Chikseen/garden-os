@@ -90,7 +90,7 @@ namespace MainService.Hardware
                         Console.WriteLine(value);
 
                         float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
-                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
+                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.1f)
                         {
                             triggerUpdate = true;
                             SaveDataToDatabase(device, avgValue);

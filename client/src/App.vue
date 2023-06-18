@@ -40,4 +40,21 @@ p {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   min-height: 100vh;
 }
+
+.diagram {
+  &_liniar {
+    width: calc(100% - 30px);
+    height: 15px;
+    margin: 5px 15px;
+    background-color: rgb(190, 190, 190);
+    box-shadow: 0 0 2px 2px #69696921;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &_bar {
+      height: 100%;
+      background-color: aqua;
+    }
+  }
+}
 </style>

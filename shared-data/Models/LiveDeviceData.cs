@@ -64,10 +64,12 @@ public class ReponseDevice
     [JsonInclude]
     [JsonPropertyName("upper_limit")]
     public Int32 UpperLimit = 100;
-    
+
     [JsonInclude]
     [JsonPropertyName("lower_limit")]
     public Int32 LowerLimit = 0;
+
+    public Boolean IsInverted = false;
 
     public ReponseDevice(Dictionary<String, String> data)
     {
@@ -79,6 +81,11 @@ public class ReponseDevice
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
         this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
         this.LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
-        this.CorrectedValue =  ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+        this.IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
+
+        if (this.IsInverted)
+            this.CorrectedValue = 100 - ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+        else
+            this.CorrectedValue = ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
     }
 }

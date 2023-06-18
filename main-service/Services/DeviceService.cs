@@ -2,6 +2,7 @@
 using MainService.DB;
 using ExtensionMethods;
 using System.Globalization;
+using System.Linq;
 
 namespace Services.Device
 {
@@ -118,16 +119,19 @@ namespace Services.Device
 
             if (timeFrame == null)
                 query += "DISTINCT ON (DEVICE_ID) ";
+            else
+                query += "DISTINCT ON (DATE, DEVICES.ID)";
 
             query += @$"
-                    DATALOG.DATE,
+                    date_trunc('hour', DATALOG.DATE) as DATE,
                     VALUE,
                     DEVICES.ID AS DEVICE_ID,
                     DATALOG.ID,
                     DEVICES.NAME,
                     DEVICES.DISPLAY_ID,
                     DEVICES.UPPER_LIMIT,
-                    DEVICES.LOWER_LIMIT
+                    DEVICES.LOWER_LIMIT,
+                    DEVICES.ISINVERTED
                 FROM
                     DATALOG";
 

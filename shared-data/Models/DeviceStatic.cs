@@ -24,6 +24,7 @@ public static class DeviceStatic
     public readonly static String UserName = "user_name";
     public readonly static String GardenName = "garden_name";
     public readonly static String WeatherLocationId = "weather_location_id";
+    public readonly static String IsInverted = "isinverted";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {
@@ -65,6 +66,15 @@ public static class DeviceStatic
         if (dict.ContainsKey(key) && dict[key] != String.Empty)
         {
             return float.Parse(dict[key]);
+        }
+        return defaultValue;
+    }
+
+    public static Boolean GetBool(Dictionary<String, String> dict, String key, Boolean defaultValue = false)
+    {
+        if (dict.ContainsKey(key) && dict[key] != String.Empty)
+        {
+            return Boolean.Parse(dict[key]);
         }
         return defaultValue;
     }
