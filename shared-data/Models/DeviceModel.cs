@@ -44,7 +44,7 @@ public class RPIDevice
 
     [JsonInclude]
     [JsonPropertyName("address")]
-    public Byte Address = 0x00;
+    public int Address = 0;
 
     [JsonInclude]
     [JsonPropertyName("serial_id")]
@@ -72,7 +72,7 @@ public class RPIDevice
         this.LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
         this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
         this.DeviceTyp = DeviceStatic.GetString(data, DeviceStatic.DeviceTyp);
-        this.Address = DeviceStatic.GetByte(data, DeviceStatic.Address);
+        this.Address = DeviceStatic.GetInt(data, DeviceStatic.Address, 0);
         this.SerialId = DeviceStatic.GetInt(data, DeviceStatic.SerialId, 0);
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
         this.DataUpdateInterval = DeviceStatic.GetTimeSpan(data, DeviceStatic.DataUpdateInterval);

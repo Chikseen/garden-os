@@ -2,6 +2,7 @@ using System.Device.Gpio;
 using System.Device.I2c;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Iot.Device.Ads1115;
 using Iot.Device.CharacterLcd;
 using Iot.Device.Pcx857x;
 
@@ -10,11 +11,11 @@ namespace MainService.Hardware
     public static class MainLoop
     {
         public static bool _recivedStop = false;
-        public static int _loopDelay = 100;
-
-        private static I2cDevice? _i2c_ADC_Device;
+        public static int _loopDelay = 250;
         private static I2cDevice? _i2c_LCD_Device;
+        private static I2cDevice? _ADC;
         private static Lcd2004? _LCD;
+        private static Dictionary<String, List<float>> _Filter = new();
 
         public static void Start()
         {
@@ -55,25 +56,49 @@ namespace MainService.Hardware
             {
                 if (device.DeviceTyp == DeviceStatic.ADC7080)
                 {
-                    if (_i2c_ADC_Device != null)
-                    {
-                        byte[] readBuffer = new byte[1];
-                        _i2c_ADC_Device.WriteByte(device.Address); // Read Channel 0 -> Check ./ADC7830 Sheet and convert Hex To Binary
-                        _i2c_ADC_Device.Read(readBuffer); // Read the conversion result
-                        int rawValue = readBuffer[0]; // Set rawValue from ReadBuffer
-
-                        float value = ((float)rawValue / 255.0f * 100.0f);
-                        Console.WriteLine(value);
-
-
-                        if (Math.Abs(device.LastSavedValue - value) > 1)
+                    Ads1115? _ADS1115;
+                    short raw = 0;
+                    if (_ADC is not null)
+                        switch (device.Address)
                         {
-                            triggerUpdate = true;
-                            SaveDataToDatabase(device, value);
+                            case 0:
+                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN0, MeasuringRange.FS4096);
+                                raw = _ADS1115.ReadRaw();
+                                break;
+                            case 1:
+                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN1, MeasuringRange.FS4096);
+                                raw = _ADS1115.ReadRaw();
+                                break;
+                            case 2:
+                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN2, MeasuringRange.FS4096);
+                                raw = _ADS1115.ReadRaw();
+                                break;
+                            default:
+                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN3, MeasuringRange.FS4096);
+                                raw = _ADS1115.ReadRaw();
+                                break;
                         }
 
-                        device.Value = value;
+                    float value = ((float)raw / 26550.0f * 100.0f);
+
+                    _Filter[$"adc1{device.Address}"].Add(value);
+                    if (_Filter[$"adc1{device.Address}"].Count > 50)
+                    {
+                        _Filter[$"adc1{device.Address}"].RemoveAt(0);
+
+                        Console.Write($"raw: {device.Address} : ");
+                        Console.WriteLine(value);
+
+                        float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
+                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
+                        {
+                            triggerUpdate = true;
+                            SaveDataToDatabase(device, avgValue);
+                        }
                     }
+                    else
+                        Console.WriteLine("Filling");
+
                 }
             }
 
@@ -120,17 +145,24 @@ namespace MainService.Hardware
         private static void DeviceInit()
         {
 
-            // I 0
+            // ADC 1 (ADS1115)
             Console.WriteLine("Check Hardware Data");
+            Console.WriteLine("Setup ADS_1 and AIN");
             try
             {
-                _i2c_ADC_Device = I2cDevice.Create(new I2cConnectionSettings(1, 0x4B));
+                I2cConnectionSettings settings = new I2cConnectionSettings(1, (int)I2cAddress.GND);
+                _ADC = I2cDevice.Create(settings);
+                _Filter.Add($"adc10", new List<float>());
+                _Filter.Add($"adc11", new List<float>());
+                _Filter.Add($"adc12", new List<float>());
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("Error while ADC Setup");
                 Console.WriteLine(e);
+                throw;
             }
+            Console.WriteLine("en");
+
 
             /* // LCD
              try

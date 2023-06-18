@@ -14,7 +14,7 @@ start_main()
 {
     echo "Starting MainService"
     ssh $host "pkill -f rpi-data"
-    ssh $host "cd ./garden-os/rpi-data && ./rpi-data"
+    ssh $host "cd ./garden-os/rpi-data && ./rpi-data &"
 }
 
 start_docker()
