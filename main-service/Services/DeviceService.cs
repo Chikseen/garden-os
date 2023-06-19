@@ -120,10 +120,12 @@ namespace Services.Device
             if (timeFrame == null)
                 query += "DISTINCT ON (DEVICE_ID) ";
             else
+            {
                 query += "DISTINCT ON (DATE, DEVICES.ID)";
+                query += "date_trunc('hour', DATALOG.DATE) as DATE,";
+            }
 
             query += @$"
-                    date_trunc('hour', DATALOG.DATE) as DATE,
                     VALUE,
                     DEVICES.ID AS DEVICE_ID,
                     DATALOG.ID,

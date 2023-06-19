@@ -53,7 +53,7 @@ p {
 
     &_bar {
       height: 100%;
-      background-color: aqua;
+      background-color: #03a9f4;
     }
   }
 }
