@@ -16,7 +16,7 @@ var app = builder.Build();
 
 app.UseCors(builder =>
     builder
-        .WithOrigins("https://gardenos.drunc.net", "http://localhost:8080")
+        .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()
