@@ -143,6 +143,7 @@ export default {
           }
         });
         this.data = { labels: labels, datasets: datasets }
+        console.log(this.data)
       } catch (error) {
         console.log(error)
       }

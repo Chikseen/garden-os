@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import RenderComponent from "@/components/Render/RenderComponent.vue";
 import DynamicGrid from "@/layout/DynamicGridLayout.vue";
 import DeviceBox from "@/components/Devices/DeviceBox.vue"
 import ForLoopWrapper from "@/components/ForLoopWrapper.vue"
@@ -32,7 +31,6 @@ import { mapState } from "vuex";
 
 export default {
     components: {
-        RenderComponent,
         DynamicGrid,
         DeviceBox,
         ForLoopWrapper,

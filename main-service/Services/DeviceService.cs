@@ -109,6 +109,11 @@ namespace Services.Device
                 return null;
 
             ResponseDevices devices = new(result);
+
+            if (DateTime.UtcNow < timeframe.End)
+                devices.Devices.AddRange(GetDataLog(id, ApiKey, true).Devices);
+
+            devices.Devices = devices.Devices.OrderBy(d => d.date).ToList(); // sort each group
             return devices;
         }
 
