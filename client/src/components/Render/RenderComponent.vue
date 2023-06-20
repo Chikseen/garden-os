@@ -76,7 +76,6 @@ export default {
           },
         });
         const res = await initData.json()
-        console.log(res)
         this.mapData = JSON.parse(res.json);
 
       } catch (error) {

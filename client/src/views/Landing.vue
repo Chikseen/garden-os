@@ -44,7 +44,6 @@ export default {
                 },
             });
             const res = await json.json();
-            console.log(res);
             if (res == true) {
                 localStorage.setItem("id", this.AuthId.toString());
                 localStorage.setItem("apiToken", this.AuthApiKey.toString());

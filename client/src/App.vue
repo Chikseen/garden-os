@@ -9,7 +9,6 @@ export default {
   name: "App",
   created() {
     this.emitter.on("HubDeviceData", (payload) => {
-      console.log(payload)
       this.$store.commit('setDeviceData', payload)
     });
   },

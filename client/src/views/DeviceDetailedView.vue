@@ -1,24 +1,22 @@
 <template>
-  <div>
-    <div v-if="currentDevice" class="data">
-      <h1>Device: {{ currentDevice.name }}</h1>
-      <h2>Current Value: {{ currentDevice.value }}</h2>
-      <h3>ID: {{ currentDevice.device_id }}</h3>
-      <div>
-        <p>Start</p>
-        <input type="datetime-local" @change="setTimeFrameStart"
-          :value="`${new Date().toISOString().replace(/T[0-9:.Z]*/, 'T00:00:00')}`">
-      </div>
-      <div>
-        <p>End</p>
-        <input type="datetime-local" @change="setTimeFrameEnd"
-          :value="`${new Date().toISOString().replace(/T[0-9:.Z]*/, 'T23:59:59')}`">
+  <div v-if="currentDevice" class="detailed_wrapper">
+    <DeviceBox :device="getDeviceById()" />
+    <div class="detailed_timeframe_wrapper">
+      <div class="detailed_timeframe">
+        <div>
+          <p>Start</p>
+          <input type="datetime-local" @change="setTimeFrameStart" :value="timeframe.start.replace(/Z|\+[0-9:]*/, '')">
+        </div>
+        <div>
+          <p>End</p>
+          <input type="datetime-local" @change="setTimeFrameEnd" :value="timeframe.end.replace(/Z|\+[0-9:]*/, '')">
+        </div>
       </div>
       <button @click="fetchData()">Fetch Timeframe</button>
     </div>
-    <div class="lineChart_wrapper">
-      <Line :data="data" :options="options" />
-    </div>
+  </div>
+  <div class="lineChart_wrapper">
+    <Line :data="data" :options="options" />
   </div>
 </template>
 
@@ -36,6 +34,7 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import 'chartjs-adapter-moment';
+import DeviceBox from "@/components/Devices/DeviceBox.vue"
 
 ChartJS.register(
   CategoryScale,
@@ -54,7 +53,8 @@ import { mapState } from "vuex";
 
 export default {
   components: {
-    Line
+    Line,
+    DeviceBox
   },
   data() {
     return {
@@ -72,31 +72,43 @@ export default {
         maintainAspectRatio: false,
         plugins: {
           title: {
-            text: 'Chart.js Time Scale',
-            display: true
+            display: false
           }
         },
         scales: {
           x: {
             type: "time",
             time: {
-              minUnit: "day"
+              minUnit: "hour"
             },
             ticks: {
               autoSkip: true,
-              maxTicksLimit: 21
+              maxTicksLimit: 50
             }
           },
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
         },
+        elements: {
+          line: {
+            tension: 0.3
+          }
+        }
       }
     }
   },
   methods: {
     setTimeFrameStart(e) {
+      console.log("changed")
       this.timeframe.start = toUTCISOString(new Date(e.target.value))
     },
     setTimeFrameEnd(e) {
       this.timeframe.end = toUTCISOString(new Date(e.target.value))
+    },
+    getDeviceById() {
+      return this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
     },
     async fetchData() {
       try {
@@ -116,15 +128,16 @@ export default {
         let datasets = []
 
         chartData.devices.forEach(device => {
-          if (!labels.includes(device.date))
+          if (!labels.includes(device.date)) {
             labels.push(device.date)
-
+          }
           if (!datasets.some(d => d.label == device.name)) {
             const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
             const dataForDevice = devicesInLabel.map(d => { return { y: d.corrected_value, x: new Date(d.date) } })
             datasets.push({
               label: device.name,
               data: dataForDevice,
+              hidden: this.$route.params.id != device.device_id,
               backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
             })
           }
@@ -134,18 +147,6 @@ export default {
         console.log(error)
       }
     }
-  },
-  async mounted() {
-    let dayStart = new Date().setUTCHours(0, 0, 0, 0)
-    let dayEnd = new Date().setUTCHours(23, 59, 59, 999)
-
-    // At this point i hink JS is high
-    this.timeframe.start = new Date(dayStart).toISOString()
-    this.timeframe.end = new Date(dayEnd).toISOString()
-
-    this.$store.commit("setGardenMeta", await fetchGardenMeta())
-    this.$store.commit("setDeviceData", await fetchDevices())
-    this.fetchData()
   },
   computed: {
     currentDevice() {
@@ -157,6 +158,19 @@ export default {
       deviceData: (state) => state.deviceData,
     }),
   },
+  created() {
+    let dayStart = new Date().setUTCHours(0, 0, 0, 0)
+    let dayEnd = new Date().setUTCHours(23, 59, 0, 0)
+
+    // At this point i hink JS is high
+    this.timeframe.start = new Date(dayStart).toISOString()
+    this.timeframe.end = new Date(dayEnd).toISOString()
+  },
+  async mounted() {
+    this.$store.commit("setGardenMeta", await fetchGardenMeta())
+    this.$store.commit("setDeviceData", await fetchDevices())
+    this.fetchData()
+  },
 }
 </script>
 
@@ -167,9 +181,38 @@ export default {
   }
 }
 
+.detailed {
+  &_wrapper {
+    max-width: 750px;
+    width: calc(100% - 20px);
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  &_timeframe {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+
+    &_wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 10px;
+    }
+  }
+}
+
+.tomorrow {
+  max-width: 750px;
+}
+
+/*
 @media screen and (orientation: landscape) {
-  .data {
-    display: none;
+  .detailed {
+    &_wrapper {
+      display: none;
+    }
   }
 
   .lineChart {
@@ -178,9 +221,5 @@ export default {
       width: 100vw;
     }
   }
-}
-
-@media screen and (orientation: portrait) {
-  /* portrait */
-}
+}*/
 </style>
