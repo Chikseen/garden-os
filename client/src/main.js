@@ -6,7 +6,6 @@ import store from "./store";
 import Hub from "./hub";
 import mitt from "mitt";
 import { TroisJSVuePlugin } from "troisjs";
-import './registerServiceWorker'
 
 const app = createApp(App);
 

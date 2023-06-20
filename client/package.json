@@ -7,7 +7,6 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@dreamonkey/vue-signalr": "^1.0.1",
     "@microsoft/signalr": "^5.0.17",
     "chart.js": "^4.3.0",
     "chartjs-adapter-moment": "^1.0.1",
