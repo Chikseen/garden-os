@@ -5,7 +5,7 @@ public static class DeviceStatic
     public readonly static String RawValue = "rawvalue";
     public readonly static String Value = "value";
     public readonly static String LogDate = "logdate";
-    public readonly static String Date = "date";
+    public readonly static String Date = "upload_date";
     public readonly static String DeviceName = "device_name";
     public readonly static String UpperLimit = "upper_limit";
     public readonly static String LowerLimit = "lower_limit";

@@ -65,7 +65,7 @@ namespace Services.Device
         {
             String query = @$"
                 SET TIMEZONE = 'Europe/Berlin';
-                INSERT INTO DATALOG (ID, VALUE, DATE, DEVICE_ID) 
+                INSERT INTO DATALOG (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
                 VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.Device_ID}')".Clean();
 
             RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
@@ -119,34 +119,47 @@ namespace Services.Device
 
         private String BuildDataLogQuery(String ID, String ApiKey, TimeFrame? timeFrame = null, Boolean isUser = false)
         {
-
             String query = "SELECT ";
 
             if (timeFrame == null)
                 query += "DISTINCT ON (DEVICE_ID) ";
-            else
-            {
-                query += "DISTINCT ON (DATE, DEVICES.ID)";
-                query += "date_trunc('hour', DATALOG.DATE) as DATE,";
-            }
 
-            query += @$"
-                    VALUE,
-                    DEVICES.ID AS DEVICE_ID,
-                    DATALOG.ID,
+            if (timeFrame == null)
+                query += " DATALOG.UPLOAD_DATE AS UPLOAD_DATE, ";
+            else
+                query += " DATALOG.DATE AS UPLOAD_DATE, ";
+
+            query += @"
+                    DATALOG.device_id AS DEVICE_ID,
+                    DATALOG.VALUE AS VALUE,
                     DEVICES.NAME,
                     DEVICES.DISPLAY_ID,
                     DEVICES.UPPER_LIMIT,
                     DEVICES.LOWER_LIMIT,
                     DEVICES.ISINVERTED
-                FROM
-                    DATALOG";
+                FROM ";
+
+            if (timeFrame == null)
+                query += @"DATALOG";
+            else
+                query += @"	
+                    (
+                        SELECT
+                            date_trunc('hour', UPLOAD_DATE) AS DATE,
+                            AVG (value) AS VALUE,
+                            DEVICE_ID
+                        FROM
+                            DATALOG
+                        GROUP BY
+                            DATE,
+                            DEVICE_ID
+                    ) AS DATALOG";
 
             if (isUser)
                 // JoinUSer
                 query += @$"
                     JOIN DEVICES
-                        ON DEVICES.ID = DATALOG.DEVICE_ID JOIN USERS
+                        ON DEVICES.ID = DEVICE_ID JOIN USERS
                         ON USERS.ID = '{ID}'
                         AND USERS.API_KEY = '{ApiKey}'
                         AND USERS.GARDEN_ID = DEVICES.GARDEN_ID";
@@ -154,14 +167,14 @@ namespace Services.Device
             else
                 query += @$"
                     JOIN DEVICES
-                        ON DEVICES.ID = DATALOG.DEVICE_ID JOIN RPIS
+                        ON DEVICES.ID = DEVICE_ID JOIN RPIS
                         ON RPIS.ID = '{ID}'
                         AND RPIS.API_KEY = '{ApiKey}'
                         AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID";
 
             if (timeFrame != null)
                 query += @$"
-                      AND DATALOG.DATE 
+                      AND DATALOG.DATE
                         BETWEEN '{timeFrame.Start.ConvertToPGString()}'
                         AND '{timeFrame.End.ConvertToPGString()}'";
 
@@ -169,10 +182,10 @@ namespace Services.Device
                 query += @$"
                     ORDER BY
                         DEVICE_ID,
-                        DATE DESC; ";
+                        UPLOAD_DATE DESC; ";
             else
                 query += @$"
-                    ORDER BY DATE DESC; ";
+                    ORDER BY UPLOAD_DATE DESC; ";
 
             String cleandQuery = query.Clean();
             return cleandQuery;
