@@ -2,6 +2,7 @@
     <div class="landing_wrapper">
         <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
         <span v-if="!registerMode" class="landing_login_wrapper">
+            <h4 v-if="showErrorMessage" class="failedText">Invalid Login</h4>
             <form class="landing_login" onsubmit="checkUser();">
                 <input type="text" @change="insertID" placeholder="User id" :value="AuthId" />
                 <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey" />
@@ -10,7 +11,7 @@
             <p @click="registerMode = !registerMode">Or register a new account</p>
         </span>
         <span v-else class="landing_login_wrapper">
-            <h3 v-if="showErrorMessage" class="failedText">Register attempt failed</h3>
+            <h4 v-if="showErrorMessage" class="failedText">Register attempt failed</h4>
             <div class="landing_login">
                 <input type="text" @change="insertUserName" placeholder="User name" />
                 <input type="text" @change="insertGardenId" placeholder="Garden id" />
@@ -55,6 +56,8 @@ export default {
                 },
             });
             const res = await json.json();
+            if (res.status > 200)
+                this.showErrorMessage = true
             if (res == true) {
                 localStorage.setItem("id", this.AuthId.toString());
                 localStorage.setItem("apiToken", this.AuthApiKey.toString());
