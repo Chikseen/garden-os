@@ -22,9 +22,11 @@ public static class DeviceStatic
     public readonly static String ID = "id";
     public readonly static String JSON = "json";
     public readonly static String UserName = "user_name";
+    public readonly static String UserId = "user_id";
     public readonly static String GardenName = "garden_name";
     public readonly static String WeatherLocationId = "weather_location_id";
     public readonly static String IsInverted = "isinverted";
+    public readonly static String ApiKey = "api_key";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

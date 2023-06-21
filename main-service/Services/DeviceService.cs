@@ -92,7 +92,9 @@ namespace Services.Device
 
         public ResponseDevices GetDataLog(String id, String ApiKey, Boolean isUser = false)
         {
-            String query = BuildDataLogQuery(id, ApiKey, null, isUser);
+            String gardenID = GetGardenID(id, isUser);
+
+            String query = BuildDataLogQuery(id, ApiKey, gardenID, null, isUser);
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             ResponseDevices devices = new(result);
@@ -101,8 +103,11 @@ namespace Services.Device
 
         public ResponseDevices? GetDataLog(String id, String ApiKey, TimeFrame timeframe, Boolean isUser = false)
         {
+            String gardenID = GetGardenID(id, isUser);
+            if (String.IsNullOrEmpty(gardenID))
+                return null;
 
-            String query = BuildDataLogQuery(id, ApiKey, timeframe, isUser);
+            String query = BuildDataLogQuery(id, ApiKey, gardenID, timeframe, isUser);
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             if (result.Count == 0)
@@ -117,7 +122,7 @@ namespace Services.Device
             return devices;
         }
 
-        private String BuildDataLogQuery(String ID, String ApiKey, TimeFrame? timeFrame = null, Boolean isUser = false)
+        private String BuildDataLogQuery(String id, String apiKey, String gardenID, TimeFrame? timeFrame = null, Boolean isUser = false)
         {
             String query = "SELECT ";
 
@@ -140,16 +145,16 @@ namespace Services.Device
                 FROM ";
 
             if (timeFrame == null)
-                query += @"DATALOG";
+                query += @$"DATALOG{gardenID} AS DATALOG";
             else
-                query += @"	
+                query += @$"	
                     (
                         SELECT
                             date_trunc('hour', UPLOAD_DATE) AS DATE,
                             AVG (value) AS VALUE,
                             DEVICE_ID
                         FROM
-                            DATALOG
+                           DATALOG{gardenID}
                         GROUP BY
                             DATE,
                             DEVICE_ID
@@ -160,16 +165,16 @@ namespace Services.Device
                 query += @$"
                     JOIN DEVICES
                         ON DEVICES.ID = DEVICE_ID JOIN USERS
-                        ON USERS.ID = '{ID}'
-                        AND USERS.API_KEY = '{ApiKey}'
+                        ON USERS.ID = '{id}'
+                        AND USERS.API_KEY = '{apiKey}'
                         AND USERS.GARDEN_ID = DEVICES.GARDEN_ID";
 
             else
                 query += @$"
                     JOIN DEVICES
                         ON DEVICES.ID = DEVICE_ID JOIN RPIS
-                        ON RPIS.ID = '{ID}'
-                        AND RPIS.API_KEY = '{ApiKey}'
+                        ON RPIS.ID = '{id}'
+                        AND RPIS.API_KEY = '{apiKey}'
                         AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID";
 
             if (timeFrame != null)
@@ -189,6 +194,21 @@ namespace Services.Device
 
             String cleandQuery = query.Clean();
             return cleandQuery;
+        }
+
+        public String GetGardenID(String id, Boolean isUser)
+        {
+            String query = String.Empty;
+            if (isUser)
+                query = $"SELECT GARDEN_ID FROM USERS WHERE ID = '{id}'";
+            else
+                query = $"SELECT GARDEN_ID FROM RPIS WHERE ID = '{id}'";
+
+            List<Dictionary<String, String>> result = MainDB.query(query);
+            Dictionary<String, String>? entry = result.FirstOrDefault();
+            if (entry is not null)
+                return entry["garden_id"].Replace("-", "");
+            else return String.Empty;
         }
     }
 }

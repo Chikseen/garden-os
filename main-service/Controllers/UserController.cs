@@ -79,5 +79,21 @@ namespace MainService.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("register")]
+        public ActionResult<GardenResponseModel> CreateNewUser(CreateNewuserRequest garden)
+        {
+            // Prevent Spam
+            Thread.Sleep(1000);
+            try
+            {
+                CreateNewUserResponse response = _userService.CreateNewUser(garden);
+                return Ok(response);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

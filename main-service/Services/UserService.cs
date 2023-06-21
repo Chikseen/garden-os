@@ -6,6 +6,8 @@ namespace Services.User
 {
     public class UserService
     {
+        private static Random random = new Random();
+
         public String? GetApiKey(HttpRequest Request)
         {
             Dictionary<string, string> requestHeaders = new();
@@ -53,6 +55,29 @@ namespace Services.User
                 return null;
 
             return new GardenResponseModel(result);
+        }
+
+        public CreateNewUserResponse CreateNewUser(CreateNewuserRequest garden)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            String apiKey = new string(Enumerable.Repeat(chars, 128)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            String query = @$"
+                INSERT INTO USERS (
+                    ID,
+                    NAME,
+                    API_KEY,
+                    GARDEN_ID
+                ) VALUES (
+                    GEN_RANDOM_UUID(),
+                    '{garden.UserName}',
+                    '{apiKey}',
+                    '{garden.GardenId}'
+                )
+                RETURNING ID AS USER_ID, API_KEY;".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+            return new CreateNewUserResponse(result);
         }
     }
 }
