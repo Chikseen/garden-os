@@ -2,11 +2,11 @@
     <div class="landing_wrapper">
         <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
         <span v-if="!registerMode" class="landing_login_wrapper">
-            <form class="landing_login" onsubmit="return checkUser();">
+            <form class="landing_login" onsubmit="checkUser();">
                 <input type="text" @change="insertID" placeholder="User id" :value="AuthId" />
                 <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey" />
+                <button>Login</button>
             </form>
-            <button @click="checkUser">Login</button>
             <p @click="registerMode = !registerMode">Or register a new account</p>
         </span>
         <span v-else class="landing_login_wrapper">
