@@ -3,10 +3,17 @@ module.exports = {
 	pwa: {
 		name: "GardenOS",
 		themeColor: "#f7f7f7",
+		background_color: "#eae3d1",
 		msTileColor: "#000000",
 		appleMobileWebAppCapable: "yes",
 		appleMobileWebAppStatusBarStyle: "black",
-
-		// configure the workbox plugin
+		icons: [
+			{
+				src: "./public/img/icons/apple-touch-icon.png",
+				sizes: "196x196",
+				type: "image/png",
+				purpose: "maskable", // <-- New property value `"maskable"`
+			},
+		],
 	},
 };
