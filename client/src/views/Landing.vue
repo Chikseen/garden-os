@@ -5,8 +5,8 @@
             <form class="landing_login" onsubmit="return checkUser();">
                 <input type="text" @change="insertID" placeholder="User id" :value="AuthId" />
                 <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey" />
-                <button @click="checkUser">Login</button>
             </form>
+            <button @click="checkUser">Login</button>
             <p @click="registerMode = !registerMode">Or register a new account</p>
         </span>
         <span v-else class="landing_login_wrapper">
