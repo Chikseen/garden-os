@@ -3,10 +3,11 @@
         <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
         <span v-if="!registerMode" class="landing_login_wrapper">
             <h4 v-if="showErrorMessage" class="failedText">Invalid Login</h4>
-            <form class="landing_login" onsubmit="checkUser();">
-                <input type="text" @change="insertID" placeholder="User id" :value="AuthId" />
-                <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey" />
-                <button>Login</button>
+            <form class="landing_login" onsubmit="return false">
+                <input type="text" @change="insertID" placeholder="User id" :value="AuthId" autocomplete="username" />
+                <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey"
+                    autocomplete="current-password" />
+                <ButtonComponent @clicked="checkUser" :isLoading="isLoading" type="submit"> Login </ButtonComponent>
             </form>
             <p @click="registerMode = !registerMode">Or register a new account</p>
         </span>
@@ -16,14 +17,19 @@
                 <input type="text" @change="insertUserName" placeholder="User name" />
                 <input type="text" @change="insertGardenId" placeholder="Garden id" />
             </div>
-            <button @click="registerAccount">Register</button>
+            <ButtonComponent @clicked="registerAccount" :isLoading="isLoading">Register</ButtonComponent>
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
     </div>
 </template>
 
 <script>
+import ButtonComponent from "@/components/ui/ButtonComponent.vue"
+
 export default {
+    components: {
+        ButtonComponent
+    },
     data: () => {
         return {
             values: null,
@@ -32,7 +38,9 @@ export default {
             registerMode: false,
             gardenId: "",
             userName: "",
-            showErrorMessage: false
+            showErrorMessage: false,
+            isLoading: false,
+            t: ""
         };
     },
     methods: {
@@ -49,23 +57,28 @@ export default {
             this.userName = e.target.value;
         },
         async checkUser() {
-            const json = await fetch(`${process.env.VUE_APP_PI_HOST}user/${this.AuthId}/validate`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${this.AuthApiKey}`,
-                },
-            });
-            const res = await json.json();
-            if (res.status > 200)
-                this.showErrorMessage = true
-            if (res == true) {
-                localStorage.setItem("id", this.AuthId.toString());
-                localStorage.setItem("apiToken", this.AuthApiKey.toString());
-                this.$store.commit("setAuthState", true);
-            } else this.$store.commit("setAuthState", false);
+            this.isLoading = true;
+            if (this.AuthId?.length > 0) {
+                const json = await fetch(`${process.env.VUE_APP_PI_HOST}user/${this.AuthId}/validate`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${this.AuthApiKey}`,
+                    },
+                });
+                const res = await json.json();
+                if (res.status > 200)
+                    this.showErrorMessage = true
+                if (res == true) {
+                    localStorage.setItem("id", this.AuthId.toString());
+                    localStorage.setItem("apiToken", this.AuthApiKey.toString());
+                    this.$store.commit("setAuthState", true);
+                } else this.$store.commit("setAuthState", false);
+            }
+            this.isLoading = false;
         },
         async registerAccount() {
             this.showErrorMessage = false
+            this.isLoading = true;
             const json = await fetch(`${process.env.VUE_APP_PI_HOST}user/register`, {
                 method: "POST",
                 body: JSON.stringify({ garden_id: this.gardenId, user_name: this.userName }),
@@ -83,12 +96,7 @@ export default {
             }
 
             console.log(res)
-        },
-        async ctc(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-            } catch (e) {
-            }
+            this.isLoading = false;
         }
     },
     async mounted() {
@@ -135,16 +143,11 @@ export default {
             color: black;
         }
 
-        button,
         input {
             border-radius: 5px;
             height: 2rem;
             border: none;
             box-shadow: 0 0 2px 2px #69696921;
-        }
-
-        button {
-            background-color: #72db76;
         }
     }
 }
