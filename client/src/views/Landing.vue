@@ -2,22 +2,24 @@
     <div class="landing_wrapper">
         <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
         <span v-if="!registerMode" class="landing_login_wrapper">
-            <h4 v-if="showErrorMessage" class="failedText">Invalid Login</h4>
+            <h4 v-if="showErrorMessage" class="failedText">Invalid login</h4>
             <form class="landing_login" onsubmit="return false">
-                <input type="text" @change="insertID" placeholder="User id" :value="AuthId" autocomplete="username" />
-                <input type="password" @change="insertApiKey" placeholder="API key" :value="AuthApiKey"
-                    autocomplete="current-password" />
+                <input type="text" @change="(e) => AuthId = e.target.value" placeholder="User id" :value="AuthId"
+                    autocomplete="username" />
+                <input type="password" @change="(e) => AuthApiKey = e.target.value" placeholder="API key"
+                    :value="AuthApiKey" autocomplete="current-password" />
                 <ButtonComponent @clicked="checkUser" :isLoading="isLoading" type="submit"> Login </ButtonComponent>
             </form>
             <p @click="registerMode = !registerMode">Or register a new account</p>
         </span>
         <span v-else class="landing_login_wrapper">
             <h4 v-if="showErrorMessage" class="failedText">Register attempt failed</h4>
-            <div class="landing_login">
-                <input type="text" @change="insertUserName" placeholder="User name" />
-                <input type="text" @change="insertGardenId" placeholder="Garden id" />
-            </div>
-            <ButtonComponent @clicked="registerAccount" :isLoading="isLoading">Register</ButtonComponent>
+            <form class="landing_login" onsubmit="return false">
+                <input type="text" @change="(e) => userName = e.target.value" placeholder="User name" />
+                <input type="text" @change="(e) => gardenId = e.target.value" placeholder="Garden id"
+                    autocomplete="gardenID" />
+                <ButtonComponent @clicked="registerAccount" :isLoading="isLoading">Register</ButtonComponent>
+            </form>
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
     </div>
@@ -44,18 +46,6 @@ export default {
         };
     },
     methods: {
-        insertID(e) {
-            this.AuthId = e.target.value;
-        },
-        insertApiKey(e) {
-            this.AuthApiKey = e.target.value;
-        },
-        insertGardenId(e) {
-            this.gardenId = e.target.value;
-        },
-        insertUserName(e) {
-            this.userName = e.target.value;
-        },
         async checkUser() {
             this.isLoading = true;
             if (this.AuthId?.length > 0) {
@@ -72,7 +62,10 @@ export default {
                     localStorage.setItem("id", this.AuthId.toString());
                     localStorage.setItem("apiToken", this.AuthApiKey.toString());
                     this.$store.commit("setAuthState", true);
-                } else this.$store.commit("setAuthState", false);
+                } else {
+                    this.$store.commit("setAuthState", false);
+                    this.showErrorMessage = true
+                }
             }
             this.isLoading = false;
         },
