@@ -22,9 +22,6 @@
             </form>
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
-        <p>{{ t }}</p>
-        <p>{{ t1 }}</p>
-        <p>{{ t3 }}</p>
     </div>
 </template>
 
@@ -45,9 +42,6 @@ export default {
             userName: "",
             showErrorMessage: false,
             isLoading: false,
-            t: "",
-            t1: "",
-            t3: "",
         };
     },
     methods: {
@@ -85,32 +79,10 @@ export default {
                     'Content-Type': 'application/json'
                 },
             });
-            this.t3 = {
-                method: "POST",
-                body: JSON.stringify({ garden_id: this.gardenId, user_name: this.userName }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }
 
             const res = await json.json();
-
-            /*        const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
-                      method: "POST",
-                      body: JSON.stringify(this.timeframe),
-                      headers: {
-                        'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                      },
-                    });
-                    const chartData = await initData.json()*/
-
-            this.t = res
             if (res.status > 200) {
                 this.showErrorMessage = true
-                this.t1 = res
             }
             else {
                 this.registerMode = false

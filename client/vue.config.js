@@ -3,9 +3,9 @@ module.exports = {
 	pwa: {
 		name: "GardenOS",
 		themeColor: "#f7f7f7",
-		background_color: "red",
+		background_color: "#f7f7f7",
 		appleMobileWebAppCapable: "yes",
-		appleMobileWebAppStatusBarStyle: "black",
+		appleMobileWebAppStatusBarStyle: "#f7f7f7",
 		icons: [
 			{
 				src: "img/icons/apple-touch-icon-60x60.png",
