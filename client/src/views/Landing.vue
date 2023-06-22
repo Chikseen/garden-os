@@ -96,7 +96,7 @@ export default {
                     });
                     const chartData = await initData.json()*/
 
-            this.t = json
+            this.t = res
             if (res.status > 200) {
                 this.showErrorMessage = true
                 this.t1 = res
