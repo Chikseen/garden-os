@@ -80,8 +80,11 @@ export default {
                 },
             });
             const res = await json.json();
-            if (res.status > 200)
+            this.t = json
+            if (res.status > 200) {
                 this.showErrorMessage = true
+                this.t += res
+            }
             else {
                 this.registerMode = false
                 this.AuthId = res.user_id
