@@ -76,7 +76,8 @@ export default {
                 method: "POST",
                 body: JSON.stringify({ garden_id: this.gardenId, user_name: this.userName }),
                 headers: {
-                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
             });
             const res = await json.json();
