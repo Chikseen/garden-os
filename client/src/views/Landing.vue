@@ -23,6 +23,7 @@
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
         <p>{{ t }}</p>
+        <p>{{ t1 }}</p>
     </div>
 </template>
 
@@ -43,7 +44,8 @@ export default {
             userName: "",
             showErrorMessage: false,
             isLoading: false,
-            t: ""
+            t: "",
+            t1: "",
         };
     },
     methods: {
@@ -97,7 +99,7 @@ export default {
             this.t = json
             if (res.status > 200) {
                 this.showErrorMessage = true
-                this.t += res
+                this.t1 = res
             }
             else {
                 this.registerMode = false
