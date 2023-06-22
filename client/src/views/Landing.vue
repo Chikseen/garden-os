@@ -24,6 +24,7 @@
         </span>
         <p>{{ t }}</p>
         <p>{{ t1 }}</p>
+        <p>{{ t3 }}</p>
     </div>
 </template>
 
@@ -46,6 +47,7 @@ export default {
             isLoading: false,
             t: "",
             t1: "",
+            t3: "",
         };
     },
     methods: {
@@ -83,6 +85,15 @@ export default {
                     'Content-Type': 'application/json'
                 },
             });
+            this.t3 = {
+                method: "POST",
+                body: JSON.stringify({ garden_id: this.gardenId, user_name: this.userName }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }
+
             const res = await json.json();
 
             /*        const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
@@ -106,8 +117,6 @@ export default {
                 this.AuthId = res.user_id
                 this.AuthApiKey = res.api_key
             }
-
-            console.log(res)
             this.isLoading = false;
         }
     },
