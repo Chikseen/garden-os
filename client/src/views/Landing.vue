@@ -22,6 +22,7 @@
             </form>
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
+        <p>{{ t }}</p>
     </div>
 </template>
 
@@ -81,6 +82,18 @@ export default {
                 },
             });
             const res = await json.json();
+
+            /*        const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
+                      method: "POST",
+                      body: JSON.stringify(this.timeframe),
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      },
+                    });
+                    const chartData = await initData.json()*/
+
             this.t = json
             if (res.status > 200) {
                 this.showErrorMessage = true

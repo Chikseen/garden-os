@@ -63,9 +63,11 @@ namespace Services.Device
 
         public ResponseDevices? SaveDataToDB(SaveDataRequest data, String id, String ApiKey)
         {
+            String gardenID = GetGardenID(id, false);
+
             String query = @$"
                 SET TIMEZONE = 'Europe/Berlin';
-                INSERT INTO DATALOG (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
+                INSERT INTO DATALOG{gardenID} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
                 VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.Device_ID}')".Clean();
 
             RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
