@@ -1,16 +1,48 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="!authPending">
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import Keycloak from "keycloak-js"
+
 export default {
   name: "App",
+  data() {
+    return {
+      authPending: true
+    }
+  },
   created() {
     this.emitter.on("HubDeviceData", (payload) => {
       this.$store.commit('setDeviceData', payload)
     });
+  },
+  async beforeMount() {
+    const keycloak = new Keycloak({
+      url: "https://auth.drunc.net",
+      realm: "GardenOS-DEV",
+      clientId: "test-client",
+
+    });
+    await keycloak
+      .init({
+        onLoad: 'login-required',
+        redirectUri: "http://localhost:8080/login",
+      })
+
+    console.log('Auth', keycloak.authenticated);
+    if (keycloak.authenticated) {
+      console.log('Auth succed', keycloak);
+      localStorage.setItem("accessToken", keycloak.token)
+      this.$store.commit("setKeycloak", keycloak)
+    } else {
+      console.log('User not authenticated!');
+    }
+
+    console.log("kc: ", keycloak)
+    this.authPending = false
   },
 };
 </script>

@@ -10,6 +10,7 @@
     "@microsoft/signalr": "^5.0.17",
     "chart.js": "^4.3.0",
     "chartjs-adapter-moment": "^1.0.1",
+    "keycloak-js": "^21.1.2",
     "mitt": "^3.0.0",
     "moment": "^2.29.4",
     "ol": "^7.3.0",

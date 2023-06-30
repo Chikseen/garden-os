@@ -22,15 +22,19 @@
             </form>
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
+        <button @click="Login">Login</button>
     </div>
 </template>
 
 <script>
 import ButtonComponent from "@/components/ui/ButtonComponent.vue"
+import Login from "@/views/Login.vue"
+import Keycloak from "keycloak-js"
 
 export default {
     components: {
-        ButtonComponent
+        ButtonComponent,
+        Login
     },
     data: () => {
         return {
@@ -42,9 +46,22 @@ export default {
             userName: "",
             showErrorMessage: false,
             isLoading: false,
+            AccessToken: ""
         };
     },
     methods: {
+        Login() {
+            const keycloak = new Keycloak({
+                url: "https://auth.drunc.net",
+                realm: "GardenOS-DEV",
+                clientId: "test-client",
+            });
+            keycloak
+                .init({
+                    onLoad: "check-sso",
+                    redirectUri: "http://localhost:8080/login"
+                })
+        },
         async checkUser() {
             this.isLoading = true;
             if (this.AuthId?.length > 0) {
@@ -95,7 +112,19 @@ export default {
     async mounted() {
         this.AuthId = localStorage.getItem("id");
         this.AuthApiKey = localStorage.getItem("apiToken");
-        await this.checkUser();
+        this.AccessToken = localStorage.getItem("accessToken");
+       /* const keycloak = new Keycloak({
+            url: "https://auth.drunc.net",
+            realm: "GardenOS-DEV",
+            clientId: "test-client",
+        });
+        console.log(keycloak)
+        keycloak.init({
+            token: this.AccessToken,
+            onLoad: "login-required",
+            redirectUri: "http://localhost:8080/login"
+        })
+        console.log(await keycloak.loadUserInfo())*/
     },
 }
 </script>

@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    keycloak: null,
     isAuth: false,
     is3dView: false,
     gardenMeta: null,
@@ -20,6 +21,9 @@ export default createStore({
     },
     setDeviceData(state, payload) {
       state.deviceData = payload;
+    },
+    setKeycloak(state, payload) {
+      state.keycloak = payload;
     },
   },
   actions: {},
