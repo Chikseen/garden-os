@@ -38,8 +38,9 @@ export default {
     },
     methods: {
         logout() {
-            this.$store.commit('setAuthState', false)
+            this.keycloak.logout();
             localStorage.clear();
+            this.$router.push("")
         }
     },
     computed: {
@@ -47,6 +48,7 @@ export default {
             gardenMeta: (state) => state.gardenMeta,
             is3dView: (state) => state.is3dView,
             deviceData: (state) => state.deviceData,
+            keycloak: (state) => state.keycloak,
         }),
     },
     async mounted() {

@@ -2,10 +2,19 @@ using MainService.Hub;
 using MainService.DB;
 using System.Net;
 using System.Net.Sockets;
+using Keycloak.AuthServices.Authentication;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var authenticationOptions = new KeycloakAuthenticationOptions
+{
+    AuthServerUrl = "https://auth.drunc.net/",
+    Realm = "GardenOS-DEV",
+    Resource = "dev-client-be",
+};
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -13,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddCors();
+builder.Services.AddKeycloakAuthentication(authenticationOptions);
 
 var app = builder.Build();
 
@@ -47,6 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MainHub>("/hub");

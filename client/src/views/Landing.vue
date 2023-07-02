@@ -54,7 +54,7 @@ export default {
             const keycloak = new Keycloak({
                 url: "https://auth.drunc.net",
                 realm: "GardenOS-DEV",
-                clientId: "test-client",
+                clientId: "dev-client",
             });
             keycloak
                 .init({
@@ -116,7 +116,7 @@ export default {
        /* const keycloak = new Keycloak({
             url: "https://auth.drunc.net",
             realm: "GardenOS-DEV",
-            clientId: "test-client",
+            clientId: "dev-client",
         });
         console.log(keycloak)
         keycloak.init({

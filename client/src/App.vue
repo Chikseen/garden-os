@@ -6,6 +6,7 @@
 
 <script>
 import Keycloak from "keycloak-js"
+import { fetchGardenMeta, fetchUserData } from "@/apiService"
 
 export default {
   name: "App",
@@ -23,7 +24,7 @@ export default {
     const keycloak = new Keycloak({
       url: "https://auth.drunc.net",
       realm: "GardenOS-DEV",
-      clientId: "test-client",
+      clientId: "dev-client",
 
     });
     await keycloak
@@ -34,14 +35,11 @@ export default {
 
     console.log('Auth', keycloak.authenticated);
     if (keycloak.authenticated) {
-      console.log('Auth succed', keycloak);
+      localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
       localStorage.setItem("accessToken", keycloak.token)
+      fetchGardenMeta()
       this.$store.commit("setKeycloak", keycloak)
-    } else {
-      console.log('User not authenticated!');
     }
-
-    console.log("kc: ", keycloak)
     this.authPending = false
   },
 };
