@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using ExtensionMethods;
 using MainService.DB;
 using Microsoft.Extensions.Primitives;
@@ -34,6 +35,26 @@ namespace Services.User
                 return true;
 
             return false;
+        }
+
+        public async Task<UserData> GetUserDataFromKeycloak(HttpRequest Request)
+        {
+            Dictionary<string, string> data = new()
+            {
+                {"grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket"},
+                {"audience", "dev-client-be"},
+            };
+            Request.Headers.TryGetValue("Authorization", out StringValues bearer);
+            if (StringValues.IsNullOrEmpty(bearer))
+                return new UserData();
+
+            String token = ((String)bearer!).Replace("Bearer", "").Trim();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.PostAsync("https://auth.drunc.net/realms/GardenOS-DEV/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
+            var contents = await response.Content.ReadAsStringAsync();
+
+            return new UserData(contents);
         }
 
         public GardenResponseModel? GetGardenData(String id, String apiKey)

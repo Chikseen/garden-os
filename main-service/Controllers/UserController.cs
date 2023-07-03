@@ -39,6 +39,8 @@ namespace MainService.Controllers
         [HttpPost("{userid}/datalog")]
         public ActionResult<ResponseDevices> GetDataLog(String userid, TimeFrame? timeFrame = null)
         {
+            var t = _userService.GetUserDataFromKeycloak(Request).Result;
+
             String? apiKey = _userService.GetApiKey(Request);
 
             Console.WriteLine("NEW DATA SEND TO FE");
