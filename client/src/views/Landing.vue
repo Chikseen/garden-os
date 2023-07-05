@@ -23,6 +23,7 @@
             <p @click="registerMode = !registerMode">You have allready have a account?</p>
         </span>
         <button @click="Login">Login</button>
+        <button @click="temp">TEMP</button>
     </div>
 </template>
 
@@ -50,6 +51,9 @@ export default {
         };
     },
     methods: {
+        temp() {
+            this.$router.push("overview")
+        },
         Login() {
             const keycloak = new Keycloak({
                 url: "https://auth.drunc.net",
