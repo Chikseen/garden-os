@@ -53,8 +53,8 @@ export default {
         Login() {
             const keycloak = new Keycloak({
                 url: "https://auth.drunc.net",
-                realm: "GardenOS-DEV",
-                clientId: "dev-client",
+                realm: process.env.VUE_APP_AUTH_REALM,
+                clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
             });
             keycloak
                 .init({
@@ -113,18 +113,6 @@ export default {
         this.AuthId = localStorage.getItem("id");
         this.AuthApiKey = localStorage.getItem("apiToken");
         this.AccessToken = localStorage.getItem("accessToken");
-       /* const keycloak = new Keycloak({
-            url: "https://auth.drunc.net",
-            realm: "GardenOS-DEV",
-            clientId: "dev-client",
-        });
-        console.log(keycloak)
-        keycloak.init({
-            token: this.AccessToken,
-            onLoad: "login-required",
-            redirectUri: "http://localhost:8080/login"
-        })
-        console.log(await keycloak.loadUserInfo())*/
     },
 }
 </script>

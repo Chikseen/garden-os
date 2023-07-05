@@ -6,7 +6,6 @@
 
 <script>
 import Keycloak from "keycloak-js"
-import { fetchGardenMeta } from "@/apiService"
 
 export default {
   name: "App",
@@ -21,10 +20,11 @@ export default {
     });
   },
   async beforeMount() {
+    console.log(process.env.VUE_APP_AUTH_REALM)
     const keycloak = new Keycloak({
       url: "https://auth.drunc.net",
-      realm: "GardenOS-DEV",
-      clientId: "dev-client",
+      realm: process.env.VUE_APP_AUTH_REALM,
+      clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
 
     });
     await keycloak

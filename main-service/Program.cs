@@ -4,15 +4,17 @@ using System.Net;
 using System.Net.Sockets;
 using Keycloak.AuthServices.Authentication;
 using System.Security.Claims;
+using dotenv.net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+DotEnv.Load();
 var authenticationOptions = new KeycloakAuthenticationOptions
 {
     AuthServerUrl = "https://auth.drunc.net/",
-    Realm = "GardenOS-DEV",
-    Resource = "dev-client-be",
+    Realm = Environment.GetEnvironmentVariable("AUTH_REALM")!,
+    Resource = Environment.GetEnvironmentVariable("client")!,
 };
 
 

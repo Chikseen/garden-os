@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using dotenv.net;
 using ExtensionMethods;
 using MainService.DB;
 using Microsoft.Extensions.Primitives;
@@ -24,10 +25,14 @@ namespace Services.User
 
         public async Task<UserData> GetUserDataFromKeycloak(HttpRequest Request)
         {
+            DotEnv.Load();
+            String realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
+            String clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
+
             Dictionary<string, string> data = new()
             {
                 {"grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket"},
-                {"audience", "dev-client-be"},
+                {"audience", clientId},
             };
             Request.Headers.TryGetValue("Authorization", out StringValues bearer);
             if (StringValues.IsNullOrEmpty(bearer))
@@ -36,7 +41,8 @@ namespace Services.User
             String token = ((String)bearer!).Replace("Bearer", "").Trim();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.PostAsync("https://auth.drunc.net/realms/GardenOS-DEV/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
+
+            var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
             var contents = await response.Content.ReadAsStringAsync();
 
             return new UserData(contents);
