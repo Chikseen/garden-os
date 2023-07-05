@@ -30,7 +30,7 @@ export default {
     await keycloak
       .init({
         onLoad: 'login-required',
-        redirectUri: "http://localhost:8080/login",
+        redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
       })
 
     console.log('Auth', keycloak.authenticated);

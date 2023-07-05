@@ -59,7 +59,7 @@ export default {
             keycloak
                 .init({
                     onLoad: "check-sso",
-                    redirectUri: "http://localhost:8080/login"
+                    redirectUri: process.env.VUE_APP_AUTH_REDIRECT
                 })
         },
         async checkUser() {
