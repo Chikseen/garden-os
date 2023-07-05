@@ -112,16 +112,17 @@ export default {
     },
     async fetchData() {
       try {
-        const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/${localStorage.getItem("id")}/datalog`, {
+        const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/detailed/${"accd30d2-7392-40b7-8a08-6d9ac9cc22b6"}`, {
           method: "POST",
           body: JSON.stringify(this.timeframe),
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem("apiToken")}`,
+            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
         });
-        const chartData = await initData.json()
+
+        const chartData = await response.json()
 
         // Refine Chart data
         let labels = []
@@ -168,8 +169,8 @@ export default {
     this.timeframe.end = new Date(dayEnd).toISOString()
   },
   async mounted() {
-    this.$store.commit("setGardenMeta", await fetchGardenMeta())
-    this.$store.commit("setDeviceData", await fetchDevices())
+    this.$store.commit("setGardenList", await fetchGardenMeta())
+    this.$store.commit("setDeviceData", await fetchDevices("accd30d2-7392-40b7-8a08-6d9ac9cc22b6"))
     this.fetchData()
   },
 }

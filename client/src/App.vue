@@ -6,7 +6,7 @@
 
 <script>
 import Keycloak from "keycloak-js"
-import { fetchGardenMeta, fetchUserData } from "@/apiService"
+import { fetchGardenMeta } from "@/apiService"
 
 export default {
   name: "App",
@@ -37,7 +37,6 @@ export default {
     if (keycloak.authenticated) {
       localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
       localStorage.setItem("accessToken", keycloak.token)
-      fetchGardenMeta()
       this.$store.commit("setKeycloak", keycloak)
     }
     this.authPending = false

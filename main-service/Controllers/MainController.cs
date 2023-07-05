@@ -26,10 +26,9 @@ namespace MainService.Controllers
         }
 
         [HttpGet()]
-        public async Task<UserData> Get()
+        public String Get()
         {
-            var t = await _userService.GetUserDataFromKeycloak(Request);
-            return t;
+            return "If your reading this your cool";
         }
 
         [HttpGet("ledToggle")]
@@ -41,8 +40,8 @@ namespace MainService.Controllers
             String rpiid = "1a667139-d648-4745-8529-a296c6de6f05";
             String apiKey = "OExfKUsFUh8bpVaR8soHNGhvFcwMXAcsLLQazmzdDumn0nSKMne2lsMJCgkPoEF2rZuUkWRMlQ7lK4WH3TNnTe16adkHeVCVwqhmZXASrcBaZzQ5j2qVQoubRDMiVbOW";
 
-            ResponseDevices devices = _deviceService.GetDataLog(rpiid, apiKey, true)!;
-            _hubContext.Clients.All.SendCurrentDeviceData(devices);
+            // ResponseDevices devices = _deviceService.GetDataLog(rpiid, apiKey, true)!;
+            // _hubContext.Clients.All.SendCurrentDeviceData(devices);
             Console.WriteLine("pts");
             return Ok();
         }

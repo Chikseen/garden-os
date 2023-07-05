@@ -22,21 +22,6 @@ namespace Services.User
             return apiKey;
         }
 
-        public Boolean ValidateUser(String id, String apiKey)
-        {
-            String query = @$"
-                SELECT Count(*)
-                FROM USERS
-                    WHERE ID = '{id}'
-                    AND API_KEY = '{apiKey}'".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
-
-            if (result.Count != 0 && result[0].ContainsKey("count") && result[0]["count"] == "1")
-                return true;
-
-            return false;
-        }
-
         public async Task<UserData> GetUserDataFromKeycloak(HttpRequest Request)
         {
             Dictionary<string, string> data = new()
@@ -46,7 +31,7 @@ namespace Services.User
             };
             Request.Headers.TryGetValue("Authorization", out StringValues bearer);
             if (StringValues.IsNullOrEmpty(bearer))
-                return new UserData();
+                throw new UnauthorizedAccessException("Accesstoken not found");
 
             String token = ((String)bearer!).Replace("Bearer", "").Trim();
             var client = new HttpClient();
@@ -57,48 +42,44 @@ namespace Services.User
             return new UserData(contents);
         }
 
-        public GardenResponseModel? GetGardenData(String id, String apiKey)
+        public GardenResponseModel GetGardenData(UserData userData)
         {
             String query = @$"
-                SELECT 
-                    USERS.NAME as USER_NAME, 
-                    USERS.ID as GARDEN_ID, 
-                    GARDEN.NAME as GARDEN_NAME,
-                    GARDEN.weather_location_id
-                FROM USERS
-                JOIN GARDEN
-                    ON USERS.ID = '{id}'
-                    AND USERS.API_KEY = '{apiKey}'
-                    AND GARDEN.ID = USERS.GARDEN_ID".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+                SELECT
+                    users.given_name,
+                    users.family_name,
+                    users.id,
+                    garden.weather_location_id,
+                    garden.name AS garden_name,
+                    garden.id AS garden_id
+                FROM
+                    gardenuser
+                    JOIN garden ON gardenuser.garden_id = garden.id
+                    JOIN users ON gardenuser.user_id = '{userData.Id}'
+                    AND users.id = '{userData.Id}';".Clean();
+            List<Dictionary<String, String>> results = MainDB.query(query);
 
-            if (result.Count != 1)
-                return null;
+            if (results.Count < 1)
+                throw new Exception("Gardendata not found");
 
-            return new GardenResponseModel(result);
+            GardenResponseModel reponse = new(results);
+
+            return reponse;
         }
 
-        public CreateNewUserResponse CreateNewUser(CreateNewuserRequest garden)
+        public void SaveNewUser(UserData user)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            String apiKey = new string(Enumerable.Repeat(chars, 128)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-
             String query = @$"
                 INSERT INTO USERS (
                     ID,
-                    NAME,
-                    API_KEY,
-                    GARDEN_ID
+                    FAMILY_NAME,
+                    GIVEN_NAME
                 ) VALUES (
-                    GEN_RANDOM_UUID(),
-                    '{garden.UserName}',
-                    '{apiKey}',
-                    '{garden.GardenId}'
-                )
-                RETURNING ID AS USER_ID, API_KEY;".Clean();
+                    '{user.Id}',
+                    '{user.FamilyName}',
+                    '{user.GivenName}'
+                ) ON CONFLICT DO NOTHING;".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);
-            return new CreateNewUserResponse(result);
         }
     }
 }

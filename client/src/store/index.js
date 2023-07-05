@@ -6,6 +6,7 @@ export default createStore({
     isAuth: false,
     is3dView: false,
     gardenMeta: null,
+    gardenList: null,
     deviceData: null,
   },
   getters: {},
@@ -15,6 +16,10 @@ export default createStore({
     },
     setGardenMeta(state, payload) {
       state.gardenMeta = payload;
+    },
+    setGardenList(state, payload) {
+      state.gardenList = payload;
+      state.gardenMeta = payload.garden_data[0];
     },
     set3dView(state, payload) {
       state.is3dView = payload;

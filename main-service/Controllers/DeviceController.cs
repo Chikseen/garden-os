@@ -6,88 +6,89 @@ using Services.User;
 
 namespace MainService.Controllers
 {
-  [ApiController]
-  [Route("devices")]
-  public class DeviceController : ControllerBase
-  {
-    private readonly IHubContext<MainHub, IMainHub> _hubContext;
-    private DeviceService _deviceService;
-    private UserService _userService;
-
-    public DeviceController(IHubContext<MainHub, IMainHub> questionHub)
+    [ApiController]
+    [Route("devices")]
+    public class DeviceController : ControllerBase
     {
-      _hubContext = questionHub;
-      _deviceService = new();
-      _userService = new();
-    }
+        private readonly IHubContext<MainHub, IMainHub> _hubContext;
+        private DeviceService _deviceService;
+        private UserService _userService;
 
-    [HttpGet("{rpiid}/metadata")]
-    public ActionResult<RPIData> GetRpiMeta(String rpiid)
-    {
-      String? apiKey = _userService.GetApiKey(Request);
+        public DeviceController(IHubContext<MainHub, IMainHub> questionHub)
+        {
+            _hubContext = questionHub;
+            _deviceService = new();
+            _userService = new();
+        }
 
-      if (String.IsNullOrEmpty(apiKey))
-        return Unauthorized();
+        [HttpGet("{rpiid}/metadata")]
+        public ActionResult<RPIData> GetRpiMeta(String rpiid)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
 
-      RPIData? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
 
-      if (data == null)
-        return BadRequest();
+            RPIData? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
 
-      return Ok(data);
-    }
+            if (data == null)
+                return BadRequest();
 
-    [HttpGet("{rpiid}")]
-    public ActionResult<RPIDevices> GetRpiDevices(String rpiid)
-    {
-      String? apiKey = _userService.GetApiKey(Request);
+            return Ok(data);
+        }
 
-      if (String.IsNullOrEmpty(apiKey))
-        return Unauthorized();
+        [HttpGet("{rpiid}")]
+        public ActionResult<RPIDevices> GetRpiDevices(String rpiid)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
 
-      RPIDevices? data = _deviceService.GetRPIDevices(rpiid, apiKey!);
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
 
-      if (data == null)
-        return BadRequest();
+            RPIDevices? data = _deviceService.GetRPIDevices(rpiid, apiKey!);
 
-      return Ok(data);
-    }
+            if (data == null)
+                return BadRequest();
 
-    [HttpPost("{rpiid}/save")]
-    public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
-    {
-      String? apiKey = _userService.GetApiKey(Request);
+            return Ok(data);
+        }
 
-      if (String.IsNullOrEmpty(apiKey))
-        return Unauthorized();
+        [HttpPost("{rpiid}/save")]
+        public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
 
-      ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
 
-      if (response == null)
-        return BadRequest();
+            ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
 
-      _hubContext.Clients.All.SendCurrentDeviceData(response);
+            if (response == null)
+                return BadRequest();
 
-      return Ok(response);
-    }
+            _hubContext.Clients.All.SendCurrentDeviceData(response);
 
-    [HttpPost("{rpiid}/datalog")]
-    public ActionResult<ResponseDevices> GetDataLog(String rpiid, TimeFrame? timeFrame = null)
-    {
-      String? apiKey = _userService.GetApiKey(Request);
+            return Ok(response);
+        }
 
-      Console.WriteLine("NEW DATA SEND TO FE");
+        [HttpPost("{rpiid}/datalog")]
+        public ActionResult<ResponseDevices> GetDataLog(String rpiid, TimeFrame? timeFrame = null)
+        {
+            String? apiKey = _userService.GetApiKey(Request);
 
-      if (String.IsNullOrEmpty(apiKey))
-        return Unauthorized();
+            Console.WriteLine("NEW DATA SEND TO FE");
 
-      ResponseDevices? response;
+            if (String.IsNullOrEmpty(apiKey))
+                return Unauthorized();
+
+            ResponseDevices? response;/*
       if (timeFrame == null)
         response = _deviceService.GetDataLog(rpiid, apiKey!);
       else
-        response = _deviceService.GetDataLog(rpiid, apiKey!, timeFrame);
+        response = _deviceService.GetDataLog(rpiid, apiKey!, timeFrame);*/
 
-      return Ok(response);
+            // return Ok(response);
+            return Ok();
+        }
     }
-  }
 }

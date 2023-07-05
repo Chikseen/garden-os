@@ -23,6 +23,8 @@ public static class DeviceStatic
     public readonly static String JSON = "json";
     public readonly static String UserName = "user_name";
     public readonly static String UserId = "user_id";
+    public readonly static String GivenName = "given_name";
+    public readonly static String FamilyName = "family_name";
     public readonly static String GardenName = "garden_name";
     public readonly static String WeatherLocationId = "weather_location_id";
     public readonly static String IsInverted = "isinverted";

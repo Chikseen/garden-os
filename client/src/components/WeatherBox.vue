@@ -38,7 +38,6 @@ export default {
 	},
 	async mounted() {
 		this.load(document, "script", "tomorrow-sdk")
-		this.$store.commit("setGardenMeta", await fetchGardenMeta())
 	}
 }
 </script>

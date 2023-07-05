@@ -21,81 +21,36 @@ namespace MainService.Controllers
             _userService = new();
         }
 
-        [HttpGet("{userid}/validate")]
-        public ActionResult<Boolean> ValidateUser(String userid)
+        [HttpGet("overview/{gardenId}")]
+        public ActionResult<ResponseDevices> GetOverview(String gardenId)
         {
-            String? apiKey = _userService.GetApiKey(Request);
-            if (String.IsNullOrEmpty(apiKey))
-                return Ok(false);
-
-            if (userid == "null" || apiKey == "null")
-                return Ok(false);
-
-            Boolean isValidated = _userService.ValidateUser(userid, apiKey);
-
-            return Ok(isValidated);
-        }
-
-        [HttpPost("{userid}/datalog")]
-        public ActionResult<ResponseDevices> GetDataLog(String userid, TimeFrame? timeFrame = null)
-        {
-            var t = _userService.GetUserDataFromKeycloak(Request).Result;
-
-            String? apiKey = _userService.GetApiKey(Request);
-
-            Console.WriteLine("NEW DATA SEND TO FE");
-
-            if (String.IsNullOrEmpty(apiKey))
-                return Unauthorized();
-
-            ResponseDevices? response;
-            if (timeFrame == null)
-                response = _deviceService.GetDataLog(
-                    id: userid,
-                    ApiKey: apiKey,
-                    isUser: true
-                );
-            else
-                response = _deviceService.GetDataLog(
-                    id: userid,
-                    ApiKey: apiKey,
-                    timeframe: timeFrame,
-                    isUser: true
-                );
-
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            ResponseDevices response = _deviceService.GetOverview(userData, gardenId);
             return Ok(response);
         }
 
-        [HttpGet("{userid}/garden")]
-        public ActionResult<GardenResponseModel> GetGardenData(String userid)
+        [HttpPost("detailed/{gardenId}")]
+        public ActionResult<ResponseDevices> GetDetailed(String gardenId, TimeFrame timeFrame)
         {
-            String? apiKey = _userService.GetApiKey(Request);
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            ResponseDevices response = _deviceService.GetDetailed(userData, gardenId, timeFrame);
+            return Ok(response);
+        }
 
-            if (String.IsNullOrEmpty(apiKey))
-                return Unauthorized();
-
-            GardenResponseModel? response = _userService.GetGardenData(userid, apiKey);
-
-            if (response == null)
-                return BadRequest();
-
+        [HttpGet("garden")]
+        public ActionResult<GardenResponseModel> GetGardenData()
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            GardenResponseModel response = _userService.GetGardenData(userData);
             return Ok(response);
         }
 
         [HttpPost("register")]
-        public ActionResult<GardenResponseModel> CreateNewUser(CreateNewuserRequest garden)
+        public ActionResult<UserData> CreateNewUser()
         {
-            // Prevent Spam
-            Thread.Sleep(1000);
-            try
-            {
-                CreateNewUserResponse response = _userService.CreateNewUser(garden);
-                return Ok(response);
-            }
-            catch (System.Exception)
-            {
-                return BadRequest();
-            }
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            _userService.SaveNewUser(userData);
+            return Ok();
         }
     }
 }

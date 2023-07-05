@@ -52,8 +52,8 @@ export default {
         }),
     },
     async mounted() {
-        this.$store.commit("setGardenMeta", await fetchGardenMeta())
-        this.$store.commit("setDeviceData", await fetchDevices())
+        this.$store.commit("setGardenList", await fetchGardenMeta())
+        this.$store.commit("setDeviceData", await fetchDevices("accd30d2-7392-40b7-8a08-6d9ac9cc22b6"))
     }
 }
 </script>

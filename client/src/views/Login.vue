@@ -1,6 +1,6 @@
 <template>
 	<div class="hello">
-		<h1>You will be redirectedf</h1>
+		<h1>You will be redirected</h1>
 	</div>
 </template>
 <script>
@@ -16,17 +16,20 @@ export default {
 			keycloak: (state) => state.keycloak,
 		}),
 	},
-	methods: {
-		login() {
-			console.log("Login", this.keycloak)
-			if (this.keycloak?.authenticated)
-				this.$router.push("overview")
-			else
-				this.$router.push("")
+	async mounted() {
+		console.log("Login", this.keycloak)
+		if (this.keycloak?.authenticated) {
+			await fetch(`${process.env.VUE_APP_PI_HOST}user/register`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${this.keycloak.token}`,
+				},
+			});
+			console.log("h")
+			this.$router.push("overview")
 		}
-	},
-	mounted() {
-		this.login()
+		else
+			this.$router.push("")
 	},
 }
 </script>

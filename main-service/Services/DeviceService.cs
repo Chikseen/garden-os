@@ -2,7 +2,6 @@
 using MainService.DB;
 using ExtensionMethods;
 using System.Globalization;
-using System.Linq;
 
 namespace Services.Device
 {
@@ -63,11 +62,12 @@ namespace Services.Device
 
         public ResponseDevices? SaveDataToDB(SaveDataRequest data, String id, String ApiKey)
         {
-            String gardenID = GetGardenID(id, false);
+            // String gardenID = GetGardenID(id, false);
+            Garden garden = new Garden();
 
             String query = @$"
                 SET TIMEZONE = 'Europe/Berlin';
-                INSERT INTO DATALOG{gardenID} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
+                INSERT INTO DATALOG{garden.Id} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
                 VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.Device_ID}')".Clean();
 
             RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
@@ -88,55 +88,19 @@ namespace Services.Device
                 lastEntryList[data.Device_ID] = DateTime.Now;
             }
 
-            ResponseDevices? devices = GetDataLog(id, ApiKey);
-            return devices;
+            //  ResponseDevices? devices = GetDataLog(id, ApiKey);
+            // return devices;
+            return new();
         }
 
-        public ResponseDevices GetDataLog(String id, String ApiKey, Boolean isUser = false)
+        public ResponseDevices GetOverview(UserData userData, String gardenId)
         {
-            String gardenID = GetGardenID(id, isUser);
+            userData.CheckGardenAccess(gardenId);
 
-            String query = BuildDataLogQuery(id, ApiKey, gardenID, null, isUser);
-            List<Dictionary<String, String>> result = MainDB.query(query);
-
-            ResponseDevices devices = new(result);
-            return devices;
-        }
-
-        public ResponseDevices? GetDataLog(String id, String ApiKey, TimeFrame timeframe, Boolean isUser = false)
-        {
-            String gardenID = GetGardenID(id, isUser);
-            if (String.IsNullOrEmpty(gardenID))
-                return null;
-
-            String query = BuildDataLogQuery(id, ApiKey, gardenID, timeframe, isUser);
-            List<Dictionary<String, String>> result = MainDB.query(query);
-
-            if (result.Count == 0)
-                return null;
-
-            ResponseDevices devices = new(result);
-
-            if (DateTime.UtcNow < timeframe.End)
-                devices.Devices.AddRange(GetDataLog(id, ApiKey, true).Devices);
-
-            devices.Devices = devices.Devices.OrderBy(d => d.date).ToList(); // sort each group
-            return devices;
-        }
-
-        private String BuildDataLogQuery(String id, String apiKey, String gardenID, TimeFrame? timeFrame = null, Boolean isUser = false)
-        {
-            String query = "SELECT ";
-
-            if (timeFrame == null)
-                query += "DISTINCT ON (DEVICE_ID) ";
-
-            if (timeFrame == null)
-                query += " DATALOG.UPLOAD_DATE AS UPLOAD_DATE, ";
-            else
-                query += " DATALOG.DATE AS UPLOAD_DATE, ";
-
-            query += @"
+            String query = @$"
+                SELECT
+                    DISTINCT ON (DEVICE_ID)
+                    DATALOG.UPLOAD_DATE AS UPLOAD_DATE,
                     DATALOG.device_id AS DEVICE_ID,
                     DATALOG.VALUE AS VALUE,
                     DEVICES.NAME,
@@ -144,73 +108,56 @@ namespace Services.Device
                     DEVICES.UPPER_LIMIT,
                     DEVICES.LOWER_LIMIT,
                     DEVICES.ISINVERTED
-                FROM ";
+                FROM
+                    DATALOG{gardenId.Replace("-", "")} AS DATALOG
+                    JOIN devices ON devices.id = DATALOG.device_id
+                    AND devices.garden_id = '{gardenId}'
+                ORDER BY
+                    DEVICE_ID,
+                    UPLOAD_DATE DESC;";
+            String cleandQuery = query.Clean();
 
-            if (timeFrame == null)
-                query += @$"DATALOG{gardenID} AS DATALOG";
-            else
-                query += @$"	
+            List<Dictionary<String, String>> result = MainDB.query(cleandQuery);
+            ResponseDevices devices = new(result);
+            return devices;
+        }
+
+        public ResponseDevices GetDetailed(UserData userData, String gardenId, TimeFrame timeFrame)
+        {
+            userData.CheckGardenAccess(gardenId);
+
+            String query = @$"
+                SELECT
+                    DATALOG.DATE AS UPLOAD_DATE,
+                    DATALOG.device_id AS DEVICE_ID,
+                    DATALOG.VALUE AS VALUE,
+                    DEVICES.NAME,
+                    DEVICES.DISPLAY_ID,
+                    DEVICES.UPPER_LIMIT,
+                    DEVICES.LOWER_LIMIT,
+                    DEVICES.ISINVERTED
+                FROM
                     (
                         SELECT
                             date_trunc('hour', UPLOAD_DATE) AS DATE,
                             AVG (value) AS VALUE,
                             DEVICE_ID
                         FROM
-                           DATALOG{gardenID}
+                            DATALOG{gardenId.Replace("-", "")}
                         GROUP BY
                             DATE,
                             DEVICE_ID
-                    ) AS DATALOG";
-
-            if (isUser)
-                // JoinUSer
-                query += @$"
-                    JOIN DEVICES
-                        ON DEVICES.ID = DEVICE_ID JOIN USERS
-                        ON USERS.ID = '{id}'
-                        AND USERS.API_KEY = '{apiKey}'
-                        AND USERS.GARDEN_ID = DEVICES.GARDEN_ID";
-
-            else
-                query += @$"
-                    JOIN DEVICES
-                        ON DEVICES.ID = DEVICE_ID JOIN RPIS
-                        ON RPIS.ID = '{id}'
-                        AND RPIS.API_KEY = '{apiKey}'
-                        AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID";
-
-            if (timeFrame != null)
-                query += @$"
-                      AND DATALOG.DATE
-                        BETWEEN '{timeFrame.Start.ConvertToPGString()}'
-                        AND '{timeFrame.End.ConvertToPGString()}'";
-
-            if (timeFrame == null)
-                query += @$"
-                    ORDER BY
-                        DEVICE_ID,
-                        UPLOAD_DATE DESC; ";
-            else
-                query += @$"
-                    ORDER BY UPLOAD_DATE DESC; ";
-
+                    ) AS DATALOG
+                    JOIN DEVICES ON DEVICES.ID = DEVICE_ID
+                    AND DATALOG.DATE BETWEEN '{timeFrame.Start.ConvertToPGString()}'
+                    AND '{timeFrame.End.ConvertToPGString()}'
+                ORDER BY
+                    UPLOAD_DATE DESC;";
             String cleandQuery = query.Clean();
-            return cleandQuery;
-        }
 
-        public String GetGardenID(String id, Boolean isUser)
-        {
-            String query = String.Empty;
-            if (isUser)
-                query = $"SELECT GARDEN_ID FROM USERS WHERE ID = '{id}'";
-            else
-                query = $"SELECT GARDEN_ID FROM RPIS WHERE ID = '{id}'";
-
-            List<Dictionary<String, String>> result = MainDB.query(query);
-            Dictionary<String, String>? entry = result.FirstOrDefault();
-            if (entry is not null)
-                return entry["garden_id"].Replace("-", "");
-            else return String.Empty;
+            List<Dictionary<String, String>> result = MainDB.query(cleandQuery);
+            ResponseDevices devices = new(result);
+            return devices;
         }
     }
 }
