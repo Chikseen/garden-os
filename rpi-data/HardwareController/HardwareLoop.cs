@@ -73,7 +73,7 @@ namespace MainService.Hardware
                                 _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN2, MeasuringRange.FS4096);
                                 raw = _ADS1115.ReadRaw();
                                 break;
-                            default:
+                            case 3:
                                 _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN3, MeasuringRange.FS4096);
                                 raw = _ADS1115.ReadRaw();
                                 break;
@@ -155,6 +155,7 @@ namespace MainService.Hardware
                 _Filter.Add($"adc10", new List<float>());
                 _Filter.Add($"adc11", new List<float>());
                 _Filter.Add($"adc12", new List<float>());
+                _Filter.Add($"adc13", new List<float>());
             }
             catch (System.Exception e)
             {

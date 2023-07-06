@@ -21,23 +21,25 @@ export default {
   },
   async beforeMount() {
     console.log(process.env.VUE_APP_AUTH_REALM)
-    const keycloak = new Keycloak({
-      url: "https://auth.drunc.net",
-      realm: process.env.VUE_APP_AUTH_REALM,
-      clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+    if (!localStorage.getItem("accessToken")) {
+      const keycloak = new Keycloak({
+        url: "https://auth.drunc.net",
+        realm: process.env.VUE_APP_AUTH_REALM,
+        clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
 
-    });
-    await keycloak
-      .init({
-        onLoad: 'login-required',
-        redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
-      })
+      });
+      await keycloak
+        .init({
+          onLoad: 'login-required',
+          redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
+        })
 
-    console.log('Auth', keycloak.authenticated);
-    if (keycloak.authenticated) {
-      localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
-      localStorage.setItem("accessToken", keycloak.token)
-      this.$store.commit("setKeycloak", keycloak)
+      console.log('Auth', keycloak.authenticated);
+      if (keycloak.authenticated) {
+        localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
+        localStorage.setItem("accessToken", keycloak.token)
+        this.$store.commit("setKeycloak", keycloak)
+      }
     }
     this.authPending = false
   },

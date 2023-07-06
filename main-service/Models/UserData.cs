@@ -26,19 +26,27 @@ public class UserData
 
     public UserData(String jsonString)
     {
-        UserData? userData = JsonSerializer.Deserialize<UserData>(jsonString);
-
-        if (userData is not null)
+        try
         {
-            this.EmailVerified = userData.EmailVerified;
-            this.GivenName = userData.GivenName;
-            this.FamilyName = userData.FamilyName;
-            this.Id = userData.Id;
-            this.IsValid = true;
+            UserData? userData = JsonSerializer.Deserialize<UserData>(jsonString);
+
+            if (userData is not null)
+            {
+                this.EmailVerified = userData.EmailVerified;
+                this.GivenName = userData.GivenName;
+                this.FamilyName = userData.FamilyName;
+                this.Id = userData.Id;
+                this.IsValid = true;
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Unauthorized");
+            }
         }
-        else
+        catch (System.Exception)
         {
             throw new UnauthorizedAccessException("Unauthorized");
+            throw;
         }
     }
 

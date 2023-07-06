@@ -29,6 +29,8 @@ import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
 
 import { mapState } from "vuex";
 
+import Keycloak from "keycloak-js"
+
 export default {
     components: {
         DynamicGrid,
@@ -37,10 +39,17 @@ export default {
         WeatherBox
     },
     methods: {
-        logout() {
-            this.keycloak.logout();
+        async logout() {
             localStorage.clear();
-            this.$router.push("")
+            const keycloak = new Keycloak({
+                url: "https://auth.drunc.net",
+                realm: process.env.VUE_APP_AUTH_REALM,
+                clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+
+            });
+            await keycloak
+                .init({})
+            keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
         }
     },
     computed: {
