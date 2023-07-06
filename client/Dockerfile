@@ -6,6 +6,8 @@ COPY . /app
 ENV VUE_APP_PI_HOST=https://gardenapi.drunc.net/
 ENV VUE_APP_AUTH_REALM=GardenOS-PROD
 ENV VUE_APP_AUTH_CLIENT_ID=client
+ENV VUE_APP_AUTH_REDIRECT=https://gardenos.drunc.net/login
+ENV VUE_APP_AUTH_LOGOUT=http://gardenos.drunc.net/
 RUN npm run build 
 EXPOSE 80
-CMD [ "node", "stream.js", "VUE_APP_PI_HOST=https://gardenapi.drunc.net/", "VUE_APP_AUTH_REALM=GardenOS-PROD", "VUE_APP_AUTH_CLIENT_ID=client", "VUE_APP_AUTH_REDIRECT=https://gardenos.drunc.net/login", "VUE_APP_AUTH_LOGOUT=http://gardenos.drunc.net/" ]
+CMD [ "node", "stream.js" ]
