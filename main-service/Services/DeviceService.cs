@@ -186,6 +186,7 @@ namespace Services.Device
                             DEVICE_ID
                     ) AS DATALOG
                     JOIN DEVICES ON DEVICES.ID = DEVICE_ID
+                    AND DEVICES.GARDEN_ID = '{gardenId}'
                     AND DATALOG.DATE BETWEEN '{timeFrame.Start.ConvertToPGString()}'
                     AND '{timeFrame.End.ConvertToPGString()}'
                 ORDER BY

@@ -4,14 +4,16 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Iot.Device.Ads1115;
 using Iot.Device.CharacterLcd;
+using Iot.Device.DHTxx;
 using Iot.Device.Pcx857x;
+using UnitsNet;
 
 namespace MainService.Hardware
 {
     public static class MainLoop
     {
         public static bool _recivedStop = false;
-        public static int _loopDelay = 100;
+        public static int _loopDelay = 250;
         private static I2cDevice? _i2c_LCD_Device;
         private static I2cDevice? _ADC;
         private static Lcd2004? _LCD;
@@ -54,52 +56,72 @@ namespace MainService.Hardware
 
             foreach (RPIDevice device in data.Devices)
             {
-                if (device.DeviceTyp == DeviceStatic.ADC7080)
+                Thread.Sleep(_loopDelay);
+                switch (device.DeviceTyp)
                 {
-                    Thread.Sleep(_loopDelay);
-
-                    Ads1115? _ADS1115;
-                    short raw = 0;
-                    if (_ADC is not null)
-                        switch (device.Address)
+                    case "ADC":
                         {
-                            case 0:
-                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN0, MeasuringRange.FS4096);
-                                raw = _ADS1115.ReadRaw();
-                                break;
-                            case 1:
-                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN1, MeasuringRange.FS4096);
-                                raw = _ADS1115.ReadRaw();
-                                break;
-                            case 2:
-                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN2, MeasuringRange.FS4096);
-                                raw = _ADS1115.ReadRaw();
-                                break;
-                            case 3:
-                                _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN3, MeasuringRange.FS4096);
-                                raw = _ADS1115.ReadRaw();
-                                break;
+
+
+                            Ads1115? _ADS1115;
+                            short raw = 0;
+                            if (_ADC is not null)
+                                switch (device.Address)
+                                {
+                                    case 0:
+                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN0, MeasuringRange.FS4096);
+                                        raw = _ADS1115.ReadRaw();
+                                        break;
+                                    case 1:
+                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN1, MeasuringRange.FS4096);
+                                        raw = _ADS1115.ReadRaw();
+                                        break;
+                                    case 2:
+                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN2, MeasuringRange.FS4096);
+                                        raw = _ADS1115.ReadRaw();
+                                        break;
+                                    case 3:
+                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN3, MeasuringRange.FS4096);
+                                        raw = _ADS1115.ReadRaw();
+                                        break;
+                                }
+
+                            float value = ((float)raw / 26550.0f * 100.0f);
+
+                            _Filter[$"adc1{device.Address}"].Add(value);
+                            if (_Filter[$"adc1{device.Address}"].Count > 50)
+                            {
+                                _Filter[$"adc1{device.Address}"].RemoveAt(0);
+
+                                float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
+                                if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
+                                {
+                                    triggerUpdate = true;
+                                    SaveDataToDatabase(device, avgValue);
+                                }
+                            }
+                            else
+                                Console.WriteLine("Filling");
                         }
-
-                    float value = ((float)raw / 26550.0f * 100.0f);
-
-                    _Filter[$"adc1{device.Address}"].Add(value);
-                    if (_Filter[$"adc1{device.Address}"].Count > 50)
-                    {
-                        _Filter[$"adc1{device.Address}"].RemoveAt(0);
-
-                        Console.Write($"raw: {device.Address} : ");
-                        Console.WriteLine(value);
-
-                        float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
-                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
+                        break;
+                    case "DHT11":
                         {
-                            triggerUpdate = true;
-                            SaveDataToDatabase(device, avgValue);
+                            Dht11 dht11 = new Dht11(17);
+
+                            Boolean isTempValid = dht11.TryReadHumidity(out RelativeHumidity humidity);
+                            Boolean isHumidValid = dht11.TryReadTemperature(out Temperature temperature);
+
+                            if (isTempValid && isHumidValid)
+                                if (humidity.Percent > 0 && temperature.DegreesCelsius > -50)
+                                {
+                                    if (device.ID == "3032fc92-1bee-11ee-be56-0242ac120002")
+                                        SaveDataToDatabase(device, (float)humidity.Percent);
+                                    if (device.ID == "de9cca87-eff5-49a5-bcc2-1a5d13d366cc")
+                                        SaveDataToDatabase(device, (float)temperature.DegreesCelsius);
+                                }
+
                         }
-                    }
-                    else
-                        Console.WriteLine("Filling");
+                        break;
                 }
             }
 
@@ -131,7 +153,7 @@ namespace MainService.Hardware
                 );
 
             Console.WriteLine("Save And Send Data");
-            Console.WriteLine(content.ToString());
+            Console.WriteLine(content.ReadAsStringAsync());
             var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
             originalDevice.LastEntry = DateTime.Now;
             originalDevice.LastSavedValue = value;

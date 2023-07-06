@@ -12,7 +12,8 @@ public static class DeviceStatic
     public readonly static String DeviceTyp = "device_typ";
     public readonly static String Address = "address";
     public readonly static String SerialId = "serial_id";
-    public readonly static String ADC7080 = "i2c_adc_7080";
+    public readonly static String ADC = "ADC";
+    public readonly static String DHT11 = "DHT11";
     public readonly static String DisplayId = "display_id";
     public readonly static String DataUpdateInterval = "data_update_interval";
     public readonly static String LastEntry = "logdate";
