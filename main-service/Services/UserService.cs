@@ -10,14 +10,14 @@ namespace Services.User
     {
         private static Random random = new Random();
 
-        public String? GetApiKey(HttpRequest Request)
+        public String GetApiKey(HttpRequest Request)
         {
             Dictionary<string, string> requestHeaders = new();
             StringValues token = String.Empty;
             Request.Headers.TryGetValue("Authorization", out token);
 
             if (token == String.Empty)
-                return null;
+                throw new Exception("RPI not registerd");
 
             String apiKey = ((String)token!).Replace("Bearer", "").Trim();
             return apiKey;

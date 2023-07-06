@@ -56,10 +56,7 @@ namespace MainService.Controllers
         [HttpPost("{rpiid}/save")]
         public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
         {
-            String? apiKey = _userService.GetApiKey(Request);
-
-            if (String.IsNullOrEmpty(apiKey))
-                return Unauthorized();
+            String apiKey = _userService.GetApiKey(Request);
 
             ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
 
@@ -69,26 +66,6 @@ namespace MainService.Controllers
             _hubContext.Clients.All.SendCurrentDeviceData(response);
 
             return Ok(response);
-        }
-
-        [HttpPost("{rpiid}/datalog")]
-        public ActionResult<ResponseDevices> GetDataLog(String rpiid, TimeFrame? timeFrame = null)
-        {
-            String? apiKey = _userService.GetApiKey(Request);
-
-            Console.WriteLine("NEW DATA SEND TO FE");
-
-            if (String.IsNullOrEmpty(apiKey))
-                return Unauthorized();
-
-            ResponseDevices? response;/*
-      if (timeFrame == null)
-        response = _deviceService.GetDataLog(rpiid, apiKey!);
-      else
-        response = _deviceService.GetDataLog(rpiid, apiKey!, timeFrame);*/
-
-            // return Ok(response);
-            return Ok();
         }
     }
 }

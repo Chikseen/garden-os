@@ -60,17 +60,17 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices? SaveDataToDB(SaveDataRequest data, String id, String ApiKey)
+        public ResponseDevices? SaveDataToDB(SaveDataRequest data, String rpiId, String rpiKey)
         {
-            // String gardenID = GetGardenID(id, false);
             Garden garden = new Garden();
+            garden.SetGardenIdByRPI(rpiId);
 
             String query = @$"
                 SET TIMEZONE = 'Europe/Berlin';
                 INSERT INTO DATALOG{garden.Id} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
                 VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.Device_ID}')".Clean();
 
-            RPIDevices? devicesData = GetRPIDevices(id, ApiKey);
+            RPIDevices? devicesData = GetRPIDevices(rpiId, rpiKey);
             if (devicesData == null)
                 return null;
 
@@ -88,9 +88,9 @@ namespace Services.Device
                 lastEntryList[data.Device_ID] = DateTime.Now;
             }
 
-            //  ResponseDevices? devices = GetDataLog(id, ApiKey);
-            // return devices;
-            return new();
+            ResponseDevices? devices = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
+            devices.Devices.First(d => d.DeviceID == data.Device_ID).Value = data.Value;
+            return devices;
         }
 
         public ResponseDevices GetOverview(UserData userData, String gardenId)
@@ -112,6 +112,37 @@ namespace Services.Device
                     DATALOG{gardenId.Replace("-", "")} AS DATALOG
                     JOIN devices ON devices.id = DATALOG.device_id
                     AND devices.garden_id = '{gardenId}'
+                ORDER BY
+                    DEVICE_ID,
+                    UPLOAD_DATE DESC;";
+            String cleandQuery = query.Clean();
+
+            List<Dictionary<String, String>> result = MainDB.query(cleandQuery);
+            ResponseDevices devices = new(result);
+            return devices;
+        }
+
+        public ResponseDevices GetOverviewFromRPI(String rpiId, String rpiKey, String gardenId)
+        {
+            String query = @$"
+                SELECT
+                    DISTINCT ON (DEVICE_ID)
+                    DATALOG.UPLOAD_DATE AS UPLOAD_DATE,
+                    DATALOG.device_id AS DEVICE_ID,
+                    DATALOG.VALUE AS VALUE,
+                    DEVICES.NAME,
+                    DEVICES.DISPLAY_ID,
+                    DEVICES.UPPER_LIMIT,
+                    DEVICES.LOWER_LIMIT,
+                    DEVICES.ISINVERTED
+                FROM
+                    DATALOG{gardenId.Replace("-", "")} AS DATALOG
+                    JOIN DEVICES
+                    ON DEVICES.ID = DEVICE_ID 
+                    JOIN RPIS
+                    ON RPIS.ID = '{rpiId}'
+                    AND RPIS.API_KEY = '{rpiKey}'
+                    AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
                 ORDER BY
                     DEVICE_ID,
                     UPLOAD_DATE DESC;";
