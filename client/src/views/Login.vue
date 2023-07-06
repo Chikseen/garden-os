@@ -25,11 +25,11 @@ export default {
 					Authorization: `Bearer ${this.keycloak.token}`,
 				},
 			});
-			console.log("h")
 			this.$router.push("overview")
 		}
-		else
-			this.$router.push("")
+		else {
+			this.$router.push("/")
+		}
 	},
 }
 </script>
