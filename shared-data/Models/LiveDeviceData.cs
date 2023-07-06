@@ -88,4 +88,15 @@ public class ReponseDevice
         else
             this.CorrectedValue = ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
     }
+
+    public void setNewValue(float value)
+    {
+        this.Value = value;
+        this.date = DateTime.Now;
+        if (this.IsInverted)
+            this.CorrectedValue = 100 - ((float)(value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+        else
+            this.CorrectedValue = ((float)(value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+
+    }
 }

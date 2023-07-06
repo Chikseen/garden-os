@@ -11,7 +11,7 @@ namespace MainService.Hardware
     public static class MainLoop
     {
         public static bool _recivedStop = false;
-        public static int _loopDelay = 250;
+        public static int _loopDelay = 100;
         private static I2cDevice? _i2c_LCD_Device;
         private static I2cDevice? _ADC;
         private static Lcd2004? _LCD;
@@ -56,6 +56,8 @@ namespace MainService.Hardware
             {
                 if (device.DeviceTyp == DeviceStatic.ADC7080)
                 {
+                    Thread.Sleep(_loopDelay);
+
                     Ads1115? _ADS1115;
                     short raw = 0;
                     if (_ADC is not null)
@@ -90,7 +92,7 @@ namespace MainService.Hardware
                         Console.WriteLine(value);
 
                         float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
-                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.1f)
+                        if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
                         {
                             triggerUpdate = true;
                             SaveDataToDatabase(device, avgValue);
@@ -98,7 +100,6 @@ namespace MainService.Hardware
                     }
                     else
                         Console.WriteLine("Filling");
-
                 }
             }
 
@@ -115,31 +116,25 @@ namespace MainService.Hardware
             if (originalDevice == null)
                 return;
 
-            DateTime lastEntry = originalDevice.LastEntry;
-            TimeSpan interval = originalDevice.DataUpdateInterval;
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainHardware.RpiApiKey);
 
-            if (lastEntry < DateTime.Now - interval)
-            {
-                HttpClient client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainHardware.RpiApiKey);
+            SaveDataRequest data = new();
+            data.Device_ID = device.ID;
+            data.Value = value;
 
-                SaveDataRequest data = new();
-                data.Device_ID = device.ID;
-                data.Value = value;
+            string jsonString = JsonSerializer.Serialize(data);
+            var content = new StringContent(
+                jsonString,
+                System.Text.Encoding.UTF8,
+                "application/json"
+                );
 
-                string jsonString = JsonSerializer.Serialize(data);
-                var content = new StringContent(
-                    jsonString,
-                    System.Text.Encoding.UTF8,
-                    "application/json"
-                    );
-
-                Console.WriteLine("Save And Send Data");
-                Console.WriteLine(content.ToString());
-                var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
-                originalDevice.LastEntry = DateTime.Now;
-                originalDevice.LastSavedValue = value;
-            }
+            Console.WriteLine("Save And Send Data");
+            Console.WriteLine(content.ToString());
+            var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
+            originalDevice.LastEntry = DateTime.Now;
+            originalDevice.LastSavedValue = value;
         }
 
         private static void DeviceInit()

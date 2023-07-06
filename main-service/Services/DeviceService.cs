@@ -8,6 +8,7 @@ namespace Services.Device
     public class DeviceService
     {
         private static Dictionary<String, DateTime> lastEntryList = new();
+        private static Dictionary<String, ResponseDevices> _deviceCache = new();
 
         public RPIData? GetRpiMeta(String id, String ApiKey)
         {
@@ -82,15 +83,20 @@ namespace Services.Device
             if (!lastEntryList.ContainsKey(data.Device_ID))
                 lastEntryList.Add(data.Device_ID, DateTime.Now);
 
+            if (!_deviceCache.ContainsKey(garden.Id))
+                _deviceCache.Add(garden.Id, _deviceCache[garden.Id] = GetOverviewFromRPI(rpiId, rpiKey, garden.Id));
+
             if (lastEntryList[data.Device_ID] < DateTime.Now - interval)
             {
                 MainDB.query(query);
                 lastEntryList[data.Device_ID] = DateTime.Now;
+                _deviceCache[garden.Id] = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
             }
-
-            ResponseDevices? devices = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
-            devices.Devices.First(d => d.DeviceID == data.Device_ID).Value = data.Value;
-            return devices;
+            else
+            {
+                _deviceCache[garden.Id].Devices.First(d => d.DeviceID == data.Device_ID).setNewValue(data.Value);
+            }
+            return _deviceCache[garden.Id];
         }
 
         public ResponseDevices GetOverview(UserData userData, String gardenId)
