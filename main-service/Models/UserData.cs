@@ -20,33 +20,21 @@ public class UserData
     [JsonPropertyName("preferred_username")]
     public String Id = String.Empty;
 
-    public Boolean IsValid = false;
-
     public List<String> GardenAccessList = new();
+
+    public Boolean IsAuthorized = false;
 
     public UserData(String jsonString)
     {
-        try
-        {
-            UserData? userData = JsonSerializer.Deserialize<UserData>(jsonString);
+        UserData? userData = JsonSerializer.Deserialize<UserData>(jsonString);
 
-            if (userData is not null)
-            {
-                this.EmailVerified = userData.EmailVerified;
-                this.GivenName = userData.GivenName;
-                this.FamilyName = userData.FamilyName;
-                this.Id = userData.Id;
-                this.IsValid = true;
-            }
-            else
-            {
-                throw new UnauthorizedAccessException("Unauthorized");
-            }
-        }
-        catch (System.Exception)
+        if (userData is not null)
         {
-            throw new UnauthorizedAccessException("Unauthorized");
-            throw;
+            this.EmailVerified = userData.EmailVerified;
+            this.GivenName = userData.GivenName;
+            this.FamilyName = userData.FamilyName;
+            this.Id = userData.Id;
+            this.IsAuthorized = true;
         }
     }
 

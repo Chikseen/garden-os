@@ -59,6 +59,18 @@ public class RPIDevice
     public TimeSpan DataUpdateInterval = TimeSpan.Parse("00:00:00");
 
     [JsonInclude]
+    [JsonPropertyName("sort_order")]
+    public int SortOrder = -1;
+
+    [JsonInclude]
+    [JsonPropertyName("group_id")]
+    public String GroupId = String.Empty;
+
+    [JsonInclude]
+    [JsonPropertyName("unit")]
+    public String Unit = String.Empty;
+
+    [JsonInclude]
     [JsonPropertyName("value")]
     public float Value = 0;
 
@@ -75,6 +87,9 @@ public class RPIDevice
         this.Address = DeviceStatic.GetInt(data, DeviceStatic.Address, 0);
         this.SerialId = DeviceStatic.GetInt(data, DeviceStatic.SerialId, 0);
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
+        this.SortOrder = DeviceStatic.GetInt(data, DeviceStatic.SortOrder, -1);
+        this.GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
+        this.Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
         this.DataUpdateInterval = DeviceStatic.GetTimeSpan(data, DeviceStatic.DataUpdateInterval);
     }
 

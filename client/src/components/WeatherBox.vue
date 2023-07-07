@@ -1,5 +1,5 @@
 <template>
-	<div v-if="gardenMeta?.weather_location_id" class="tomorrow grid_item grid_item_weather" data-language="DE"
+	<div v-if="gardenMeta?.weather_location_id" class="tomorrow" data-language="DE"
 		data-unit-system="METRIC" data-skin="light" data-widget-type="upcoming"
 		style="padding-bottom: 22px; position:relative;" :data-location-id="gardenMeta.weather_location_id">
 		<a href="https://www.tomorrow.io/weather-api/" rel="nofollow noopener noreferrer" target="_blank"
@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { fetchGardenMeta } from "@/apiService.js"
 import { mapState } from "vuex";
 
 export default {

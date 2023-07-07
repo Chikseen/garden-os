@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 
 public class GardenResponseModel
 {
-
     [JsonInclude]
     [JsonPropertyName("garden_data")]
     public List<GardenData> GardenData = new();
@@ -18,8 +17,8 @@ public class GardenResponseModel
     [JsonConstructor]
     public GardenResponseModel()
     { }
-
 }
+
 public class GardenData
 {
     [JsonInclude]

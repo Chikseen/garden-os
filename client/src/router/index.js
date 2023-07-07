@@ -4,6 +4,7 @@ import NotFound from "@/views/NotFound";
 import Index from "@/views/Index";
 import Login from "@/views/Login";
 import Overview from "@/views/Overview";
+import GardenOverview from "@/views/GardenOverview";
 
 const routes = [
   {
@@ -27,6 +28,10 @@ const routes = [
   {
     path: '/login',
     component: Login,
+  },
+  {
+    path: '/garden',
+    component: GardenOverview,
   },
 ];
 

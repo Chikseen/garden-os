@@ -1,49 +1,19 @@
 <template>
-  <div class="grid_item device_wrapper" @click="this.$router.push(`device/${device.device_id}`)">
-    <h1> {{ device.name }} </h1>
-    <h2> {{ device.corrected_value.toFixed(1) }} %
-    </h2>
-    <div class="diagram_liniar">
-      <div class="diagram_liniar_bar" :style="`width: ${device.corrected_value}%;`"></div>
-    </div>
-    <h5> {{ formatTime(device.date) }} </h5>
-  </div>
+  <DeviceBarlabel :device=device class="grid_item" />
 </template>
 
 <script>
-import { formatToDateTime } from "@/dates.js";
+import DeviceBarlabel from "@/components/Devices/DeviceBarlabel.vue"
 
 export default {
+  components: {
+    DeviceBarlabel
+  },
   props: {
     device: {
       type: Object,
       default: () => { }
     }
-  },
-  methods: {
-    formatTime(d) {
-      return formatToDateTime(d)
-    }
-  },
-}
-</script>
-
-<style lang="scss">
-.device {
-  &_wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: #ffffff;
-    width: auto;
-    padding: 10px 0;
-
-    h1,
-    h2,
-    h5,
-    p {
-      text-align: center;
-    }
   }
 }
-</style>
+</script>

@@ -1,20 +1,36 @@
 async function fetchGardenMeta() {
-	const initData = await fetch(`${process.env.VUE_APP_PI_HOST}user/garden`, {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-		},
-	});
-	const res = await initData.json();
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}user/garden`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
 	return res;
 }
 async function fetchDevices(gardenId) {
-	const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/overview/${gardenId}`, {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-		},
-	});
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}user/overview/${gardenId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
 	const res = await response.json();
 	return res;
 }

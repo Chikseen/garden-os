@@ -65,6 +65,13 @@ p {
   padding: 0;
 }
 
+button {
+  border-radius: 10px;
+  border: none;
+  background-color: #eae3d1;
+  padding: 10px;
+}
+
 #app {
   position: relative;
   background-color: #f7f7f7;

@@ -44,7 +44,10 @@ namespace Services.Device
                     DEVICES.ADDRESS,
                     DEVICES.SERIAL_ID,
                     DEVICES.DISPLAY_ID,
-                    DEVICES.DATA_UPDATE_INTERVAL
+                    DEVICES.DATA_UPDATE_INTERVAL, 
+                    DEVICES.SORT_ORDER, 
+                    DEVICES.GROUP_ID, 
+                    DEVICES.UNIT 
                 FROM
                     RPIS
                     JOIN GARDEN
@@ -113,7 +116,10 @@ namespace Services.Device
                     DEVICES.DISPLAY_ID,
                     DEVICES.UPPER_LIMIT,
                     DEVICES.LOWER_LIMIT,
-                    DEVICES.ISINVERTED
+                    DEVICES.ISINVERTED, 
+                    DEVICES.SORT_ORDER, 
+                    DEVICES.GROUP_ID, 
+                    DEVICES.UNIT 
                 FROM
                     DATALOG{gardenId.Replace("-", "")} AS DATALOG
                     JOIN devices ON devices.id = DATALOG.device_id
@@ -140,7 +146,10 @@ namespace Services.Device
                     DEVICES.DISPLAY_ID,
                     DEVICES.UPPER_LIMIT,
                     DEVICES.LOWER_LIMIT,
-                    DEVICES.ISINVERTED
+                    DEVICES.ISINVERTED, 
+                    DEVICES.SORT_ORDER, 
+                    DEVICES.GROUP_ID, 
+                    DEVICES.UNIT 
                 FROM
                     DATALOG{gardenId.Replace("-", "")} AS DATALOG
                     JOIN DEVICES
@@ -172,7 +181,10 @@ namespace Services.Device
                     DEVICES.DISPLAY_ID,
                     DEVICES.UPPER_LIMIT,
                     DEVICES.LOWER_LIMIT,
-                    DEVICES.ISINVERTED
+                    DEVICES.ISINVERTED, 
+                    DEVICES.SORT_ORDER, 
+                    DEVICES.GROUP_ID, 
+                    DEVICES.UNIT 
                 FROM
                     (
                         SELECT

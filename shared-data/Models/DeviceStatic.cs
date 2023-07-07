@@ -30,6 +30,10 @@ public static class DeviceStatic
     public readonly static String WeatherLocationId = "weather_location_id";
     public readonly static String IsInverted = "isinverted";
     public readonly static String ApiKey = "api_key";
+    public readonly static String SortOrder = "sort_order";
+    public readonly static String GroupId = "group_id";
+    public readonly static String Unit = "unit";
+    public readonly static String IsApproved = "is_approved";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

@@ -25,7 +25,10 @@ export default {
 					Authorization: `Bearer ${this.keycloak.token}`,
 				},
 			});
-			this.$router.push("overview")
+			if (localStorage.getItem("selectedGarden"))
+				this.$router.push("overview")
+			else
+				this.$router.push("garden")
 		}
 		else {
 			this.$router.push("/")

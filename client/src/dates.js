@@ -1,6 +1,6 @@
 function formatToDateTime(payload) {
 	const date = new Date(payload);
-	return `${date.toLocaleDateString("ger", { weekday: "long", year: "numeric", month: "numeric", day: "numeric" })} ${date.toLocaleTimeString()};`;
+	return `${date.toLocaleDateString("de", { localeMatcher: "lookup",  month: "numeric", day: "numeric", hour12: false })} ${date.toLocaleTimeString()};`;
 }
 
 function toUTCISOString(date) {

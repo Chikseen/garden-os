@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using Keycloak.AuthServices.Authentication;
 using System.Security.Claims;
 using dotenv.net;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +52,6 @@ else
             .AllowCredentials()
     );
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -25,6 +25,8 @@ namespace MainService.Controllers
         public ActionResult<ResponseDevices> GetOverview(String gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
             ResponseDevices response = _deviceService.GetOverview(userData, gardenId);
             return Ok(response);
         }
@@ -33,6 +35,8 @@ namespace MainService.Controllers
         public ActionResult<ResponseDevices> GetDetailed(String gardenId, TimeFrame timeFrame)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
             ResponseDevices response = _deviceService.GetDetailed(userData, gardenId, timeFrame);
             return Ok(response);
         }
@@ -41,7 +45,19 @@ namespace MainService.Controllers
         public ActionResult<GardenResponseModel> GetGardenData()
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
             GardenResponseModel response = _userService.GetGardenData(userData);
+            return Ok(response);
+        }
+
+        [HttpGet("users/{gardenId}")]
+        public ActionResult<UserList> GetUserList(String gardenId)
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+            UserList response = _userService.GetUserList(userData, gardenId);
             return Ok(response);
         }
 
@@ -49,7 +65,29 @@ namespace MainService.Controllers
         public ActionResult<UserData> CreateNewUser()
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
             _userService.SaveNewUser(userData);
+            return Ok();
+        }
+
+        [HttpGet("accessrequest/{gardenId}")]
+        public ActionResult<UserData> AccessRequest(String gardenId)
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+            _userService.AccessRequest(userData, gardenId);
+            return Ok();
+        }
+
+        [HttpGet("changestatus/{gardenId}/{userId}")]
+        public ActionResult<UserData> Changestatus(String gardenId, String userId)
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+            _userService.Changestatus(gardenId, userId);
             return Ok();
         }
     }

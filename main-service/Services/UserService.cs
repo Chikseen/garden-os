@@ -1,7 +1,9 @@
+using System.Net;
 using System.Net.Http.Headers;
 using dotenv.net;
 using ExtensionMethods;
 using MainService.DB;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
 namespace Services.User
@@ -45,6 +47,8 @@ namespace Services.User
             var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
             var contents = await response.Content.ReadAsStringAsync();
 
+            if (String.IsNullOrEmpty(contents))
+                return new();
             return new UserData(contents);
         }
 
@@ -62,11 +66,9 @@ namespace Services.User
                     gardenuser
                     JOIN garden ON gardenuser.garden_id = garden.id
                     JOIN users ON gardenuser.user_id = '{userData.Id}'
-                    AND users.id = '{userData.Id}';".Clean();
+                    AND users.id = '{userData.Id}'
+                    AND gardenuser.is_approved = true;".Clean();
             List<Dictionary<String, String>> results = MainDB.query(query);
-
-            if (results.Count < 1)
-                throw new Exception("Gardendata not found");
 
             GardenResponseModel reponse = new(results);
 
@@ -86,6 +88,51 @@ namespace Services.User
                     '{user.GivenName}'
                 ) ON CONFLICT DO NOTHING;".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);
+        }
+
+        public UserList GetUserList(UserData user, String gardenId)
+        {
+            String query = @$"
+                SELECT
+                    garden_id,
+                    user_id,
+                    is_approved
+                FROM
+                    gardenuser
+                WHERE
+                    garden_id = '{gardenId}'".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            return new(result);
+        }
+
+        public UserList AccessRequest(UserData user, String gardenId)
+        {
+            String query = @$"
+                INSERT INTO GARDENUSER (
+                   garden_id,
+                   user_id,
+                   is_approved
+                ) VALUES (
+                    '{gardenId}',
+                    '{user.Id}',
+                    false
+                ) ON CONFLICT DO NOTHING;".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            return new(result);
+        }
+
+        public UserList Changestatus(String gardenId, String userId)
+        {
+            String query = @$"
+                UPDATE  gardenuser
+                SET is_approved = NOT is_approved 
+                WHERE garden_id = '{gardenId}'
+                AND user_id = '{userId}'".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            return new(result);
         }
     }
 }

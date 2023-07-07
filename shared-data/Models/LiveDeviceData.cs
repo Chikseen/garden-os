@@ -69,6 +69,18 @@ public class ReponseDevice
     [JsonPropertyName("lower_limit")]
     public Int32 LowerLimit = 0;
 
+    [JsonInclude]
+    [JsonPropertyName("sort_order")]
+    public int SortOrder = -1;
+
+    [JsonInclude]
+    [JsonPropertyName("group_id")]
+    public String GroupId = String.Empty;
+
+    [JsonInclude]
+    [JsonPropertyName("unit")]
+    public String Unit = String.Empty;
+
     public Boolean IsInverted = false;
 
     public ReponseDevice(Dictionary<String, String> data)
@@ -81,6 +93,9 @@ public class ReponseDevice
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
         this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
         this.LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
+        this.SortOrder = DeviceStatic.GetInt(data, DeviceStatic.SortOrder, -1);
+        this.GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
+        this.Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
         this.IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
 
         if (this.IsInverted)

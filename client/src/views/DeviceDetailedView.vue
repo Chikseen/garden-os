@@ -87,8 +87,8 @@ export default {
             }
           },
           y: {
-            beginAtZero: true,
-            max: 100
+           // beginAtZero: true,
+            //max: 100
           }
         },
         elements: {
@@ -111,43 +111,40 @@ export default {
       return this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
     },
     async fetchData() {
-      try {
-        const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/detailed/${"accd30d2-7392-40b7-8a08-6d9ac9cc22b6"}`, {
-          method: "POST",
-          body: JSON.stringify(this.timeframe),
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-        });
+      const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/detailed/${localStorage.getItem("selectedGarden")}`, {
+        method: "POST",
+        body: JSON.stringify(this.timeframe),
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
 
-        const chartData = await response.json()
+      const chartData = await response.json()
 
-        // Refine Chart data
-        let labels = []
-        let datasets = []
+      // Refine Chart data
+      let labels = []
+      let datasets = []
+      const routeDevice = this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
 
-        chartData.devices.forEach(device => {
-          if (!labels.includes(device.date)) {
-            labels.push(device.date)
-          }
-          if (!datasets.some(d => d.label == device.name)) {
-            const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
-            const dataForDevice = devicesInLabel.map(d => { return { y: d.corrected_value, x: new Date(d.date) } })
-            datasets.push({
-              label: device.name,
-              data: dataForDevice,
-              hidden: this.$route.params.id != device.device_id,
-              backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
-            })
-          }
-        });
-        this.data = { labels: labels, datasets: datasets }
-        console.log(this.data)
-      } catch (error) {
-        console.log(error)
-      }
+      chartData.devices.forEach(device => {
+        if (!labels.includes(device.date)) {
+          labels.push(device.date)
+        }
+        if (!datasets.some(d => d.label == device.name)) {
+          const ishidden = routeDevice.group_id != "" ? routeDevice.group_id != device.group_id : routeDevice.device_id != device.device_id
+          const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
+          const dataForDevice = devicesInLabel.map(d => { return { y: d.corrected_value, x: new Date(d.date) } })
+          datasets.push({
+            label: device.name,
+            data: dataForDevice,
+            hidden: ishidden,
+            backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+          })
+        }
+      });
+      this.data = { labels: labels, datasets: datasets }
     }
   },
   computed: {
@@ -170,7 +167,7 @@ export default {
   },
   async mounted() {
     this.$store.commit("setGardenList", await fetchGardenMeta())
-    this.$store.commit("setDeviceData", await fetchDevices("accd30d2-7392-40b7-8a08-6d9ac9cc22b6"))
+    this.$store.commit("setDeviceData", await fetchDevices(localStorage.getItem("selectedGarden")))
     this.fetchData()
   },
 }

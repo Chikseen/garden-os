@@ -1,10 +1,10 @@
 import { createStore } from "vuex";
+import router from "@/router/index";
 
 export default createStore({
 	state: {
 		keycloak: null,
 		isAuth: false,
-		is3dView: false,
 		gardenMeta: null,
 		gardenList: null,
 		deviceData: null,
@@ -18,14 +18,15 @@ export default createStore({
 			state.gardenMeta = payload;
 		},
 		setGardenList(state, payload) {
-			state.gardenList = payload;
-			state.gardenMeta = payload.garden_data[0];
-		},
-		set3dView(state, payload) {
-			state.is3dView = payload;
+			if (payload != null) {
+				state.gardenList = payload;
+				state.gardenMeta = payload.garden_data[0];
+			} else {
+				router.push("/");
+				localStorage.clear();
+			}
 		},
 		setDeviceData(state, payload) {
-			console.log("p", payload);
 			state.deviceData = payload;
 		},
 		setKeycloak(state, payload) {
