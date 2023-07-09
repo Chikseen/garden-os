@@ -66,9 +66,17 @@ p {
 }
 
 button {
+  cursor: pointer;
   border-radius: 10px;
   border: none;
   background-color: #eae3d1;
+  padding: 10px;
+}
+
+input {
+  border-radius: 10px;
+  border: none;
+  background-color: #eae3d280;
   padding: 10px;
 }
 

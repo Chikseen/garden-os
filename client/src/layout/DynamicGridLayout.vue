@@ -26,6 +26,9 @@
 		&_large {
 			grid-row-start: span 2;
 		}
+		&_xlarge {
+			grid-row-start: span 3;
+		}
 
 		&_settings {
 			padding: 15px;

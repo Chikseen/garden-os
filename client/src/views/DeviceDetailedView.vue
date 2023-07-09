@@ -15,7 +15,9 @@
       <button @click="fetchData()">Fetch Timeframe</button>
     </div>
   </div>
-  <div class="lineChart_wrapper">
+
+  <LC v-if="isDataLoading" />
+  <div v-else class="lineChart_wrapper">
     <Line :data="data" :options="options" />
   </div>
 </template>
@@ -35,6 +37,7 @@ import {
 import { Line } from 'vue-chartjs'
 import 'chartjs-adapter-moment';
 import DeviceBox from "@/components/Devices/DeviceBox.vue"
+import LC from "@/components/ui/LoadingComponent.vue"
 
 ChartJS.register(
   CategoryScale,
@@ -54,10 +57,12 @@ import { mapState } from "vuex";
 export default {
   components: {
     Line,
-    DeviceBox
+    DeviceBox,
+    LC,
   },
   data() {
     return {
+      isDataLoading: true,
       timeframe: {
         start: null,
         end: null
@@ -87,7 +92,7 @@ export default {
             }
           },
           y: {
-           // beginAtZero: true,
+            // beginAtZero: true,
             //max: 100
           }
         },
@@ -111,6 +116,7 @@ export default {
       return this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
     },
     async fetchData() {
+      this.isDataLoading = true
       const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/detailed/${localStorage.getItem("selectedGarden")}`, {
         method: "POST",
         body: JSON.stringify(this.timeframe),
@@ -145,6 +151,7 @@ export default {
         }
       });
       this.data = { labels: labels, datasets: datasets }
+      this.isDataLoading = false
     }
   },
   computed: {

@@ -1,7 +1,7 @@
 <template>
 	<div v-if="gardenMeta?.weather_location_id" class="tomorrow" data-language="DE"
 		data-unit-system="METRIC" data-skin="light" data-widget-type="upcoming"
-		style="padding-bottom: 22px; position:relative;" :data-location-id="gardenMeta.weather_location_id">
+		style="padding-bottom: 22px; position:relative; max-height: 475px" :data-location-id="gardenMeta.weather_location_id">
 		<a href="https://www.tomorrow.io/weather-api/" rel="nofollow noopener noreferrer" target="_blank"
 			style="position: absolute; bottom: 0; transform: translateX(-50%); left: 50%;">
 			<img alt="Powered by the Tomorrow.io Weather API"
