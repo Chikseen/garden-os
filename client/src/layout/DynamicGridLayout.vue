@@ -7,7 +7,7 @@
 <style lang="scss">
 .grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 	grid-auto-rows: 1fr;
 	gap: 15px;
 	max-width: 1500px;
@@ -26,6 +26,7 @@
 		&_large {
 			grid-row-start: span 2;
 		}
+
 		&_xlarge {
 			grid-row-start: span 3;
 		}
@@ -47,5 +48,11 @@
 .upcoming-widget-square__root--KGAv {
 	border-radius: 10px !important;
 	border: 10px solid #5f5e5e21 !important;
+}
+
+@media only screen and (max-width: 350px) {
+	.grid {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	}
 }
 </style>

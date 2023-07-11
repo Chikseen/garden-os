@@ -191,6 +191,7 @@ export default {
 .gardenOverview {
 	&_wrapper {
 		max-width: 750px;
+		width: calc(100% - 30px);
 		margin: auto;
 		padding: 15px;
 	}
