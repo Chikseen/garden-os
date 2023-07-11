@@ -10,14 +10,27 @@
 				<h5> {{ garden.weather_location }} </h5>
 			</div>
 			<div class="grid_item item item_input">
-				<input type="text" name="" id="" placeholder="gardenID" @change="(e) => newGardenId = e.target.value">
-				<button @click="sendAccessRequest()">Request Access</button>
+				<input type="text" name="" id="" placeholder="gardenID" @change="(e) => newGardenId = e.target.value"
+					:value="newGardenId">
+				<button @click="sendAccessRequest()">
+					<LC v-if="isAccessRequestLoading" />
+					<p v-else>Request Access</p>
+				</button>
+				<button @click="logout">Logout</button>
 			</div>
 
 		</DynamicGrid>
 
+		<h1>Pending requests</h1>
+		<LC v-if="isAccessRequestLoading" />
+		<DynamicGrid v-else>
+			<div v-for="req in requestedGarden" :key="req" class="grid_item item">
+				<h2>{{ req }}</h2>
+			</div>
+		</DynamicGrid>
+
 		<hr>
-		
+
 		<h1>User Settings</h1>
 		<div v-if="selectedGarden">
 			<LC v-if="isUserListLoading" />
@@ -48,6 +61,8 @@ import LC from "@/components/ui/LoadingComponent.vue"
 import { fetchGardenMeta } from "@/apiService.js"
 import { mapState } from "vuex";
 
+import Keycloak from "keycloak-js"
+
 export default {
 	components: {
 		DynamicGrid,
@@ -60,6 +75,8 @@ export default {
 			newGardenId: null,
 			isGardenListLoading: true,
 			isUserListLoading: true,
+			isAccessRequestLoading: false,
+			requestedGarden: []
 		}
 	},
 	methods: {
@@ -79,19 +96,8 @@ export default {
 
 			this.isUserListLoading = false;
 		},
-		async sendAccessRequest() {
-			if (this.newGardenId) {
-				const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/accessrequest/${this.newGardenId}`, {
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-					},
-				});
-			}
-		},
 		async toggleUserStatus(user) {
 			this.isUserListLoading = true;
-			console.log(user)
 			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/changestatus/${user.garden_id}/${user.user_id}`, {
 				method: "GET",
 				headers: {
@@ -100,16 +106,54 @@ export default {
 			});
 			await this.fetchuser()
 		},
+		async sendAccessRequest() {
+			this.isAccessRequestLoading = true
+			if (this.newGardenId) {
+				const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/accessrequest/${this.newGardenId}`, {
+					method: "GET",
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					},
+				});
+			}
+			this.loadRequested();
+			this.newGardenId = ""
+		},
+		async loadRequested() {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/requested`, {
+				method: "GET",
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+				},
+			});
+			this.requestedGarden = await response.json()
+
+			this.isAccessRequestLoading = false
+		},
+		async logout() {
+			localStorage.clear();
+			const keycloak = new Keycloak({
+				url: "https://auth.drunc.net",
+				realm: process.env.VUE_APP_AUTH_REALM,
+				clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+
+			});
+			await keycloak
+				.init({})
+			keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
+		},
 	},
 	computed: {
 		...mapState({
 			gardenList: (state) => state.gardenList,
+			keycloak: (state) => state.keycloak,
 		}),
 	},
 	async mounted() {
 		this.isGardenListLoading = true
 		this.selectedGarden = localStorage.getItem('selectedGarden')
 		this.$store.commit("setGardenList", await fetchGardenMeta())
+		await this.loadRequested();
 		if (this.selectedGarden) {
 			this.fetchuser()
 		}
@@ -126,7 +170,7 @@ export default {
 	justify-content: space-evenly;
 	background-color: #ffffff;
 	width: auto;
-	padding: 10px 0;
+	padding: 10px;
 
 	h1,
 	h2,

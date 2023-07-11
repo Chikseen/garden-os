@@ -17,7 +17,6 @@ export default {
 	computed: {
 		...mapState({
 			gardenMeta: (state) => state.gardenMeta,
-
 		}),
 	},
 	methods: {

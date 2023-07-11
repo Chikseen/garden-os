@@ -15,10 +15,9 @@ export default {
 <style lang="scss">
 .LoadingIcon {
 	user-select: none;
-	position: relative;
+	margin: auto;
 	display: flex;
 	justify-content: center;
-	width: 100%;
 	height: 100%;
 
 	img {

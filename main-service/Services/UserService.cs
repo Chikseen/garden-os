@@ -123,6 +123,27 @@ namespace Services.User
             return new(result);
         }
 
+        public List<String> GetRequestedGardenList(UserData user)
+        {
+            String query = @$"
+                SELECT
+                    garden_id
+                FROM
+                    gardenUser
+                WHERE
+                    user_id = '{user.Id}'
+                    AND is_approved = false;".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            List<String> list = new();
+            foreach (var item in result)
+            {
+                list.Add(item[DeviceStatic.GardenID]);
+            }
+
+            return list;
+        }
+
         public UserList Changestatus(String gardenId, String userId)
         {
             String query = @$"

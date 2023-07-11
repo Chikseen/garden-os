@@ -268,3 +268,11 @@ FROM
     tempTable;
 
 COMMIT;
+
+SELECT
+    garden_id
+FROM
+    gardenUser
+WHERE
+    user_id = 't@t.de'
+    AND is_approved = false;

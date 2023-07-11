@@ -52,7 +52,6 @@ export default {
     methods: {
         async logout() {
             localStorage.clear();
-            console.log("RDURL", process.env.VUE_APP_AUTH_LOGOUT)
             const keycloak = new Keycloak({
                 url: "https://auth.drunc.net",
                 realm: process.env.VUE_APP_AUTH_REALM,
@@ -75,6 +74,8 @@ export default {
         this.$store.commit("setGardenList", await fetchGardenMeta())
         this.$store.commit("setDeviceData", await fetchDevices(localStorage.getItem("selectedGarden")))
         this.isLoading = false
+        console.log(this.$hub)
+        this.$hub.invoke("setUserToGarden", localStorage.getItem("selectedGarden"));
     }
 }
 </script>

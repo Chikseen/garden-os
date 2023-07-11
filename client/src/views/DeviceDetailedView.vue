@@ -106,7 +106,6 @@ export default {
   },
   methods: {
     setTimeFrameStart(e) {
-      console.log("changed")
       this.timeframe.start = toUTCISOString(new Date(e.target.value))
     },
     setTimeFrameEnd(e) {

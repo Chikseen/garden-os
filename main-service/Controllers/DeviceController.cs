@@ -57,13 +57,16 @@ namespace MainService.Controllers
         public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
         {
             String apiKey = _userService.GetApiKey(Request);
+            Garden garden = new Garden();
+            garden.SetGardenIdByRPI(rpiid);
 
             ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
 
             if (response == null)
                 return BadRequest();
 
-            _hubContext.Clients.All.SendCurrentDeviceData(response);
+            Console.WriteLine(garden.Id);
+            _hubContext.Clients.Group(garden.Id).SendCurrentDeviceData(response);
 
             return Ok(response);
         }

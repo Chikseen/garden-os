@@ -17,7 +17,6 @@ export default {
 		}),
 	},
 	async mounted() {
-		console.log("Login", this.keycloak)
 		if (this.keycloak?.authenticated) {
 			await fetch(`${process.env.VUE_APP_PI_HOST}user/register`, {
 				method: "POST",

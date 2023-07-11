@@ -20,7 +20,7 @@ export default createStore({
 		setGardenList(state, payload) {
 			if (payload != null) {
 				state.gardenList = payload;
-				state.gardenMeta = payload.garden_data[0];
+				state.gardenMeta = payload.garden_data.find((g) => g.garden_id == localStorage.getItem("selectedGarden"));
 			} else {
 				router.push("/");
 				localStorage.clear();

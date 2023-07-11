@@ -1,7 +1,5 @@
 <template>
-  <div id="app" v-if="!authPending">
-    <router-view></router-view>
-  </div>
+  <router-view v-if="!authPending"></router-view>
 </template>
 
 <script>
@@ -20,7 +18,6 @@ export default {
     });
   },
   async beforeMount() {
-    console.log(process.env.VUE_APP_AUTH_REALM)
     if (!localStorage.getItem("accessToken")) {
       const keycloak = new Keycloak({
         url: "https://auth.drunc.net",
@@ -34,7 +31,6 @@ export default {
           redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
         })
 
-      console.log('Auth', keycloak.authenticated);
       if (keycloak.authenticated) {
         localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
         localStorage.setItem("accessToken", keycloak.token)
@@ -66,11 +62,12 @@ p {
 }
 
 button {
+  position: relative;
   cursor: pointer;
   border-radius: 10px;
   border: none;
   background-color: #eae3d1;
-  padding: 10px;
+  height: 3rem;
 }
 
 input {
@@ -82,6 +79,8 @@ input {
 
 #app {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background-color: #f7f7f7;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   min-height: 100vh;

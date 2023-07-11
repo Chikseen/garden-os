@@ -81,6 +81,15 @@ namespace MainService.Controllers
             return Ok();
         }
 
+        [HttpGet("requested")]
+        public ActionResult<List<String>> GetRequestedGardenList()
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+            return Ok(_userService.GetRequestedGardenList(userData));
+        }
+
         [HttpGet("changestatus/{gardenId}/{userId}")]
         public ActionResult<UserData> Changestatus(String gardenId, String userId)
         {
