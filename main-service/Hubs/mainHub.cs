@@ -7,6 +7,7 @@ namespace MainService.Hub
         public Task SendMyEvent(ResponseDevices message);
         public Task SendCurrentDeviceData(ResponseDevices message);
         public Task HardwareRequestRPI();
+        public Task SendRebootRequest();
     }
 
     // I have the assumbtion that clients are not disconnected in the correct manner
@@ -15,6 +16,7 @@ namespace MainService.Hub
         private readonly IHubContext<MainHub, IMainHub> _hubContext;
         static bool isInit = false;
         static private Dictionary<String, String> _groupList = new();
+        static public Dictionary<String, String> _rpiList = new();
 
         public MainHub(IHubContext<MainHub, IMainHub> hubContext)
         {
@@ -35,11 +37,6 @@ namespace MainService.Hub
             // MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
-        ~MainHub()
-        {
-            // MainHardware.ProcessCompleted -= PrepareEventToSend;
-        }
-
         public void setUserToGarden(String gId)
         {
             String gardenId = gId.Replace("-", "");
@@ -51,6 +48,16 @@ namespace MainService.Hub
 
             _groupList[userId] = gardenId;
             this.Groups.AddToGroupAsync(userId, gardenId);
+        }
+
+        public void SetRpiConnectionId(String rpiId)
+        {
+            String conId = this.Context.ConnectionId;
+
+            _rpiList[rpiId] = conId;
+
+            Console.WriteLine(rpiId);
+            Console.WriteLine(conId);
         }
     }
 }

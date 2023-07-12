@@ -31,6 +31,13 @@ namespace MainService.Controllers
             return "If your reading this your cool";
         }
 
+        [HttpGet("reboot")]
+        public String Reboot()
+        {
+            _hubContext.Clients.Client(MainHub._rpiList["c4202eb8-cf7f-488a-bedd-0c5596847803"]).SendRebootRequest();
+            return "RebootRequest send";
+        }
+
         [HttpGet("ledToggle")]
         public OkResult ledToggle()
         {

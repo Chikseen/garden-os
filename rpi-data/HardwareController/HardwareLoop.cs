@@ -23,23 +23,18 @@ namespace MainService.Hardware
         {
             DeviceInit();
 
-            while (true && !_recivedStop)
+            while (true)
             {
                 try
                 {
                     Loop();
                 }
-                catch (System.Exception e)
+                catch (System.Exception)
                 {
-                    Console.WriteLine(e);
-                }
 
+                    throw;
+                }
                 Thread.Sleep(_loopDelay);
-
-                if (_recivedStop)
-                {
-                    _LCD.Dispose();
-                }
             }
         }
 
@@ -61,8 +56,6 @@ namespace MainService.Hardware
                 {
                     case "ADC":
                         {
-
-
                             Ads1115? _ADS1115;
                             short raw = 0;
                             if (_ADC is not null)
