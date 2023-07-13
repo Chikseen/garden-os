@@ -31,25 +31,24 @@ namespace MainService.Controllers
             return "If your reading this your cool";
         }
 
-        [HttpGet("reboot")]
-        public String Reboot()
+        [HttpGet("reboot/{rpiId}")]
+        public ActionResult<String> Reboot(String rpiId)
         {
-            _hubContext.Clients.Client(MainHub._rpiList["c4202eb8-cf7f-488a-bedd-0c5596847803"]).SendRebootRequest();
-            return "RebootRequest send";
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+
+            if (!MainHub._rpiList.ContainsKey(rpiId))
+                return BadRequest("The Hub is not registerd");
+
+            _hubContext.Clients.Client(MainHub._rpiList[rpiId]).SendRebootRequest();
+            return Ok("RebootRequest send");
         }
 
         [HttpGet("ledToggle")]
         public OkResult ledToggle()
         {
             //WebInput.toggleLed();
-
-            // I did not forgot to remove the apikey its an dummy key so dont be hyped
-            String rpiid = "1a667139-d648-4745-8529-a296c6de6f05";
-            String apiKey = "OExfKUsFUh8bpVaR8soHNGhvFcwMXAcsLLQazmzdDumn0nSKMne2lsMJCgkPoEF2rZuUkWRMlQ7lK4WH3TNnTe16adkHeVCVwqhmZXASrcBaZzQ5j2qVQoubRDMiVbOW";
-
-            // ResponseDevices devices = _deviceService.GetDataLog(rpiid, apiKey, true)!;
-            // _hubContext.Clients.All.SendCurrentDeviceData(devices);
-            Console.WriteLine("pts");
             return Ok();
         }
     }

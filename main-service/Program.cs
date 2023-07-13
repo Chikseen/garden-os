@@ -3,10 +3,7 @@ using MainService.DB;
 using System.Net;
 using System.Net.Sockets;
 using Keycloak.AuthServices.Authentication;
-using System.Security.Claims;
 using dotenv.net;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +38,7 @@ if (app.Environment.IsDevelopment())
     );
     //app.Urls.Add($"https://{GetLocalIPAddress()}:5082");
     app.Urls.Add($"https://localhost:5082");
-    app.Urls.Add($"http://192.168.1.104:5082");
+    app.Urls.Add($"http://{GetLocalIPAddress()}:5082");
 }
 else
 {
@@ -72,13 +69,5 @@ app.Run();
 
 static string GetLocalIPAddress()
 {
-    var host = Dns.GetHostEntry(Dns.GetHostName());
-    foreach (var ip in host.AddressList)
-    {
-        if (ip.AddressFamily == AddressFamily.InterNetwork)
-        {
-            return ip.ToString();
-        }
-    }
-    throw new Exception("No network adapters with an IPv4 address in the system!");
+    return Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where(a => a.AddressFamily == AddressFamily.InterNetwork).FirstOrDefault()?.ToString()!;
 }

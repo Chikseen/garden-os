@@ -18,7 +18,18 @@
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_xlarge" />
             <DeviceList :devices=deviceData?.devices></DeviceList>
-            <div class="grid_item grid_item_settings">
+            <div class="grid_item grid_item_settings grid_item_text">
+                <h3>Hub Controll</h3>
+                {{ bridge }}
+                <div class="grid_item_status">
+                    <h4>Current Status:</h4>
+                    <StatusIcon status="ok" />
+                    <h4>placeholder</h4>
+                </div>
+                <ClickAndHoldButton @trigger="sendRebootRequest">Reboot (click & hold)</ClickAndHoldButton>
+            </div>
+            <div class="grid_item grid_item_settings grid_item_text">
+                <h3>Settings</h3>
                 <button @click="logout">Logout</button>
                 <button @click="$router.push('/garden')">Change Garden</button>
             </div>
@@ -31,6 +42,8 @@ import DynamicGrid from "@/layout/DynamicGridLayout.vue";
 import DeviceList from "@/components/Devices/DeviceList.vue"
 import WeatherBox from "@/components/WeatherBox.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
+import StatusIcon from "@/assets/StatusIcon.vue"
+import ClickAndHoldButton from "@/components/ClickAndHoldButton.vue"
 
 import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
 import { mapState } from "vuex";
@@ -43,10 +56,13 @@ export default {
         DeviceList,
         WeatherBox,
         LC,
+        StatusIcon,
+        ClickAndHoldButton,
     },
     data() {
         return {
-            isLoading: true
+            isLoading: true,
+            bridge: null
         }
     },
     methods: {
@@ -61,6 +77,24 @@ export default {
             await keycloak
                 .init({})
             keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
+        },
+        async sendRebootRequest() {
+            const response = await fetch(`${process.env.VUE_APP_PI_HOST}reboot/${this.bridge}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            });
+        },
+        async getBridges() {
+            const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/bridges/${localStorage.getItem("selectedGarden")}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            });
+            const j = await response.json()
+            this.bridge = j[0]
         }
     },
     computed: {
@@ -74,8 +108,8 @@ export default {
         this.$store.commit("setGardenList", await fetchGardenMeta())
         this.$store.commit("setDeviceData", await fetchDevices(localStorage.getItem("selectedGarden")))
         this.isLoading = false
-        console.log(this.$hub)
         this.$hub.invoke("setUserToGarden", localStorage.getItem("selectedGarden"));
+        this.getBridges()
     }
 }
 </script>

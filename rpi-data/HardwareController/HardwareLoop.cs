@@ -2,6 +2,7 @@ using System.Device.Gpio;
 using System.Device.I2c;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using dotenv.net;
 using Iot.Device.Ads1115;
 using Iot.Device.CharacterLcd;
 using Iot.Device.DHTxx;
@@ -147,9 +148,20 @@ namespace MainService.Hardware
 
             Console.WriteLine("Save And Send Data");
             Console.WriteLine(content.ReadAsStringAsync());
-            var responseString = client.PostAsync($"https://gardenapi.drunc.net/devices/{MainHardware.RpiId}/save", content).Result;
-            originalDevice.LastEntry = DateTime.Now;
-            originalDevice.LastSavedValue = value;
+
+            DotEnv.Load();
+            String url = Environment.GetEnvironmentVariable("URL")!;
+          
+            try
+            {
+                var responseString = client.PostAsync($"{url}/devices/{MainHardware.RpiId}/save", content).Result;
+                originalDevice.LastEntry = DateTime.Now;
+                originalDevice.LastSavedValue = value;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private static void DeviceInit()

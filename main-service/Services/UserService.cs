@@ -155,5 +155,19 @@ namespace Services.User
 
             return new(result);
         }
+
+        public List<String> GetBridges(String gardenId)
+        {
+            String query = @$"
+                SELECT 
+                    id 
+                FROM 
+                    rpis
+                WHERE 
+                    garden_id = '{gardenId}'".Clean();
+            List<Dictionary<String, String>> results = MainDB.query(query);
+
+            return results.Select(b => b["id"]).ToList();
+        }
     }
 }

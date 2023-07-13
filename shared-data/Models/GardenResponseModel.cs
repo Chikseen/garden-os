@@ -37,6 +37,10 @@ public class GardenData
     [JsonPropertyName("weather_location_id")]
     public String WeatherLocationId = "";
 
+    [JsonInclude]
+    [JsonPropertyName("hubs")]
+    public List<String> Hubs = new();
+    
     public GardenData(Dictionary<String, String> data)
     {
         this.UserName = $"{DeviceStatic.GetString(data, DeviceStatic.GivenName)} {DeviceStatic.GetString(data, DeviceStatic.FamilyName)}";

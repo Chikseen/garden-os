@@ -18,45 +18,45 @@ namespace RPI.Connection
 
         private Microsoft.AspNetCore.SignalR.Client.HubConnection Connect()
         {
-            Console.WriteLine("Try Connect");
-            _hubConnection = new HubConnectionBuilder()
-             .WithUrl("https://gardenapi.drunc.net/hub")
-            .WithAutomaticReconnect()
-            .Build();
-
-            _hubConnection.On("SendRebootRequest", () =>
-                {
-                    Console.WriteLine("Reboot request recvied");
-                    try
-                    {
-                        System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "reboot" });
-                    }
-                    catch (System.Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                });
-            _hubConnection.On<string>("SendMyEvent", (user) =>
-                {
-                    GetMessage(user, "message");
-                });
-
-            _hubConnection.Closed += (exception) =>
+            try
             {
-                if (exception == null)
-                {
-                    Console.WriteLine("Connection closed without error.");
-                }
-                else
-                {
-                    Console.WriteLine($"Connection closed due to an error: {exception}");
-                }
-                Connect();
-                return null!;
-            };
+                DotEnv.Load();
+                Console.WriteLine("Try Connect");
+                _hubConnection = new HubConnectionBuilder()
+                 .WithUrl($"{Environment.GetEnvironmentVariable("URL")!}/hub")
+                .WithAutomaticReconnect()
+                .Build();
 
-            _hubConnection.StartAsync().Wait();
-            return _hubConnection;
+                _hubConnection.On("SendRebootRequest", () =>
+                    {
+                        Console.WriteLine("Reboot request recvied");
+
+                        FileStream fs = File.Create("../111.txt");
+                        System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "reboot" });
+
+                    });
+                _hubConnection.On<string>("SendMyEvent", (user) =>
+                    {
+                        GetMessage(user, "message");
+                    });
+
+
+                _hubConnection.StartAsync().Wait();
+
+                _hubConnection.Closed += HubConnection_Closed;
+                _hubConnection.Reconnected += HubConnection_Reconnected;
+
+                return _hubConnection;
+            }
+            catch (System.Exception e)
+            {
+                // create a file at pathName
+                FileStream fs = File.Create("../222.txt");
+                Thread.Sleep(10000);
+                System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "reboot" });
+                Console.WriteLine(e);
+                return Connect();
+            }
         }
 
         void GetMessage(string user, string message)
@@ -70,6 +70,27 @@ namespace RPI.Connection
             DotEnv.Load();
             String rpiId = Environment.GetEnvironmentVariable("RPI_ID")!;
             _hubConnection.SendAsync("SetRpiConnectionId", rpiId);
+        }
+
+        static Task HubConnection_Closed(Exception? exception)
+        {
+            // Handle connection closed event
+            Console.WriteLine("Connection closed.");
+
+            if (exception != null)
+            {
+                // Handle connection error
+                Console.WriteLine($"Connection error: {exception.Message}");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        Task HubConnection_Reconnected(string? arg)
+        {
+            Console.WriteLine("Reconnected");
+            setRpiAndConId();
+            return Task.CompletedTask;
         }
     }
 }

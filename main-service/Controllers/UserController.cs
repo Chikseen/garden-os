@@ -99,5 +99,15 @@ namespace MainService.Controllers
             _userService.Changestatus(gardenId, userId);
             return Ok();
         }
+
+        [HttpGet("bridges/{gardenId}")]
+        public ActionResult<List<String>> GetBridges(String gardenId)
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+
+            return Ok(_userService.GetBridges(gardenId));
+        }
     }
 }

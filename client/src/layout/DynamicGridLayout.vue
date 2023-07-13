@@ -31,10 +31,20 @@
 			grid-row-start: span 3;
 		}
 
+		&_text {
+			text-align: center;
+		}
+
+		&_status {
+			display: flex;
+			justify-content: center;
+		}
+
 		&_settings {
 			padding: 15px;
 			display: flex;
 			flex-direction: column;
+			justify-content: space-between;
 			gap: 15px;
 
 			button {

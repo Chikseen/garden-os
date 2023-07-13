@@ -67,7 +67,7 @@ button {
   border-radius: 10px;
   border: none;
   background-color: #eae3d1;
-  height: 3rem;
+  height: 2rem;
 }
 
 input {
