@@ -11,9 +11,7 @@ public class Garden
 
     public void SetGardenIdByUser(String id)
     {
-        String query = $"SELECT GARDEN_ID FROM USERS WHERE ID = '{id}'";
-
-        List<Dictionary<String, String>> result = MainDB.query(query);
+        List<Dictionary<String, String>> result = MainDB.query(Querys.SelectGardenIDFromUsereId(id));
         Dictionary<String, String>? entry = result.FirstOrDefault();
 
         if (entry is not null)
@@ -24,9 +22,7 @@ public class Garden
 
     public void SetGardenIdByRPI(String id)
     {
-        String query = $"SELECT GARDEN_ID FROM RPIS WHERE ID = '{id}'";
-
-        List<Dictionary<String, String>> result = MainDB.query(query);
+        List<Dictionary<String, String>> result = MainDB.query(Querys.SelectGardenIDFromRpiId(id));
         Dictionary<String, String>? entry = result.FirstOrDefault();
 
         if (entry is not null)

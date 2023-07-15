@@ -6,6 +6,7 @@ namespace MainService.Hub
     {
         public Task SendMyEvent(ResponseDevices message);
         public Task SendCurrentDeviceData(ResponseDevices message);
+        public Task NewDeviceStatus(DeveiceStatus message);
         public Task HardwareRequestRPI();
         public Task SendRebootRequest();
     }

@@ -1,4 +1,4 @@
-using RPI.Connection;
+using System.Text.Json;
 using dotenv.net;
 
 namespace MainService.Hardware
@@ -20,25 +20,36 @@ namespace MainService.Hardware
                 OnProcessCompleted(); // This is a supercool event listner only sends an event to ALL subs if this value is actually changed
             }
         }
-        public static Connection? _connection;
-
 
         // Starts the main loop for getting Hardwaredata
-        public static void Init(Connection connection)
+        public static void Init()
         {
             DotEnv.Load();
             RpiId = Environment.GetEnvironmentVariable("RPI_ID")!;
             RpiApiKey = Environment.GetEnvironmentVariable("API_KEY")!;
 
-            // Set up Connection
-            _connection = connection;
+            try
+            {
+                Preperation prep = new(RpiApiKey);
 
-            Preperation prep = new(RpiApiKey);
+                rpiData = prep.SetRPI(RpiId);
+                _data = prep.SetDevices(RpiId);
 
-            rpiData = prep.SetRPI(RpiId);
-            _data = prep.SetDevices(RpiId);
+                MainLoop.Start();
+            }
+            catch (System.Exception)
+            {
+                DeveiceStatus status = new()
+                {
+                    RpiId = MainHardware.RpiId,
+                    TriggerdBy = "RPI Exeption: MainLoop was exited",
+                    Status = "error",
+                };
 
-            MainLoop.Start();
+                ApiService api = new();
+                api.Post($"/devices/status", JsonSerializer.Serialize(status));
+                SystemService.Reboot();
+            }
         }
 
         protected static void OnProcessCompleted()

@@ -1,7 +1,7 @@
 
-using System;
-using System.Diagnostics;
+using System.Text.Json;
 using dotenv.net;
+using MainService.Hardware;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace RPI.Connection
@@ -23,7 +23,7 @@ namespace RPI.Connection
                 DotEnv.Load();
                 Console.WriteLine("Try Connect");
                 _hubConnection = new HubConnectionBuilder()
-                 .WithUrl($"{Environment.GetEnvironmentVariable("URL")!}/hub")
+                .WithUrl($"{Environment.GetEnvironmentVariable("URL")!}/hub")
                 .WithAutomaticReconnect()
                 .Build();
 
@@ -31,9 +31,17 @@ namespace RPI.Connection
                     {
                         Console.WriteLine("Reboot request recvied");
 
-                        FileStream fs = File.Create("../111.txt");
-                        System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "reboot" });
+                        DeveiceStatus status = new()
+                        {
+                            RpiId = MainHardware.RpiId,
+                            TriggerdBy = "Manuel Reboot triggerd",
+                            Status = "reboot",
+                        };
 
+                        ApiService api = new();
+                        api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
+                        SystemService.Reboot();
                     });
                 _hubConnection.On<string>("SendMyEvent", (user) =>
                     {
@@ -48,13 +56,19 @@ namespace RPI.Connection
 
                 return _hubConnection;
             }
-            catch (System.Exception e)
+            catch (System.Exception)
             {
-                // create a file at pathName
-                FileStream fs = File.Create("../222.txt");
-                Thread.Sleep(10000);
-                System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "reboot" });
-                Console.WriteLine(e);
+                DeveiceStatus status = new()
+                {
+                    RpiId = MainHardware.RpiId,
+                    TriggerdBy = "Not able to create Hub Connection",
+                    Status = "error",
+                };
+
+                ApiService api = new();
+                api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
+                SystemService.Reboot();
                 return Connect();
             }
         }

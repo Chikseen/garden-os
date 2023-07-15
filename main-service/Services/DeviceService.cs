@@ -209,5 +209,34 @@ namespace Services.Device
             ResponseDevices devices = new(result);
             return devices;
         }
+
+        public DeveiceStatus SetStatus(DeveiceStatus status)
+        {
+            String insertQuery = @$"
+                INSERT INTO rpilog (
+                    status,
+                    tiggerd_by
+                ) VALUES (
+                    '{status.Status}',
+                    '{status.TriggerdBy}'
+                );".Clean();
+            MainDB.query(insertQuery);
+
+            /*   String query = @$"
+                   SELECT
+                       RPIS.ID   AS RPI_ID,
+                       GARDEN.ID AS GARDEN_ID,
+                       GARDEN.NAME
+                   FROM
+                       RPIS
+                       JOIN GARDEN
+                       ON RPIS.ID = '{id}'
+                       AND RPIS.API_KEY = '{ApiKey}'
+                       AND RPIS.GARDEN_ID = GARDEN.ID;".Clean();
+               List<Dictionary<String, String>> result = MainDB.query(query);
+
+               DeveiceStatus.get*/
+            return new();
+        }
     }
 }

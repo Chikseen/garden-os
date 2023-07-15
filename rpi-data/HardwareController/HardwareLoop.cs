@@ -24,17 +24,19 @@ namespace MainService.Hardware
         {
             DeviceInit();
 
+            DeveiceStatus status = new()
+            {
+                RpiId = MainHardware.RpiId,
+                TriggerdBy = "MainLoopStarted",
+                Status = "ok",
+            };
+
+            ApiService api = new();
+            api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
             while (true)
             {
-                try
-                {
-                    Loop();
-                }
-                catch (System.Exception)
-                {
-
-                    throw;
-                }
+                Loop();
                 Thread.Sleep(_loopDelay);
             }
         }
@@ -132,29 +134,16 @@ namespace MainService.Hardware
             if (originalDevice == null)
                 return;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainHardware.RpiApiKey);
-
             SaveDataRequest data = new();
             data.Device_ID = device.ID;
             data.Value = value;
 
-            string jsonString = JsonSerializer.Serialize(data);
-            var content = new StringContent(
-                jsonString,
-                System.Text.Encoding.UTF8,
-                "application/json"
-                );
-
             Console.WriteLine("Save And Send Data");
-            Console.WriteLine(content.ReadAsStringAsync());
 
-            DotEnv.Load();
-            String url = Environment.GetEnvironmentVariable("URL")!;
-          
             try
             {
-                var responseString = client.PostAsync($"{url}/devices/{MainHardware.RpiId}/save", content).Result;
+                ApiService api = new();
+                api.Post($"/devices/{MainHardware.RpiId}/save", JsonSerializer.Serialize(data));
                 originalDevice.LastEntry = DateTime.Now;
                 originalDevice.LastSavedValue = value;
             }

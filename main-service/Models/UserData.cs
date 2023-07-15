@@ -58,7 +58,7 @@ public class UserData
             FROM
                 gardenUser
             WHERE
-                user_id = 't@t.de'";
+                user_id = '{this.Id}'";
         List<Dictionary<String, String>> results = MainDB.query(query);
 
         foreach (var item in results)

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
 using Services.Device;
-using Microsoft.Extensions.Primitives;
 using Services.User;
 using Services.Maps;
 

@@ -65,8 +65,21 @@ namespace MainService.Controllers
             if (response == null)
                 return BadRequest();
 
-            Console.WriteLine(garden.Id);
             _hubContext.Clients.Group(garden.Id).SendCurrentDeviceData(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("status")]
+        public ActionResult<ResponseDevices> SetStatus(DeveiceStatus status)
+        {
+            String apiKey = _userService.GetApiKey(Request);
+            Garden garden = new Garden();
+            garden.SetGardenIdByRPI(status.RpiId);
+
+            DeveiceStatus response = _deviceService.SetStatus(status);
+
+            _hubContext.Clients.Group(garden.Id).NewDeviceStatus(response);
 
             return Ok(response);
         }
