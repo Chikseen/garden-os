@@ -34,8 +34,9 @@ namespace RPI.Connection
                         DeveiceStatus status = new()
                         {
                             RpiId = MainHardware.RpiId,
-                            TriggerdBy = "Manuel Reboot triggerd",
+                            Message = "Manuel Reboot triggerd",
                             Status = "reboot",
+                            TriggerdBy = "hub"
                         };
 
                         ApiService api = new();
@@ -61,8 +62,9 @@ namespace RPI.Connection
                 DeveiceStatus status = new()
                 {
                     RpiId = MainHardware.RpiId,
-                    TriggerdBy = "Not able to create Hub Connection",
+                    Message = "Not able to create Hub Connection",
                     Status = "error",
+                    TriggerdBy = "hub"
                 };
 
                 ApiService api = new();

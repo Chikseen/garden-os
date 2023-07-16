@@ -34,6 +34,9 @@ public static class DeviceStatic
     public readonly static String GroupId = "group_id";
     public readonly static String Unit = "unit";
     public readonly static String IsApproved = "is_approved";
+    public readonly static String TriggerdBy = "triggerd_by";
+    public readonly static String Status = "status";
+    public readonly static String Message = "message";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

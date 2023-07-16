@@ -83,5 +83,16 @@ namespace MainService.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("status/{gardenId}")]
+        public ActionResult<ResponseDevices> GetStatus(String gardenId)
+        {
+            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
+            if (!userData.IsAuthorized)
+                return Unauthorized();
+            DeveiceStatus response = _deviceService.GetStatus(gardenId);
+
+            return Ok(response);
+        }
     }
 }

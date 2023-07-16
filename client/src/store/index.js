@@ -8,6 +8,7 @@ export default createStore({
 		gardenMeta: null,
 		gardenList: null,
 		deviceData: null,
+		deviceStatus: null
 	},
 	getters: {},
 	mutations: {
@@ -31,6 +32,9 @@ export default createStore({
 		},
 		setKeycloak(state, payload) {
 			state.keycloak = payload;
+		},
+		setNewDeviceStatus(state, payload) {
+			state.deviceStatus = payload;
 		},
 	},
 	actions: {},

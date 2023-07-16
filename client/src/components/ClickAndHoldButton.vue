@@ -32,6 +32,7 @@ export default {
 .clickandholdanimation {
 	position: relative;
 	overflow: hidden;
+	user-select: none;
 
 	&::after {
 		content: "";

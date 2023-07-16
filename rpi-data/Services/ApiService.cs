@@ -3,17 +3,18 @@ using dotenv.net;
 
 public class ApiService
 {
-    HttpClient _client;
-    String _rpiId = String.Empty;
-    String _rpiApiKey = String.Empty;
-    String _url = String.Empty;
+    private HttpClient _client;
+    private String _rpiId = String.Empty;
+    private String _rpiApiKey = String.Empty;
+    private String _url = String.Empty;
 
     public ApiService()
     {
         DotEnv.Load();
         String _rpiId = Environment.GetEnvironmentVariable("RPI_ID")!;
         String _rpiApiKey = Environment.GetEnvironmentVariable("API_KEY")!;
-        String _url = Environment.GetEnvironmentVariable("URL")!;
+
+        _url = Environment.GetEnvironmentVariable("URL")!;
 
         _client = new HttpClient();
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _rpiApiKey);
@@ -27,6 +28,6 @@ public class ApiService
             "application/json"
         );
 
-        return _client.PostAsync($"{_url}route", content).Result;
+        return _client.PostAsync($"{_url}{route}", content).Result;
     }
 }

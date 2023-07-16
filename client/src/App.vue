@@ -16,6 +16,9 @@ export default {
     this.emitter.on("HubDeviceData", (payload) => {
       this.$store.commit('setDeviceData', payload)
     });
+    this.emitter.on("NewDeviceStatus", (payload) => {
+      this.$store.commit('setNewDeviceStatus', payload)
+    });
   },
   async beforeMount() {
     if (!localStorage.getItem("accessToken")) {

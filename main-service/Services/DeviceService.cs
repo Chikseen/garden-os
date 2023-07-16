@@ -215,28 +215,42 @@ namespace Services.Device
             String insertQuery = @$"
                 INSERT INTO rpilog (
                     status,
-                    tiggerd_by
+                    triggerd_by,
+                    rpi_id,
+                    message
                 ) VALUES (
                     '{status.Status}',
-                    '{status.TriggerdBy}'
+                    '{status.TriggerdBy}',
+                    '{status.RpiId}',
+                    '{status.Message}'
                 );".Clean();
             MainDB.query(insertQuery);
 
-            /*   String query = @$"
-                   SELECT
-                       RPIS.ID   AS RPI_ID,
-                       GARDEN.ID AS GARDEN_ID,
-                       GARDEN.NAME
-                   FROM
-                       RPIS
-                       JOIN GARDEN
-                       ON RPIS.ID = '{id}'
-                       AND RPIS.API_KEY = '{ApiKey}'
-                       AND RPIS.GARDEN_ID = GARDEN.ID;".Clean();
-               List<Dictionary<String, String>> result = MainDB.query(query);
+            Garden garden = new();
+            garden.SetGardenIdByRPI(status.RpiId, false);
 
-               DeveiceStatus.get*/
-            return new();
+            return GetStatus(garden.Id);
+        }
+
+        public DeveiceStatus GetStatus(String gardenId)
+        {
+            String query = @$"
+                SELECT
+                    DISTINCT ON (rpi_id)
+                    rpilog.rpi_id AS rpi_id,
+                    rpilog.date,
+                    rpilog.status,
+                    rpilog.triggerd_by,
+                    rpilog.message
+                FROM
+                    rpilog
+                    JOIN rpis ON rpis.garden_id = '{gardenId}'
+                ORDER BY
+                    rpi_id,
+                    rpilog.date DESC ".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            return new(result);
         }
     }
 }

@@ -21,6 +21,10 @@ export default {
 			Vue.config.globalProperties.emitter.emit("HubDeviceData", payload);
 		});
 
+		connection.on("NewDeviceStatus", (payload) => {
+			Vue.config.globalProperties.emitter.emit("NewDeviceStatus", payload);
+		});
+
 		/*connection.disconnected(() => {
       setTimeout(async () => {
         console.log("try to reconnect");

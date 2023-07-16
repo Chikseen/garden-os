@@ -27,7 +27,7 @@ namespace MainService.Hardware
             DeveiceStatus status = new()
             {
                 RpiId = MainHardware.RpiId,
-                TriggerdBy = "MainLoopStarted",
+                TriggerdBy = "hub",
                 Status = "ok",
             };
 

@@ -42,8 +42,9 @@ namespace MainService.Hardware
                 DeveiceStatus status = new()
                 {
                     RpiId = MainHardware.RpiId,
-                    TriggerdBy = "RPI Exeption: MainLoop was exited",
+                    Message = "RPI Exeption: MainLoop was exited",
                     Status = "error",
+                    TriggerdBy = "hub"
                 };
 
                 ApiService api = new();
