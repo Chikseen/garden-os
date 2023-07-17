@@ -22,17 +22,13 @@ public class DeveiceStatus
     [JsonPropertyName("date")]
     public DateTime Date;
 
-    public DeveiceStatus(List<Dictionary<String, String>> data)
+    public DeveiceStatus(Dictionary<String, String> data)
     {
-        var latest = data.FirstOrDefault()!;
-        if (latest is not null)
-        {
-            this.RpiId = DeviceStatic.GetString(latest, DeviceStatic.RPIID);
-            this.TriggerdBy = DeviceStatic.GetString(latest, DeviceStatic.TriggerdBy);
-            this.Status = DeviceStatic.GetString(latest, DeviceStatic.Status);
-            this.Message = DeviceStatic.GetString(latest, DeviceStatic.Message);
-            this.Date = DeviceStatic.GetDateTime(latest, DeviceStatic.Date);
-        }
+        this.RpiId = DeviceStatic.GetString(data, DeviceStatic.RPIID);
+        this.TriggerdBy = DeviceStatic.GetString(data, DeviceStatic.TriggerdBy);
+        this.Status = DeviceStatic.GetString(data, DeviceStatic.Status);
+        this.Message = DeviceStatic.GetString(data, DeviceStatic.Message);
+        this.Date = DeviceStatic.GetDateTime(data, DeviceStatic.Date);
     }
 
     [JsonConstructor]

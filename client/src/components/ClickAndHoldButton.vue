@@ -1,5 +1,5 @@
 <template>
-	<button @mousedown="mouseDown" @touchstart="mouseDown" @mouseup="mouseUp" @touchend="mouseUp" ref="cahbutton">
+	<button @mousedown.stop="mouseDown" @touchstart.stop="mouseDown" @mouseup.stop="mouseUp" @touchend.stop="mouseUp" ref="cahbutton">
 		<slot></slot>
 	</button>
 </template>

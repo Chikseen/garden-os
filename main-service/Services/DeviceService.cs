@@ -250,7 +250,32 @@ namespace Services.Device
                     rpilog.date DESC ".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);
 
-            return new(result);
+            return new(result.FirstOrDefault()!);
+        }
+
+        public List<DeveiceStatus> GetStatusLog(String gardenId)
+        {
+            String query = @$"
+                SELECT
+                    rpilog.rpi_id AS rpi_id,
+                    rpilog.date,
+                    rpilog.status,
+                    rpilog.triggerd_by,
+                    rpilog.message
+                FROM
+                    rpilog
+                    JOIN rpis ON rpis.garden_id = '{gardenId}'
+                ORDER BY
+                    rpilog.date DESC ".Clean();
+            List<Dictionary<String, String>> result = MainDB.query(query);
+
+            List<DeveiceStatus> list = new();
+            foreach (Dictionary<String, String> item in result)
+            {
+                list.Add(new(item));
+            }
+
+            return list;
         }
     }
 }

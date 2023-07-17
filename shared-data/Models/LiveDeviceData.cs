@@ -88,7 +88,7 @@ public class ReponseDevice
         this.DeviceID = DeviceStatic.GetString(data, DeviceStatic.DeviceId);
         this.EntryID = DeviceStatic.GetString(data, DeviceStatic.ID);
         this.Value = DeviceStatic.GetFloat(data, DeviceStatic.Value, 0);
-        this.date = DeviceStatic.GetDateTime(data, DeviceStatic.Date);
+        this.date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
         this.Name = DeviceStatic.GetString(data, DeviceStatic.Name);
         this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
         this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
