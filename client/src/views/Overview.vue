@@ -70,14 +70,6 @@ export default {
                 .init({})
             keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
         },
-        async sendRebootRequest() {
-            const response = await fetch(`${process.env.VUE_APP_PI_HOST}reboot/${this.hub?.rpi_id}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            });
-        },
     },
     watch: {
         deviceStatus() {
