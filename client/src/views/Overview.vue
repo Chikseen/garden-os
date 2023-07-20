@@ -54,7 +54,6 @@ export default {
     data() {
         return {
             isLoading: true,
-            hub: null,
         }
     },
     methods: {
@@ -69,11 +68,6 @@ export default {
             await keycloak
                 .init({})
             keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
-        },
-    },
-    watch: {
-        deviceStatus() {
-            this.hub = this.deviceStatus
         },
     },
     computed: {

@@ -51,6 +51,7 @@ namespace MainService.Hardware
                 api.Post($"/devices/status", JsonSerializer.Serialize(status));
                 SystemService.Reboot();
             }
+            SystemService.Reboot();
         }
 
         protected static void OnProcessCompleted()

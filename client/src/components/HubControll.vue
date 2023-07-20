@@ -4,10 +4,10 @@
 		<h3>Hub Controll</h3>
 		<div class="grid_item_status">
 			<h4>Current Status:</h4>
-			<StatusIcon :status="hub?.status" />
-			<h4>{{ hub?.status }}</h4>
+			<StatusIcon :status="deviceStatus?.status" />
+			<h4>{{ deviceStatus?.status }}</h4>
 		</div>
-		<h4>Date: {{ formatTime(hub?.date) }} - Triggerd by: {{ hub?.triggerd_by }}</h4>
+		<h4>Date: {{ formatTime(deviceStatus?.date) }} - Triggerd by: {{ deviceStatus?.triggerd_by }}</h4>
 		<ClickAndHoldButton v-if="showRebootButton" @trigger="sendRebootRequest">Reboot (click & hold)</ClickAndHoldButton>
 	</div>
 </template>
@@ -39,6 +39,11 @@ export default {
 			deviceStatus: (state) => state.deviceStatus,
 		}),
 	},
+	watch: {
+		deviceStatus() {
+			this.hub = this.deviceStatus
+		}
+	},
 	methods: {
 		formatTime(d) {
 			return formatToDateTime(d)
@@ -51,11 +56,11 @@ export default {
 				},
 			});
 			const j = await response.json()
-			this.hub = j
+			this.$store.commit("setNewDeviceStatus", j)
 			this.isHubStatusLoading = false
 		},
 		async sendRebootRequest() {
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}reboot/${this.hub?.rpi_id}`, {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}reboot/${this.deviceStatus?.rpi_id}`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

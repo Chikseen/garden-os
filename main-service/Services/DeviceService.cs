@@ -245,6 +245,7 @@ namespace Services.Device
                 FROM
                     rpilog
                     JOIN rpis ON rpis.garden_id = '{gardenId}'
+                    AND rpis.id = rpilog.rpi_id
                 ORDER BY
                     rpi_id,
                     rpilog.date DESC ".Clean();
@@ -265,6 +266,7 @@ namespace Services.Device
                 FROM
                     rpilog
                     JOIN rpis ON rpis.garden_id = '{gardenId}'
+                    AND rpis.id = rpilog.rpi_id
                 ORDER BY
                     rpilog.date DESC ".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);

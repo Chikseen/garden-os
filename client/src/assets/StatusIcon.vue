@@ -3,6 +3,7 @@
 	<div :class="['statusIcon', status == 'reboot' ? 'statusIcon_reboot' : '']"></div>
 	<div :class="['statusIcon', status == 'error' ? 'statusIcon_error' : '']"></div>
 	<div :class="['statusIcon', status == 'noData' ? 'statusIcon_noData' : '']"></div>
+	<div :class="['statusIcon', status == '' ? 'statusIcon_noData' : '']"></div>
 </template>
 
 <script>
