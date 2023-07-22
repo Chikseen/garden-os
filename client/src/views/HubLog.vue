@@ -11,7 +11,7 @@
 				</div>
 				<p>{{ log.message }}</p>
 				<h4>Date: {{ formatTime(log.date) }}</h4>
-				<h4>Triggerd by: {{ log.triggerd_by }}</h4>
+				<!--	<h4>Triggerd by: {{ log.triggerd_by }}</h4> -->
 			</div>
 		</DynamicGrid>
 	</div>

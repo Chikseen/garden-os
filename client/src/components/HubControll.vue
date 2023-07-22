@@ -7,7 +7,7 @@
 			<StatusIcon :status="deviceStatus?.status" />
 			<h4>{{ deviceStatus?.status }}</h4>
 		</div>
-		<h4>Date: {{ formatTime(deviceStatus?.date) }} - Triggerd by: {{ deviceStatus?.triggerd_by }}</h4>
+		<h4>Date: {{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h4>
 		<ClickAndHoldButton v-if="showRebootButton" @trigger="sendRebootRequest">Reboot (click & hold)</ClickAndHoldButton>
 	</div>
 </template>

@@ -37,12 +37,12 @@ namespace MainService.Hardware
 
                 MainLoop.Start();
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
                 DeveiceStatus status = new()
                 {
                     RpiId = MainHardware.RpiId,
-                    Message = "RPI Exeption: MainLoop was exited",
+                    Message = "RPI Exeption: MainLoop was exited: " + e,
                     Status = "error",
                     TriggerdBy = "hub"
                 };
@@ -50,6 +50,7 @@ namespace MainService.Hardware
                 ApiService api = new();
                 api.Post($"/devices/status", JsonSerializer.Serialize(status));
                 SystemService.Reboot();
+                throw;
             }
             SystemService.Reboot();
         }
