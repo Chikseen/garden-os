@@ -35,7 +35,7 @@ namespace MainService.Hardware
                 rpiData = prep.SetRPI(RpiId);
                 _data = prep.SetDevices(RpiId);
 
-                MainLoop.Start();
+                 MainLoop.Start();
             }
             catch (System.Exception e)
             {
@@ -52,6 +52,7 @@ namespace MainService.Hardware
                 SystemService.Reboot();
                 throw;
             }
+            Thread.Sleep(1000 * 60);
             SystemService.Reboot();
         }
 

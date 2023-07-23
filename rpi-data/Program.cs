@@ -8,7 +8,7 @@ Connection connection = new Connection();
 try
 {
     MainHardware.Init();
-    DeveiceStatus status = new()
+    DeveiceStatus statusE = new()
     {
         RpiId = MainHardware.RpiId,
         Message = "debug 1",
@@ -16,11 +16,11 @@ try
         TriggerdBy = "hub"
     };
 
-    ApiService api = new();
+    ApiService apiE = new();
 }
 catch (System.Exception e)
 {
-    DeveiceStatus status = new()
+    DeveiceStatus statusE = new()
     {
         RpiId = MainHardware.RpiId,
         Message = "RPI Exeption: Unexpected void was reached: " + e,
@@ -28,7 +28,19 @@ catch (System.Exception e)
         TriggerdBy = "hub"
     };
 
-    ApiService api = new();
-    api.Post($"/devices/status", JsonSerializer.Serialize(status));
+    ApiService apiE = new();
+    apiE.Post($"/devices/status", JsonSerializer.Serialize(statusE));
     SystemService.Reboot();
 }
+
+DeveiceStatus status = new()
+{
+    RpiId = MainHardware.RpiId,
+    Message = "RPI Exeption: Unexpected void was reached 222: ",
+    Status = "error",
+    TriggerdBy = "hub"
+};
+
+ApiService api = new();
+api.Post($"/devices/status", JsonSerializer.Serialize(status));
+SystemService.Reboot();

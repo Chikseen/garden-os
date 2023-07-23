@@ -99,11 +99,33 @@ namespace RPI.Connection
                 Console.WriteLine($"Connection error: {exception.Message}");
             }
 
+            DeveiceStatus status = new()
+            {
+                RpiId = MainHardware.RpiId,
+                Message = "Connection: Connection closed: " + exception,
+                Status = "error",
+                TriggerdBy = "hub"
+            };
+
+            ApiService api = new();
+            api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
             return Task.CompletedTask;
         }
 
         Task HubConnection_Reconnected(string? arg)
         {
+            DeveiceStatus status = new()
+            {
+                RpiId = MainHardware.RpiId,
+                Message = "Connection: Connection reconnected ",
+                Status = "warning",
+                TriggerdBy = "hub"
+            };
+
+            ApiService api = new();
+            api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
             Console.WriteLine("Reconnected");
             setRpiAndConId();
             return Task.CompletedTask;
