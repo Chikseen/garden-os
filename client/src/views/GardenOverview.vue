@@ -192,6 +192,8 @@ export default {
 	&_wrapper {
 		max-width: 750px;
 		width: 100%;
+		margin: 0 auto;
+		padding: 15px 0;
 
 		h1,
 		h2,

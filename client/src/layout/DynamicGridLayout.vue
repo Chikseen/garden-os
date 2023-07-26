@@ -7,7 +7,8 @@
 <style lang="scss">
 .grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	grid-auto-flow: dense;
 	grid-auto-rows: 1fr;
 	gap: 15px;
 	max-width: 1500px;
@@ -27,8 +28,9 @@
 			grid-row-start: span 2;
 		}
 
-		&_xlarge {
+		&_weather {
 			grid-row-start: span 3;
+			grid-column-start: span 2;
 		}
 
 		&_text {

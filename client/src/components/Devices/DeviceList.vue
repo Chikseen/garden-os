@@ -1,6 +1,6 @@
 <template>
   <DeviceGroupBox v-for="group in groupList" :key="group" :devices="devices.filter(d => d.group_id == group)"
-    :group=group />
+    :group=group style="grid-column-start: span 2"/>
   <DeviceBox v-for="device in devices.filter(d => d.group_id.length < 1).sort((a, b) => a.sort_order - b.sort_order)"
     :key="device.device_id" :device="device" />
 </template>

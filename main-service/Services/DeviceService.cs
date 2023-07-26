@@ -268,7 +268,9 @@ namespace Services.Device
                     JOIN rpis ON rpis.garden_id = '{gardenId}'
                     AND rpis.id = rpilog.rpi_id
                 ORDER BY
-                    rpilog.date DESC ".Clean();
+                    rpilog.date DESC
+                LIMIT
+                    20;".Clean();
             List<Dictionary<String, String>> result = MainDB.query(query);
 
             List<DeveiceStatus> list = new();

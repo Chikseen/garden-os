@@ -16,7 +16,7 @@
             </span>
         </div>
         <DynamicGrid v-if="deviceData">
-            <WeatherBox class="grid_item grid_item_xlarge" />
+            <WeatherBox class="grid_item grid_item_weather" />
             <DeviceList :devices=deviceData?.devices></DeviceList>
             <div class="grid_item" style="background-color: #ffffff;"
                 @click="$router.push('/hublog')">

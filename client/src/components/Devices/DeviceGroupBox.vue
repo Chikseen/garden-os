@@ -1,10 +1,12 @@
 <template>
-  <div class="grid_item grid_item_large group_wrapper">
+  <div class="grid_item group_wrapper" :style="`grid-row-start: span ${(devices.length + 1) / 2}`">
     <h1> {{ group }} </h1>
     <hr>
-    <div v-for="device in devices.sort((a, b) => a.sort_order - b.sort_order )" :key="device.id" class="group">
-      <DeviceBarlabel :device=device />
-    </div>
+    <span class="group_items">
+      <div v-for="device in devices.sort((a, b) => a.sort_order - b.sort_order)" :key="device.id" class="group">
+        <DeviceBarlabel :device=device />
+      </div>
+    </span>
   </div>
 </template>
 
@@ -32,7 +34,11 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   width: auto;
-  padding: 10px 0;
+
+  &_items {
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
 
   &_wrapper {
     background-color: #ffffff;
