@@ -1,12 +1,9 @@
-using System.Device.Gpio;
 using System.Device.I2c;
-using System.Net.Http.Headers;
+using System.Diagnostics;
 using System.Text.Json;
-using dotenv.net;
 using Iot.Device.Ads1115;
 using Iot.Device.CharacterLcd;
 using Iot.Device.DHTxx;
-using Iot.Device.Pcx857x;
 using UnitsNet;
 
 namespace MainService.Hardware
@@ -19,6 +16,10 @@ namespace MainService.Hardware
         private static I2cDevice? _ADC;
         private static Lcd2004? _LCD;
         private static Dictionary<String, List<float>> _Filter = new();
+
+        private static int _MetricsCounter = 99;
+        private static int _MetricsLimit = 10;
+
 
         public static void Start()
         {
@@ -118,6 +119,11 @@ namespace MainService.Hardware
 
                         }
                         break;
+                    case "DEBUG":
+                        {
+                            ReadAndSetMetrics(device);
+                        }
+                        break;
                 }
             }
 
@@ -196,6 +202,36 @@ namespace MainService.Hardware
                  Console.WriteLine("Error while LCD Setup");
                  Console.WriteLine(e);
              }*/
+        }
+
+        public static void ReadAndSetMetrics(RPIDevice device)
+        {
+            Console.WriteLine("start met", device.ID);
+            Console.WriteLine(device.ID);
+            if (_MetricsCounter > _MetricsLimit)
+            {
+                Console.WriteLine("in met");
+                var output = "";
+
+                var info = new ProcessStartInfo("free -m");
+                info.FileName = "/bin/bash";
+                info.Arguments = "-c \"free -m\"";
+                info.RedirectStandardOutput = true;
+
+                using (var process = Process.Start(info))
+                {
+                    output = process.StandardOutput.ReadToEnd();
+                }
+
+                var lines = output.Split("\n");
+                var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
+                Console.WriteLine("val " + float.Parse(memory[2]));
+
+                SaveDataToDatabase(device, float.Parse(memory[2]));
+                _MetricsCounter = 0;
+            }
+            _MetricsCounter++;
         }
     }
 }

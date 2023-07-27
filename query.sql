@@ -233,8 +233,10 @@ VALUES
         75.456,
         LOCALTIMESTAMP,
         '877bcb9a-fefb-4bb8-97da-624e43e01ce0'
-    ) -- DATETRUNC
-    BEGIN;
+    );
+
+-- DATETRUNC
+BEGIN;
 
 -- Create Temp Table
 CREATE TEMPORARY TABLE IF NOT EXISTS tempTable ON COMMIT DROP AS TABLE datalogaccd30d2739240b78a086d9ac9cc22b6;
