@@ -3,11 +3,11 @@
 	<div v-else class="grid_item_settings grid_item_text">
 		<h3>Hub Controll</h3>
 		<div class="grid_item_status">
-			<h4>Current Status:</h4>
+			<h4>Status:</h4>
 			<StatusIcon :status="deviceStatus?.status" />
 			<h4>{{ deviceStatus?.status }}</h4>
 		</div>
-		<h4>Date: {{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h4>
+		<h5>{{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h5>
 		<ClickAndHoldButton v-if="showRebootButton" @trigger="sendRebootRequest">Reboot (click & hold)</ClickAndHoldButton>
 	</div>
 </template>

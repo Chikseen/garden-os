@@ -211,20 +211,4 @@ export default {
 .tomorrow {
   max-width: 750px;
 }
-
-/*
-@media screen and (orientation: landscape) {
-  .detailed {
-    &_wrapper {
-      display: none;
-    }
-  }
-
-  .lineChart {
-    &_wrapper {
-      height: 100vh;
-      width: 100vw;
-    }
-  }
-}*/
 </style>

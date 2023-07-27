@@ -52,4 +52,13 @@ export default {
     }
   }
 }
+
+@media only screen and (max-width: 360px) {
+  .group {
+    &_items {
+      display: grid;
+      grid-template-columns: 100%;
+    }
+  }
+}
 </style>

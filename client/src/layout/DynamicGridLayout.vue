@@ -9,7 +9,6 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	grid-auto-flow: dense;
-	grid-auto-rows: 1fr;
 	gap: 15px;
 	max-width: 1500px;
 	margin: 0 auto;
@@ -62,9 +61,18 @@
 	border: 10px solid #5f5e5e21 !important;
 }
 
-@media only screen and (max-width: 350px) {
+@media only screen and (max-width: 445px) {
 	.grid {
 		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	}
+}
+
+
+@media only screen and (max-width: 360px) {
+	.grid {
+		&_item {
+			grid-column-start: span 2;
+		}
 	}
 }
 </style>

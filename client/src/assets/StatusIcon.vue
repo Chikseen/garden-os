@@ -1,9 +1,5 @@
 <template>
-	<div :class="['statusIcon', status == 'ok' ? 'statusIcon_ok' : '']"></div>
-	<div :class="['statusIcon', status == 'reboot' ? 'statusIcon_reboot' : '']"></div>
-	<div :class="['statusIcon', status == 'error' ? 'statusIcon_error' : '']"></div>
-	<div :class="['statusIcon', status == 'noData' ? 'statusIcon_noData' : '']"></div>
-	<div :class="['statusIcon', status == '' ? 'statusIcon_noData' : '']"></div>
+	<div :class="`statusIcon statusIcon_${status}`"></div>
 </template>
 
 <script>
@@ -19,15 +15,16 @@ export default {
 	top: 0;
 	left: 0;
 	width: 10px;
+	min-width: 10px;
 	height: 10px;
-	margin: auto 2px;
+	margin: auto 5px;
 	border-radius: 50%;
 
 	&_ok {
 		background-color: #b0e95a;
 	}
 
-	&_reboot {
+	&_warning {
 		background-color: #e9e05a;
 	}
 

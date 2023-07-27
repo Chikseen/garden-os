@@ -1,7 +1,7 @@
 <template>
 	<div @click="this.$router.push(`device/${device.device_id}`)" class="device_wrapper">
-		<SoilMoisture class="device_wrapper_icon" v-if="device.display_id == 'soil_moisture'" />
-		<span class="device_wrapper_content">
+		<SoilMoisture class="device_wrapper_icon" v-if="device.display_id == 'soil_moisture'" :value="device.corrected_value" />
+		<span class="device_wrapper_content" :style="device.display_id === '' ? 'width: 100%;' : ''">
 			<h2> {{ device.name }} </h2>
 			<h3> {{ device.corrected_value.toFixed(1) }} {{ device.unit }} </h3>
 			<div class="diagram_liniar" v-if="device.display_id === ''">
@@ -37,22 +37,19 @@ export default {
 		cursor: pointer;
 		display: flex;
 		flex-direction: row;
+		justify-content: center;
 		gap: 15px;
+		padding: 10px 5px;
+		background-color: #ffffff;
 
 		&_icon {
-			width: 50px;
+			margin: auto 0;
 		}
 
 		&_content {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-evenly;
-			background-color: #ffffff;
-			width: 100%;
-
-			&_icon {
-				width: 50px;
-			}
 
 			h1,
 			h2,
