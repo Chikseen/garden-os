@@ -2,7 +2,7 @@
 	<div @click="this.$router.push(`device/${device.device_id}`)" class="device_wrapper">
 		<SoilMoisture class="device_wrapper_icon" v-if="device.display_id == 'soil_moisture'"
 			:value="device.corrected_value" />
-		<UVIndex class="device_wrapper_icon" v-if="device.display_id == 'uv_index'" :value="20" />
+		<UVIndex class="device_wrapper_icon" v-if="device.display_id == 'uv_index'" :value="device.corrected_value" />
 		<span class="device_wrapper_content" :style="device.display_id === '' ? 'width: 100%;' : ''">
 			<h2> {{ device.name }} </h2>
 			<h3> {{ device.corrected_value.toFixed(1) }} {{ device.unit }} </h3>
