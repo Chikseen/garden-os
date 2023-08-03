@@ -81,6 +81,10 @@ public class ReponseDevice
     [JsonPropertyName("unit")]
     public String Unit = String.Empty;
 
+    [JsonInclude]
+    [JsonPropertyName("special_id")]
+    public String SpecialId = String.Empty;
+
     public Boolean IsInverted = false;
 
     public ReponseDevice(Dictionary<String, String> data)
@@ -97,21 +101,40 @@ public class ReponseDevice
         this.GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
         this.Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
         this.IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
+        this.SpecialId = DeviceStatic.GetString(data, DeviceStatic.SpecialId);
 
-        if (this.IsInverted)
-            this.CorrectedValue = 100 - ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
-        else
-            this.CorrectedValue = ((float)(Value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+        Invert();
+        AdjustSpecial();
     }
 
-    public void setNewValue(float value)
+    public void SetNewValue(float value)
     {
         this.Value = value;
         this.date = DateTime.Now;
-        if (this.IsInverted)
-            this.CorrectedValue = 100 - ((float)(value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
-        else
-            this.CorrectedValue = ((float)(value - LowerLimit) * 100.0f) / (float)(UpperLimit - LowerLimit);
+        Invert();
+        AdjustSpecial();
+    }
 
+    private void Invert()
+    {
+        if (this.IsInverted)
+            this.CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
+        else
+            this.CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
+    }
+
+    private void AdjustSpecial()
+    {
+        if (!String.IsNullOrEmpty(this.SpecialId))
+        {
+            switch (this.SpecialId)
+            {
+                case "brightness":
+                    {
+                        this.CorrectedValue /= 10;
+                    }
+                    break;
+            }
+        }
     }
 }

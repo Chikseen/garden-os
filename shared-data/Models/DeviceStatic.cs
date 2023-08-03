@@ -38,6 +38,7 @@ public static class DeviceStatic
     public readonly static String TriggerdBy = "triggerd_by";
     public readonly static String Status = "status";
     public readonly static String Message = "message";
+    public readonly static String SpecialId = "special_id";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

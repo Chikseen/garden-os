@@ -97,7 +97,7 @@ namespace Services.Device
             }
             else
             {
-                _deviceCache[garden.Id].Devices.First(d => d.DeviceID == data.Device_ID).setNewValue(data.Value);
+                _deviceCache[garden.Id].Devices.First(d => d.DeviceID == data.Device_ID).SetNewValue(data.Value);
             }
             return _deviceCache[garden.Id];
         }
@@ -119,7 +119,8 @@ namespace Services.Device
                     DEVICES.ISINVERTED, 
                     DEVICES.SORT_ORDER, 
                     DEVICES.GROUP_ID, 
-                    DEVICES.UNIT 
+                    DEVICES.UNIT,
+                    DEVICES.SPECIAL_ID
                 FROM
                     DATALOG{gardenId.Replace("-", "")} AS DATALOG
                     JOIN devices ON devices.id = DATALOG.device_id
@@ -149,7 +150,8 @@ namespace Services.Device
                     DEVICES.ISINVERTED, 
                     DEVICES.SORT_ORDER, 
                     DEVICES.GROUP_ID, 
-                    DEVICES.UNIT 
+                    DEVICES.UNIT,
+                    DEVICES.SPECIAL_ID
                 FROM
                     DATALOG{gardenId.Replace("-", "")} AS DATALOG
                     JOIN DEVICES
@@ -184,7 +186,8 @@ namespace Services.Device
                     DEVICES.ISINVERTED, 
                     DEVICES.SORT_ORDER, 
                     DEVICES.GROUP_ID, 
-                    DEVICES.UNIT 
+                    DEVICES.UNIT,
+                    DEVICES.SPECIAL_ID
                 FROM
                     (
                         SELECT
