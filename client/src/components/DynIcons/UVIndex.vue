@@ -85,6 +85,7 @@ export default {
 		width: 100%;
 		height: 100%;
 		background-color: rgb(255, 255, 255);
+		transition: bottom 1s;
 	}
 
 	&_spinner {

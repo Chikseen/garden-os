@@ -3,6 +3,7 @@
 		<SoilMoisture class="device_wrapper_icon" v-if="device.display_id == 'soil_moisture'"
 			:value="device.corrected_value" />
 		<UVIndex class="device_wrapper_icon" v-if="device.display_id == 'uv_index'" :value="device.corrected_value" />
+		<Temperature class="device_wrapper_icon" v-if="device.display_id == 'temperature'" :value="device.corrected_value" />
 		<span class="device_wrapper_content" :style="device.display_id === '' ? 'width: 100%;' : ''">
 			<h2> {{ device.name }} </h2>
 			<h3> {{ device.corrected_value.toFixed(1) }} {{ device.unit }} </h3>
@@ -17,12 +18,14 @@
 <script>
 import SoilMoisture from "@/components/DynIcons/SoilMoisture"
 import UVIndex from "@/components/DynIcons/UVIndex"
+import Temperature from "@/components/DynIcons/Temperature"
 import { formatToDateTime } from "@/dates.js";
 
 export default {
 	components: {
 		SoilMoisture,
-		UVIndex
+		UVIndex,
+		Temperature,
 	},
 	props: {
 		device: { type: Object }
