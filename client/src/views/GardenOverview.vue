@@ -2,14 +2,14 @@
 	<div class="gardenOverview_wrapper">
 		<h1>Garden</h1>
 		<LC v-if="isGardenListLoading" />
-		<DynamicGrid v-else>
-			<div v-for="garden in gardenList?.garden_data" :key="garden.garden_id" class="grid_item item"
+		<List v-else>
+			<div v-for="garden in gardenList?.garden_data" :key="garden.garden_id" class="list_item item"
 				@click="setGarden(garden.garden_id)">
 				<h2> {{ garden.garden_name }} </h2>
 				<h5> {{ garden.garden_id }} </h5>
 				<h5> {{ garden.weather_location }} </h5>
 			</div>
-			<div class="grid_item item item_input">
+			<div class="list_item item item_input">
 				<input type="text" name="" id="" placeholder="gardenID" @change="(e) => newGardenId = e.target.value"
 					:value="newGardenId">
 				<button @click="sendAccessRequest()">
@@ -19,43 +19,20 @@
 				<button @click="logout">Logout</button>
 			</div>
 
-		</DynamicGrid>
+		</List>
 
 		<h1>Pending requests</h1>
 		<LC v-if="isAccessRequestLoading" />
-		<DynamicGrid v-else>
-			<div v-for="req in requestedGarden" :key="req" class="grid_item item">
+		<List v-else>
+			<div v-for="req in requestedGarden" :key="req" class="list_item item">
 				<h2>{{ req }}</h2>
 			</div>
-		</DynamicGrid>
-
-		<hr>
-
-		<h1>User Settings</h1>
-		<div v-if="selectedGarden">
-			<LC v-if="isUserListLoading" />
-			<span v-else>
-				<h2>Approved User</h2>
-				<DynamicGrid>
-					<div v-for="user in userList?.userList.filter(u => u.isApproved)" :key="user" class="grid_item item">
-						<h2 @click="toggleUserStatus(user)"> {{ user.user_id }} </h2>
-					</div>
-				</DynamicGrid>
-
-				<h2>Requests to join the garden</h2>
-				<DynamicGrid>
-					<div v-for="user in userList?.userList.filter(u => !u.isApproved)" :key="user" class="grid_item item">
-						<h2 @click="toggleUserStatus(user)"> {{ user.user_id }} </h2>
-					</div>
-				</DynamicGrid>
-			</span>
-		</div>
-		<p v-else>No Garden Selected, please select a garden to see current user</p>
+		</List>
 	</div>
 </template>
 
 <script>
-import DynamicGrid from "@/layout/DynamicGridLayout.vue";
+import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
 import { fetchGardenMeta } from "@/apiService.js"
@@ -65,46 +42,21 @@ import Keycloak from "keycloak-js"
 
 export default {
 	components: {
-		DynamicGrid,
+		List,
 		LC,
 	},
 	data() {
 		return {
-			selectedGarden: null,
-			userList: null,
 			newGardenId: null,
 			isGardenListLoading: true,
-			isUserListLoading: true,
 			isAccessRequestLoading: false,
-			requestedGarden: []
+			requestedGarden: [],
 		}
 	},
 	methods: {
 		setGarden(id) {
 			localStorage.setItem('selectedGarden', id)
 			this.$router.push("/overview")
-		},
-		async fetchuser() {
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/users/${this.selectedGarden}`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-				},
-			});
-
-			this.userList = await response.json();
-
-			this.isUserListLoading = false;
-		},
-		async toggleUserStatus(user) {
-			this.isUserListLoading = true;
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/changestatus/${user.garden_id}/${user.user_id}`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-				},
-			});
-			await this.fetchuser()
 		},
 		async sendAccessRequest() {
 			this.isAccessRequestLoading = true

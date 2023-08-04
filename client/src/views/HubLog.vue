@@ -2,7 +2,7 @@
 	<div class="hubLog">
 		<HubControll />
 		<LC v-if="isLogLoading" />
-		<DynamicGrid v-else>
+		<List v-else>
 			<div v-for="(log, i) in logs" :key="i" class="grid_item grid_item_settings grid_item_text">
 				<div class="grid_item_status">
 					<h4>Status:</h4>
@@ -13,14 +13,14 @@
 				<h4>Date: {{ formatTime(log.date) }}</h4>
 				<!--	<h4>Triggerd by: {{ log.triggerd_by }}</h4> -->
 			</div>
-		</DynamicGrid>
+		</List>
 	</div>
 </template>
 
 <script>
 import LC from "@/components/ui/LoadingComponent.vue"
 import HubControll from "@/components/HubControll.vue"
-import DynamicGrid from "@/layout/DynamicGridLayout.vue";
+import List from "@/layout/ListLayout.vue";
 import StatusIcon from "@/assets/StatusIcon.vue"
 
 import { formatToDateTime } from "@/dates.js";
@@ -29,7 +29,7 @@ export default {
 	components: {
 		LC,
 		HubControll,
-		DynamicGrid,
+		List,
 		StatusIcon,
 	},
 	data() {

@@ -5,6 +5,7 @@ import Index from "@/views/Index";
 import Login from "@/views/Login";
 import Overview from "@/views/Overview";
 import GardenOverview from "@/views/GardenOverview";
+import UserOverview from "@/views/UserOverview";
 import HubLog from "@/views/HubLog";
 
 
@@ -34,6 +35,10 @@ const routes = [
   {
     path: '/garden',
     component: GardenOverview,
+  },
+  {
+    path: '/user',
+    component: UserOverview,
   },
   {
     path: '/hublog',

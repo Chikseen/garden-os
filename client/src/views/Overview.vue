@@ -6,9 +6,9 @@
                 <h1> Garden: </h1>
                 <h1> {{ gardenMeta.garden_name }} </h1>
             </span>
-            <span>
-                <h5> GardenID: </h5>
-                <h5> {{ gardenMeta.garden_id }} </h5>
+            <span @click="ctc(gardenMeta.garden_id)">
+                <h3> GardenID: </h3>
+                <h3> {{ gardenMeta.garden_id }} </h3>
             </span>
             <span>
                 <h3> User: </h3>
@@ -18,14 +18,13 @@
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_weather" />
             <DeviceList :devices=deviceData?.devices></DeviceList>
-            <div class="grid_item" style="background-color: #ffffff;"
-                @click="$router.push('/hublog')">
-                <HubControll :showRebootButton="false"/>
+            <div class="grid_item" style="background-color: #ffffff;" @click="$router.push('/hublog')">
+                <HubControll :showRebootButton="false" />
             </div>
             <div class="grid_item grid_item_settings grid_item_text">
-                <h3>Settings</h3>
-                <button @click="logout">Logout</button>
+                <button @click="$router.push('/user')">User Access</button>
                 <button @click="$router.push('/garden')">Change Garden</button>
+                <button @click="logout">Logout</button>
             </div>
         </DynamicGrid>
     </span>
@@ -57,6 +56,9 @@ export default {
         }
     },
     methods: {
+        ctc(value) {
+            navigator.clipboard.writeText(value);
+        },
         async logout() {
             localStorage.clear();
             const keycloak = new Keycloak({
@@ -99,13 +101,8 @@ export default {
             justify-content: space-between;
 
             h1,
-            h3,
-            h5 {
+            h3 {
                 width: 100%;
-            }
-
-            h5 {
-                font-size: 0.75rem;
             }
         }
     }
