@@ -59,7 +59,7 @@ public class UserData
                 gardenUser
             WHERE
                 user_id = '{this.Id}'";
-        List<Dictionary<String, String>> results = MainDB.query(query);
+        List<Dictionary<String, String>> results = MainDB.Query(query);
 
         foreach (var item in results)
         {

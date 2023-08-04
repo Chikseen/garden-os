@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 public class Device
 {
     [JsonInclude]
-    public String Name = String.Empty;
+    public string Name = string.Empty;
 
     [JsonInclude]
-    public String Id = String.Empty;
+    public string Id = string.Empty;
 
     [JsonInclude]
-    public String DisplayId = String.Empty;
+    public string DisplayId = string.Empty;
 
     [JsonInclude]
     public int Value = 0;
@@ -21,12 +21,12 @@ public class Device
     public int? LowerLimit = null;
 
     public int? SerialId = 0;
-    public String DeviceTyp = String.Empty;
-    public Byte Address = 0x00;
-    public TimeSpan DataUpdateInterval = new TimeSpan(24, 24, 24);
+    public string DeviceTyp = string.Empty;
+    public byte Address = 0x00;
+    public TimeSpan DataUpdateInterval = new(24, 24, 24);
     public DateTime LastEntry = DateTime.Now.AddYears(-1);
 
-    public Device(Dictionary<String, String> deviceDictionary)
+    public Device(Dictionary<string, string> deviceDictionary)
     {
         Name = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceName);
         Id = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceId);

@@ -10,26 +10,22 @@ namespace Services.User
 {
     public class UserService
     {
-        private static Random random = new Random();
-
-        public String GetApiKey(HttpRequest Request)
+        public string GetApiKey(HttpRequest Request)
         {
-            Dictionary<string, string> requestHeaders = new();
-            StringValues token = String.Empty;
-            Request.Headers.TryGetValue("Authorization", out token);
+            Request.Headers.TryGetValue("Authorization", out StringValues token);
 
-            if (token == String.Empty)
+            if (token == string.Empty)
                 throw new Exception("RPI not registerd");
 
-            String apiKey = ((String)token!).Replace("Bearer", "").Trim();
+            string apiKey = ((string)token!).Replace("Bearer", "").Trim();
             return apiKey;
         }
 
         public async Task<UserData> GetUserDataFromKeycloak(HttpRequest Request)
         {
             DotEnv.Load();
-            String realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
-            String clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
+            string realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
+            string clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
 
             Dictionary<string, string> data = new()
             {
@@ -40,21 +36,21 @@ namespace Services.User
             if (StringValues.IsNullOrEmpty(bearer))
                 throw new UnauthorizedAccessException("Accesstoken not found");
 
-            String token = ((String)bearer!).Replace("Bearer", "").Trim();
+            string token = ((string)bearer!).Replace("Bearer", "").Trim();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
             var contents = await response.Content.ReadAsStringAsync();
 
-            if (String.IsNullOrEmpty(contents))
+            if (string.IsNullOrEmpty(contents))
                 return new();
             return new UserData(contents);
         }
 
         public GardenResponseModel GetGardenData(UserData userData)
         {
-            String query = @$"
+            string query = @$"
                 SELECT
                     users.given_name,
                     users.family_name,
@@ -68,7 +64,7 @@ namespace Services.User
                     JOIN users ON gardenuser.user_id = '{userData.Id}'
                     AND users.id = '{userData.Id}'
                     AND gardenuser.is_approved = true;".Clean();
-            List<Dictionary<String, String>> results = MainDB.query(query);
+            List<Dictionary<string, string>> results = MainDB.Query(query);
 
             GardenResponseModel reponse = new(results);
 
@@ -77,7 +73,7 @@ namespace Services.User
 
         public void SaveNewUser(UserData user)
         {
-            String query = @$"
+            string query = @$"
                 INSERT INTO USERS (
                     ID,
                     FAMILY_NAME,
@@ -87,12 +83,12 @@ namespace Services.User
                     '{user.FamilyName}',
                     '{user.GivenName}'
                 ) ON CONFLICT DO NOTHING;".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+            MainDB.Query(query);
         }
 
-        public UserList GetUserList(UserData user, String gardenId)
+        public UserList GetUserList(string gardenId)
         {
-            String query = @$"
+            string query = @$"
                 SELECT
                     garden_id,
                     user_id,
@@ -101,14 +97,14 @@ namespace Services.User
                     gardenuser
                 WHERE
                     garden_id = '{gardenId}'".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+            List<Dictionary<string, string>> result = MainDB.Query(query);
 
             return new(result);
         }
 
-        public UserList AccessRequest(UserData user, String gardenId)
+        public UserList AccessRequest(UserData user, string gardenId)
         {
-            String query = @$"
+            string query = @$"
                 INSERT INTO GARDENUSER (
                    garden_id,
                    user_id,
@@ -118,14 +114,14 @@ namespace Services.User
                     '{user.Id}',
                     false
                 ) ON CONFLICT DO NOTHING;".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+            List<Dictionary<string, string>> result = MainDB.Query(query);
 
             return new(result);
         }
 
-        public List<String> GetRequestedGardenList(UserData user)
+        public List<string> GetRequestedGardenList(UserData user)
         {
-            String query = @$"
+            string query = @$"
                 SELECT
                     garden_id
                 FROM
@@ -133,9 +129,9 @@ namespace Services.User
                 WHERE
                     user_id = '{user.Id}'
                     AND is_approved = false;".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+            List<Dictionary<string, string>> result = MainDB.Query(query);
 
-            List<String> list = new();
+            List<string> list = new();
             foreach (var item in result)
             {
                 list.Add(item[DeviceStatic.GardenID]);
@@ -144,28 +140,28 @@ namespace Services.User
             return list;
         }
 
-        public UserList Changestatus(String gardenId, String userId)
+        public UserList Changestatus(string gardenId, string userId)
         {
-            String query = @$"
+            string query = @$"
                 UPDATE  gardenuser
                 SET is_approved = NOT is_approved 
                 WHERE garden_id = '{gardenId}'
                 AND user_id = '{userId}'".Clean();
-            List<Dictionary<String, String>> result = MainDB.query(query);
+            List<Dictionary<string, string>> result = MainDB.Query(query);
 
             return new(result);
         }
 
-        public List<String> GetBridges(String gardenId)
+        public List<string> GetBridges(string gardenId)
         {
-            String query = @$"
+            string query = @$"
                 SELECT 
                     id 
                 FROM 
                     rpis
                 WHERE 
                     garden_id = '{gardenId}'".Clean();
-            List<Dictionary<String, String>> results = MainDB.query(query);
+            List<Dictionary<string, string>> results = MainDB.Query(query);
 
             return results.Select(b => b["id"]).ToList();
         }

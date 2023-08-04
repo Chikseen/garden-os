@@ -11,8 +11,8 @@ namespace MainService.Controllers
     public class DeviceController : ControllerBase
     {
         private readonly IHubContext<MainHub, IMainHub> _hubContext;
-        private DeviceService _deviceService;
-        private UserService _userService;
+        private readonly DeviceService _deviceService;
+        private readonly UserService _userService;
 
         public DeviceController(IHubContext<MainHub, IMainHub> questionHub)
         {
@@ -22,11 +22,11 @@ namespace MainService.Controllers
         }
 
         [HttpGet("{rpiid}/metadata")]
-        public ActionResult<RPIData> GetRpiMeta(String rpiid)
+        public ActionResult<RPIData> GetRpiMeta(string rpiid)
         {
-            String? apiKey = _userService.GetApiKey(Request);
+            string? apiKey = _userService.GetApiKey(Request);
 
-            if (String.IsNullOrEmpty(apiKey))
+            if (string.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
             RPIData? data = _deviceService.GetRpiMeta(rpiid, apiKey!);
@@ -38,11 +38,11 @@ namespace MainService.Controllers
         }
 
         [HttpGet("{rpiid}")]
-        public ActionResult<RPIDevices> GetRpiDevices(String rpiid)
+        public ActionResult<RPIDevices> GetRpiDevices(string rpiid)
         {
-            String? apiKey = _userService.GetApiKey(Request);
+            string? apiKey = _userService.GetApiKey(Request);
 
-            if (String.IsNullOrEmpty(apiKey))
+            if (string.IsNullOrEmpty(apiKey))
                 return Unauthorized();
 
             RPIDevices? data = _deviceService.GetRPIDevices(rpiid, apiKey!);
@@ -54,10 +54,10 @@ namespace MainService.Controllers
         }
 
         [HttpPost("{rpiid}/save")]
-        public ActionResult<ResponseDevices> SaveDataToDB(String rpiid, SaveDataRequest data)
+        public ActionResult<ResponseDevices> SaveDataToDB(string rpiid, SaveDataRequest data)
         {
-            String apiKey = _userService.GetApiKey(Request);
-            Garden garden = new Garden();
+            string apiKey = _userService.GetApiKey(Request);
+            Garden garden = new ();
             garden.SetGardenIdByRPI(rpiid);
 
             ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
@@ -73,8 +73,7 @@ namespace MainService.Controllers
         [HttpPost("status")]
         public ActionResult<ResponseDevices> SetStatus(DeveiceStatus status)
         {
-            String apiKey = _userService.GetApiKey(Request);
-            Garden garden = new Garden();
+            Garden garden = new();
             garden.SetGardenIdByRPI(status.RpiId);
 
             DeveiceStatus response = _deviceService.SetStatus(status);
@@ -85,7 +84,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("status/{gardenId}")]
-        public ActionResult<DeveiceStatus> GetStatus(String gardenId)
+        public ActionResult<DeveiceStatus> GetStatus(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -95,7 +94,7 @@ namespace MainService.Controllers
             return Ok(response);
         }
         [HttpGet("status/{gardenId}/log")]
-        public ActionResult<List<DeveiceStatus>> GetStatusLog(String gardenId)
+        public ActionResult<List<DeveiceStatus>> GetStatusLog(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)

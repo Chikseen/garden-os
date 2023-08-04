@@ -11,8 +11,8 @@ namespace MainService.Controllers
     public class UserController : ControllerBase
     {
         private readonly IHubContext<MainHub, IMainHub> _hubContext;
-        private DeviceService _deviceService;
-        private UserService _userService;
+        private readonly DeviceService _deviceService;
+        private readonly UserService _userService;
 
         public UserController(IHubContext<MainHub, IMainHub> questionHub)
         {
@@ -22,7 +22,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("overview/{gardenId}")]
-        public ActionResult<ResponseDevices> GetOverview(String gardenId)
+        public ActionResult<ResponseDevices> GetOverview(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -32,7 +32,7 @@ namespace MainService.Controllers
         }
 
         [HttpPost("detailed/{gardenId}")]
-        public ActionResult<ResponseDevices> GetDetailed(String gardenId, TimeFrame timeFrame)
+        public ActionResult<ResponseDevices> GetDetailed(string gardenId, TimeFrame timeFrame)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -52,12 +52,12 @@ namespace MainService.Controllers
         }
 
         [HttpGet("users/{gardenId}")]
-        public ActionResult<UserList> GetUserList(String gardenId)
+        public ActionResult<UserList> GetUserList(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
                 return Unauthorized();
-            UserList response = _userService.GetUserList(userData, gardenId);
+            UserList response = _userService.GetUserList(gardenId);
             return Ok(response);
         }
 
@@ -72,7 +72,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("accessrequest/{gardenId}")]
-        public ActionResult<UserData> AccessRequest(String gardenId)
+        public ActionResult<UserData> AccessRequest(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -82,7 +82,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("requested")]
-        public ActionResult<List<String>> GetRequestedGardenList()
+        public ActionResult<List<string>> GetRequestedGardenList()
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -91,7 +91,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("changestatus/{gardenId}/{userId}")]
-        public ActionResult<UserData> Changestatus(String gardenId, String userId)
+        public ActionResult<UserData> Changestatus(string gardenId, string userId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)
@@ -101,7 +101,7 @@ namespace MainService.Controllers
         }
 
         [HttpGet("bridges/{gardenId}")]
-        public ActionResult<List<String>> GetBridges(String gardenId)
+        public ActionResult<List<string>> GetBridges(string gardenId)
         {
             UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
             if (!userData.IsAuthorized)

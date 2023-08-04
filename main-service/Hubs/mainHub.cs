@@ -16,8 +16,8 @@ namespace MainService.Hub
     {
         private readonly IHubContext<MainHub, IMainHub> _hubContext;
         static bool isInit = false;
-        static private Dictionary<String, String> _groupList = new();
-        static public Dictionary<String, String> _rpiList = new();
+        private static readonly Dictionary<string, string> _groupList = new();
+        static public Dictionary<string, string> _rpiList = new();
 
         public MainHub(IHubContext<MainHub, IMainHub> hubContext)
         {
@@ -38,22 +38,22 @@ namespace MainService.Hub
             // MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
-        public void setUserToGarden(String gId)
+        public void SetUserToGarden(string gId)
         {
-            String gardenId = gId.Replace("-", "");
-            String userId = this.Context.ConnectionId;
+            string gardenId = gId.Replace("-", "");
+            string userId = Context.ConnectionId;
 
 
             if (_groupList.ContainsKey(userId))
-                this.Groups.RemoveFromGroupAsync(userId, _groupList[userId]);
+                Groups.RemoveFromGroupAsync(userId, _groupList[userId]);
 
             _groupList[userId] = gardenId;
-            this.Groups.AddToGroupAsync(userId, gardenId);
+            Groups.AddToGroupAsync(userId, gardenId);
         }
 
-        public void SetRpiConnectionId(String rpiId)
+        public void SetRpiConnectionId(string rpiId)
         {
-            String conId = this.Context.ConnectionId;
+            string conId = Context.ConnectionId;
 
             _rpiList[rpiId] = conId;
 

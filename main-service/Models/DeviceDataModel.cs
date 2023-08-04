@@ -5,7 +5,7 @@ public class DevicesData
     [JsonInclude]
     public List<Device> Devices = new();
 
-    public DevicesData(List<Dictionary<String, String>> devicesList)
+    public DevicesData(List<Dictionary<string, string>> devicesList)
     {
         List<Device> devices = new();
         foreach (var deciveDictionary in devicesList)
