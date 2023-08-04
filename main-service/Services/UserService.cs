@@ -90,13 +90,15 @@ namespace Services.User
         {
             string query = @$"
                 SELECT
-                    garden_id,
-                    user_id,
-                    is_approved
+                    gardenuser.garden_id,
+                    gardenuser.user_id,
+                    gardenuser.is_approved,
+                    users.given_name,
+                    users.family_name
                 FROM
                     gardenuser
-                WHERE
-                    garden_id = '{gardenId}'".Clean();
+                    JOIN users ON gardenuser.user_id = users.id
+                    AND garden_id = '{gardenId}';".Clean();
             List<Dictionary<string, string>> result = MainDB.Query(query);
 
             return new(result);

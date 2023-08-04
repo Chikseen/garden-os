@@ -106,9 +106,6 @@ export default {
 		this.selectedGarden = localStorage.getItem('selectedGarden')
 		this.$store.commit("setGardenList", await fetchGardenMeta())
 		await this.loadRequested();
-		if (this.selectedGarden) {
-			this.fetchuser()
-		}
 		this.isGardenListLoading = false
 	}
 }

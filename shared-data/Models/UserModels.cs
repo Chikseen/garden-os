@@ -6,14 +6,14 @@ public class UserList
     [JsonPropertyName("userList")]
     public List<User> User = new();
 
-    public UserList(List<Dictionary<String, String>> data)
+    public UserList(List<Dictionary<string, string>> data)
     {
         List<User> users = new();
-        foreach (Dictionary<String, String> user in data)
+        foreach (Dictionary<string, string> user in data)
         {
             users.Add(new User(user));
         }
-        this.User = users;
+        User = users;
     }
 
     [JsonConstructor]
@@ -24,21 +24,31 @@ public class User
 {
     [JsonInclude]
     [JsonPropertyName("user_id")]
-    public String UserId = String.Empty;
+    public string UserId = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("garden_id")]
-    public String GardenId = String.Empty;
+    public string GardenId = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("isApproved")]
-    public Boolean IsApproved = false;
+    public bool IsApproved = false;
 
-    public User(Dictionary<String, String> data)
+    [JsonInclude]
+    [JsonPropertyName("given_name")]
+    public string GivenName = string.Empty;
+
+    [JsonInclude]
+    [JsonPropertyName("family_name")]
+    public string FamilyName = string.Empty;
+
+    public User(Dictionary<string, string> data)
     {
-        this.UserId = DeviceStatic.GetString(data, DeviceStatic.UserId);
-        this.GardenId = DeviceStatic.GetString(data, DeviceStatic.GardenID);
-        this.IsApproved = DeviceStatic.GetBool(data, DeviceStatic.IsApproved);
+        UserId = DeviceStatic.GetString(data, DeviceStatic.UserId);
+        GardenId = DeviceStatic.GetString(data, DeviceStatic.GardenID);
+        IsApproved = DeviceStatic.GetBool(data, DeviceStatic.IsApproved);
+        GivenName = DeviceStatic.GetString(data, DeviceStatic.GivenName);
+        FamilyName = DeviceStatic.GetString(data, DeviceStatic.FamilyName);
     }
 
     [JsonConstructor]

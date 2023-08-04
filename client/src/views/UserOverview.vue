@@ -5,15 +5,19 @@
 		<span v-else>
 			<h2>Approved User</h2>
 			<List>
-				<div v-for="user in userList?.userList.filter(u => u.isApproved)" :key="user" class="grid_item item">
-					<h2 @click="toggleUserStatus(user)"> {{ user.user_id }} </h2>
+				<div v-for="user in userList?.userList.filter(u => u.isApproved)" :key="user" class="grid_item item"
+					@click="toggleUserStatus(user)">
+					<h2> {{ user.given_name }} {{ user.family_name }} </h2>
+					<h3> {{ user.user_id }} </h3>
 				</div>
 			</List>
 
 			<h2>Requests to join the garden</h2>
 			<List>
-				<div v-for="user in userList?.userList.filter(u => !u.isApproved)" :key="user" class="grid_item item">
-					<h2 @click="toggleUserStatus(user)"> {{ user.user_id }} </h2>
+				<div v-for="user in userList?.userList.filter(u => !u.isApproved)" :key="user" class="grid_item item"
+					@click="toggleUserStatus(user)">
+					<h2> {{ user.given_name }} {{ user.family_name }} </h2>
+					<h3> {{ user.user_id }} </h3>
 				</div>
 			</List>
 		</span>
