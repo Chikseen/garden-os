@@ -39,3 +39,16 @@ public class Device
         DataUpdateInterval = DeviceStatic.GetTimeSpan(deviceDictionary, DeviceStatic.DataUpdateInterval);
     }
 }
+
+public class DeviceCache
+{
+    public DateTime Date = DateTime.Now;
+    public float Value = 0;
+
+    public DeviceCache(float value)
+    {
+        Value = value;
+    }
+    public DeviceCache()
+    { }
+}

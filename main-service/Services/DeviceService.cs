@@ -6,7 +6,7 @@ namespace Services.Device
     public class DeviceService
     {
         private static readonly Dictionary<string, DateTime> lastEntryList = new();
-        private static readonly Dictionary<string, ResponseDevices> _deviceCache = new();
+        private static readonly Dictionary<string, Dictionary<string, float>> _deviceCache = new();
 
         public RPIData? GetRpiMeta(string rpiId, string apiKey)
         {
@@ -51,20 +51,30 @@ namespace Services.Device
             if (!lastEntryList.ContainsKey(data.Device_ID))
                 lastEntryList.Add(data.Device_ID, DateTime.Now);
 
-            if (!_deviceCache.ContainsKey(garden.Id))
-                _deviceCache.Add(garden.Id, _deviceCache[garden.Id] = GetOverviewFromRPI(rpiId, rpiKey, garden.Id));
-
             if (lastEntryList[data.Device_ID] < DateTime.Now - interval)
             {
                 MainDB.Query(query);
                 lastEntryList[data.Device_ID] = DateTime.Now;
-                _deviceCache[garden.Id] = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
             }
-            else
+
+            if (!_deviceCache.ContainsKey(garden.Id))
+                _deviceCache.Add(garden.Id, new());
+            if (!_deviceCache[garden.Id].ContainsKey(data.Device_ID))
+                _deviceCache[garden.Id].Add(data.Device_ID, 0.0f);
+            _deviceCache[garden.Id][data.Device_ID] = data.Value;
+
+            ResponseDevices response = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
+
+            foreach (ReponseDevice device in response.Devices)
             {
-                _deviceCache[garden.Id].Devices.First(d => d.DeviceID == data.Device_ID).SetNewValue(data.Value);
+                if (_deviceCache[garden.Id].ContainsKey(device.DeviceID))
+                {
+                    int i = response.Devices.FindIndex(d => d.DeviceID == device.DeviceID);
+                    response.Devices[i].SetNewValue(_deviceCache[garden.Id][device.DeviceID]);
+                }
             }
-            return _deviceCache[garden.Id];
+
+            return response;
         }
 
         public ResponseDevices GetOverview(UserData userData, string gardenId)
