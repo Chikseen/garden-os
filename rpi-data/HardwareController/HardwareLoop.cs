@@ -1,8 +1,6 @@
 using System.Device.I2c;
-using System.Diagnostics;
 using System.Text.Json;
 using Iot.Device.Ads1115;
-using Iot.Device.CharacterLcd;
 using Iot.Device.DHTxx;
 using UnitsNet;
 
@@ -11,15 +9,9 @@ namespace MainService.Hardware
     public static class MainLoop
     {
         public static bool _recivedStop = false;
-        public static int _loopDelay = 250;
-        private static I2cDevice? _i2c_LCD_Device;
+        public static int _loopDelay = 50;
         private static I2cDevice? _ADC;
-        private static Lcd2004? _LCD;
-        private static Dictionary<String, List<float>> _Filter = new();
-
-        private static int _MetricsCounter = 99;
-        private static int _MetricsLimit = 10;
-
+        private static readonly Dictionary<string, List<float>> _Filter = new();
 
         public static void Start()
         {
@@ -27,7 +19,7 @@ namespace MainService.Hardware
 
             DeveiceStatus status = new()
             {
-                RpiId = MainHardware.RpiId,
+                RpiId = MainHardware._RpiId,
                 TriggerdBy = "hub",
                 Status = "ok",
             };
@@ -42,7 +34,6 @@ namespace MainService.Hardware
             }
         }
 
-
         public static void Loop()
         {
             ReadAndSetValues();
@@ -50,8 +41,7 @@ namespace MainService.Hardware
 
         private static void ReadAndSetValues()
         {
-            Boolean triggerUpdate = false;
-            RPIDevices data = MainHardware._data;
+            RPIDevices data = MainHardware._Devices;
 
             foreach (RPIDevice device in data.Devices)
             {
@@ -59,128 +49,37 @@ namespace MainService.Hardware
                 switch (device.DeviceTyp)
                 {
                     case "ADC":
-                        {
-                            Ads1115? _ADS1115;
-                            short raw = 0;
-                            if (_ADC is not null)
-                                switch (device.Address)
-                                {
-                                    case 0:
-                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN0, MeasuringRange.FS4096);
-                                        raw = _ADS1115.ReadRaw();
-                                        break;
-                                    case 1:
-                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN1, MeasuringRange.FS4096);
-                                        raw = _ADS1115.ReadRaw();
-                                        break;
-                                    case 2:
-                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN2, MeasuringRange.FS4096);
-                                        raw = _ADS1115.ReadRaw();
-                                        break;
-                                    case 3:
-                                        _ADS1115 = new Ads1115(_ADC, InputMultiplexer.AIN3, MeasuringRange.FS4096);
-                                        raw = _ADS1115.ReadRaw();
-                                        break;
-                                }
-
-                            float value = ((float)raw / 26550.0f * 100.0f);
-
-                            _Filter[$"adc1{device.Address}"].Add(value);
-                            if (_Filter[$"adc1{device.Address}"].Count > 50)
-                            {
-                                _Filter[$"adc1{device.Address}"].RemoveAt(0);
-
-                                float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
-                                if (Math.Abs(device.LastSavedValue - avgValue) > 0.25f)
-                                {
-                                    triggerUpdate = true;
-                                    SaveDataToDatabase(device, avgValue);
-                                }
-                            }
-                            else
-                                Console.WriteLine("Filling");
-                        }
+                        ReadADC(device);
                         break;
                     case "DHT11":
-                        {
-                            Dht11 dht11 = new Dht11(17);
-
-                            Boolean isTempValid = dht11.TryReadHumidity(out RelativeHumidity humidity);
-                            Boolean isHumidValid = dht11.TryReadTemperature(out Temperature temperature);
-
-                            if (isTempValid && isHumidValid)
-                                if (humidity.Percent > 0 && temperature.DegreesCelsius > -50)
-                                {
-                                    if (device.ID == "3032fc92-1bee-11ee-be56-0242ac120002")
-                                        SaveDataToDatabase(device, (float)humidity.Percent);
-                                    if (device.ID == "de9cca87-eff5-49a5-bcc2-1a5d13d366cc")
-                                        SaveDataToDatabase(device, (float)temperature.DegreesCelsius);
-                                }
-
-                        }
+                        ReadDHT11(device);
                         break;
                     case "DEBUG":
-                        {
-                            ReadAndSetMetrics(device);
-                        }
+                        Metrics.ReadAndSetMetrics(device);
                         break;
                 }
-            }
-
-            // Trigger only on change to spare performance
-            if (triggerUpdate)
-            {
-                MainHardware._data = data;
-            }
-        }
-
-        private static void SaveDataToDatabase(RPIDevice device, float value)
-        {
-            RPIDevice? originalDevice = MainHardware._data.Devices.FirstOrDefault(d => d.ID == device.ID);
-            if (originalDevice == null)
-                return;
-
-            SaveDataRequest data = new();
-            data.Device_ID = device.ID;
-            data.Value = value;
-
-            Console.WriteLine("Save And Send Data");
-
-            try
-            {
-                ApiService api = new();
-                api.Post($"/devices/{MainHardware.RpiId}/save", JsonSerializer.Serialize(data));
-                originalDevice.LastEntry = DateTime.Now;
-                originalDevice.LastSavedValue = value;
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
 
         private static void DeviceInit()
         {
-
             // ADC 1 (ADS1115)
             Console.WriteLine("Check Hardware Data");
             Console.WriteLine("Setup ADS_1 and AIN");
             try
             {
-                I2cConnectionSettings settings = new I2cConnectionSettings(1, (int)I2cAddress.GND);
+                I2cConnectionSettings settings = new(1, (int)I2cAddress.GND);
                 _ADC = I2cDevice.Create(settings);
                 _Filter.Add($"adc10", new List<float>());
                 _Filter.Add($"adc11", new List<float>());
                 _Filter.Add($"adc12", new List<float>());
                 _Filter.Add($"adc13", new List<float>());
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-            Console.WriteLine("en");
-
 
             /* // LCD
              try
@@ -204,34 +103,57 @@ namespace MainService.Hardware
              }*/
         }
 
-        public static void ReadAndSetMetrics(RPIDevice device)
+        private static void ReadADC(RPIDevice device)
         {
-            Console.WriteLine("start met", device.ID);
-            Console.WriteLine(device.ID);
-            if (_MetricsCounter > _MetricsLimit)
+            if (_ADC is not null)
             {
-                Console.WriteLine("in met");
-                var output = "";
+                Ads1115 _ADS1115 = new(_ADC, GetADCInput(device), MeasuringRange.FS4096);
+                short raw = _ADS1115.ReadRaw();
 
-                var info = new ProcessStartInfo("free -m");
-                info.FileName = "/bin/bash";
-                info.Arguments = "-c \"free -m\"";
-                info.RedirectStandardOutput = true;
+                float value = raw / 26550.0f * 100.0f;
 
-                using (var process = Process.Start(info))
+                _Filter[$"adc1{device.Address}"].Add(value);
+                if (_Filter[$"adc1{device.Address}"].Count > 50)
                 {
-                    output = process.StandardOutput.ReadToEnd();
+                    _Filter[$"adc1{device.Address}"].RemoveAt(0);
+
+                    float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
+                    if (Math.Abs(device.LastSavedValue - avgValue) > 0.1f)
+                    {
+                        HardwareEvents.SaveDataToDatabase(device, avgValue);
+                    }
                 }
-
-                var lines = output.Split("\n");
-                var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
-
-                Console.WriteLine("val " + float.Parse(memory[2]));
-
-                SaveDataToDatabase(device, float.Parse(memory[2]));
-                _MetricsCounter = 0;
+                else
+                    Console.WriteLine("Filling");
             }
-            _MetricsCounter++;
+        }
+
+        private static void ReadDHT11(RPIDevice device)
+        {
+            Dht11 dht11 = new(17);
+
+            bool isTempValid = dht11.TryReadHumidity(out RelativeHumidity humidity);
+            bool isHumidValid = dht11.TryReadTemperature(out Temperature temperature);
+
+            if (isTempValid && isHumidValid)
+                if (humidity.Percent > 0 && temperature.DegreesCelsius > -50)
+                {
+                    if (device.ID == "3032fc92-1bee-11ee-be56-0242ac120002")
+                        HardwareEvents.SaveDataToDatabase(device, (float)humidity.Percent);
+                    if (device.ID == "de9cca87-eff5-49a5-bcc2-1a5d13d366cc")
+                        HardwareEvents.SaveDataToDatabase(device, (float)temperature.DegreesCelsius);
+                }
+        }
+
+        private static InputMultiplexer GetADCInput(RPIDevice device)
+        {
+            return device.Address switch
+            {
+                0 => InputMultiplexer.AIN0,
+                1 => InputMultiplexer.AIN1,
+                2 => InputMultiplexer.AIN2,
+                _ => InputMultiplexer.AIN3,
+            };
         }
     }
 }
