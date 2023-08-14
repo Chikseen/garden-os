@@ -8,32 +8,32 @@ namespace RPI.Connection
 {
     public class Connection
     {
-        private Microsoft.AspNetCore.SignalR.Client.HubConnection _hubConnection { get; set; }
+        private HubConnection HubConnection { get; set; }
 
         public Connection()
         {
-            _hubConnection = Connect();
-            setRpiAndConId();
+            HubConnection = Connect();
+            SetRpiAndConId();
         }
 
-        private Microsoft.AspNetCore.SignalR.Client.HubConnection Connect()
+        HubConnection Connect()
         {
             try
             {
                 DotEnv.Load();
                 Console.WriteLine("Try Connect");
-                _hubConnection = new HubConnectionBuilder()
+                HubConnection = new HubConnectionBuilder()
                 .WithUrl($"{Environment.GetEnvironmentVariable("URL")!}/hub")
                 .WithAutomaticReconnect()
                 .Build();
 
-                _hubConnection.On("SendRebootRequest", () =>
+                HubConnection.On("SendRebootRequest", () =>
                     {
                         Console.WriteLine("Reboot request recvied");
 
                         DeveiceStatus status = new()
                         {
-                            RpiId = MainHardware.RpiId,
+                            RpiId = MainHardware._RpiId,
                             Message = "Manuel Reboot triggerd",
                             Status = "reboot",
                             TriggerdBy = "hub"
@@ -44,24 +44,25 @@ namespace RPI.Connection
 
                         SystemService.Reboot();
                     });
-                _hubConnection.On<string>("SendMyEvent", (user) =>
+
+                HubConnection.On<string>("SendMyEvent", (user) =>
                     {
                         GetMessage(user, "message");
                     });
 
 
-                _hubConnection.StartAsync().Wait();
+                HubConnection.StartAsync().Wait();
 
-                _hubConnection.Closed += HubConnection_Closed;
-                _hubConnection.Reconnected += HubConnection_Reconnected;
+                HubConnection.Closed += HubConnection_Closed;
+                HubConnection.Reconnected += HubConnection_Reconnected;
 
-                return _hubConnection;
+                return HubConnection;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 DeveiceStatus status = new()
                 {
-                    RpiId = MainHardware.RpiId,
+                    RpiId = MainHardware._RpiId,
                     Message = "Not able to create Hub Connection",
                     Status = "error",
                     TriggerdBy = "hub"
@@ -81,11 +82,11 @@ namespace RPI.Connection
             Console.WriteLine(message);
         }
 
-        void setRpiAndConId()
+        void SetRpiAndConId()
         {
             DotEnv.Load();
-            String rpiId = Environment.GetEnvironmentVariable("RPI_ID")!;
-            _hubConnection.SendAsync("SetRpiConnectionId", rpiId);
+            string rpiId = Environment.GetEnvironmentVariable("RPI_ID")!;
+            HubConnection.SendAsync("SetRpiConnectionId", rpiId);
         }
 
         static Task HubConnection_Closed(Exception? exception)
@@ -101,7 +102,7 @@ namespace RPI.Connection
 
             DeveiceStatus status = new()
             {
-                RpiId = MainHardware.RpiId,
+                RpiId = MainHardware._RpiId,
                 Message = "Connection: Connection closed: " + exception,
                 Status = "error",
                 TriggerdBy = "hub"
@@ -117,7 +118,7 @@ namespace RPI.Connection
         {
             DeveiceStatus status = new()
             {
-                RpiId = MainHardware.RpiId,
+                RpiId = MainHardware._RpiId,
                 Message = "Connection: Connection reconnected ",
                 Status = "warning",
                 TriggerdBy = "hub"
@@ -127,7 +128,7 @@ namespace RPI.Connection
             api.Post($"/devices/status", JsonSerializer.Serialize(status));
 
             Console.WriteLine("Reconnected");
-            setRpiAndConId();
+            SetRpiAndConId();
             return Task.CompletedTask;
         }
     }
