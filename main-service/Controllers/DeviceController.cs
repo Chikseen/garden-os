@@ -82,26 +82,5 @@ namespace MainService.Controllers
 
             return Ok(response);
         }
-
-        [HttpGet("status/{gardenId}")]
-        public ActionResult<DeveiceStatus> GetStatus(string gardenId)
-        {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
-            DeveiceStatus response = _deviceService.GetStatus(gardenId);
-
-            return Ok(response);
-        }
-        [HttpGet("status/{gardenId}/log")]
-        public ActionResult<List<DeveiceStatus>> GetStatusLog(string gardenId)
-        {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
-            List<DeveiceStatus> response = _deviceService.GetStatusLog(gardenId);
-
-            return Ok(response);
-        }
     }
 }

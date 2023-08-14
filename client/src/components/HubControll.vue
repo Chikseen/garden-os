@@ -49,7 +49,7 @@ export default {
 			return formatToDateTime(d)
 		},
 		async getHubStatus() {
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/status/${localStorage.getItem("selectedGarden")}`, {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/status`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

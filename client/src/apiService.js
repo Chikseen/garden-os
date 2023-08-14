@@ -19,7 +19,7 @@ async function fetchGardenMeta() {
 async function fetchDevices(gardenId) {
 	let response;
 	if (localStorage.getItem("accessToken")) {
-		response = await fetch(`${process.env.VUE_APP_PI_HOST}user/overview/${gardenId}`, {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${gardenId}/overview`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

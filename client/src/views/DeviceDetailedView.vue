@@ -116,7 +116,7 @@ export default {
     },
     async fetchData() {
       this.isDataLoading = true
-      const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/detailed/${localStorage.getItem("selectedGarden")}`, {
+      const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/detailed`, {
         method: "POST",
         body: JSON.stringify(this.timeframe),
         headers: {

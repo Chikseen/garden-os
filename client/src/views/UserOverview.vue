@@ -44,7 +44,7 @@ export default {
 	},
 	methods: {
 		async fetchuser() {
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/users/${this.selectedGarden}`, {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${this.selectedGarden}/users`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -57,7 +57,7 @@ export default {
 		},
 		async toggleUserStatus(user) {
 			this.isUserListLoading = true;
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/changestatus/${user.garden_id}/${user.user_id}`, {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/${user.garden_id}/changestatus/${user.user_id}`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

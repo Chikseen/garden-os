@@ -44,7 +44,7 @@ export default {
 		},
 		async fetchHubLog() {
 			this.isLogLoading = true
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/status/${localStorage.getItem("selectedGarden")}/log`, {
+			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/status/log`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

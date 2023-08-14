@@ -18,7 +18,7 @@ public class AuthMiddleware
     {
         string path = context.Request.Path.Value!;
 
-        if (path.Contains("/user/"))
+        if (path.Contains("/user/") || path.Contains("/garden/"))
         {
             DotEnv.Load();
             string realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;

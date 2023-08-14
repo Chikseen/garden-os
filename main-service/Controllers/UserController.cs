@@ -21,34 +21,11 @@ namespace MainService.Controllers
             _userService = new();
         }
 
-        [HttpGet("overview/{gardenId}")]
-        public ActionResult<ResponseDevices> GetOverview(string gardenId)
-        {
-            UserData userData = HttpContext.Features.Get<UserData>()!;
-            ResponseDevices response = _deviceService.GetOverview(userData, gardenId);
-            return Ok(response);
-        }
-
-        [HttpPost("detailed/{gardenId}")]
-        public ActionResult<ResponseDevices> GetDetailed(string gardenId, TimeFrame timeFrame)
-        {
-            UserData userData = HttpContext.Features.Get<UserData>()!;
-            ResponseDevices response = _deviceService.GetDetailed(userData, gardenId, timeFrame);
-            return Ok(response);
-        }
-
         [HttpGet("garden")]
         public ActionResult<GardenResponseModel> GetGardenData()
         {
             UserData userData = HttpContext.Features.Get<UserData>()!;
             GardenResponseModel response = _userService.GetGardenData(userData);
-            return Ok(response);
-        }
-
-        [HttpGet("users/{gardenId}")]
-        public ActionResult<UserList> GetUserList(string gardenId)
-        {
-            UserList response = _userService.GetUserList(gardenId);
             return Ok(response);
         }
 
@@ -60,7 +37,7 @@ namespace MainService.Controllers
             return Ok();
         }
 
-        [HttpGet("accessrequest/{gardenId}")]
+        [HttpGet("{gardenId}/accessrequest")]
         public ActionResult<UserData> AccessRequest(string gardenId)
         {
             UserData userData = HttpContext.Features.Get<UserData>()!;
@@ -75,17 +52,11 @@ namespace MainService.Controllers
             return Ok(_userService.GetRequestedGardenList(userData));
         }
 
-        [HttpGet("changestatus/{gardenId}/{userId}")]
+        [HttpGet("{gardenId}/changestatus/{userId}")]
         public ActionResult<UserData> Changestatus(string gardenId, string userId)
         {
             _userService.Changestatus(gardenId, userId);
             return Ok();
-        }
-
-        [HttpGet("bridges/{gardenId}")]
-        public ActionResult<List<string>> GetBridges(string gardenId)
-        {
-            return Ok(_userService.GetBridges(gardenId));
         }
     }
 }
