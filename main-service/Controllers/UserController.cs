@@ -24,9 +24,7 @@ namespace MainService.Controllers
         [HttpGet("overview/{gardenId}")]
         public ActionResult<ResponseDevices> GetOverview(string gardenId)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             ResponseDevices response = _deviceService.GetOverview(userData, gardenId);
             return Ok(response);
         }
@@ -34,9 +32,7 @@ namespace MainService.Controllers
         [HttpPost("detailed/{gardenId}")]
         public ActionResult<ResponseDevices> GetDetailed(string gardenId, TimeFrame timeFrame)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             ResponseDevices response = _deviceService.GetDetailed(userData, gardenId, timeFrame);
             return Ok(response);
         }
@@ -44,9 +40,7 @@ namespace MainService.Controllers
         [HttpGet("garden")]
         public ActionResult<GardenResponseModel> GetGardenData()
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             GardenResponseModel response = _userService.GetGardenData(userData);
             return Ok(response);
         }
@@ -54,9 +48,6 @@ namespace MainService.Controllers
         [HttpGet("users/{gardenId}")]
         public ActionResult<UserList> GetUserList(string gardenId)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
             UserList response = _userService.GetUserList(gardenId);
             return Ok(response);
         }
@@ -64,9 +55,7 @@ namespace MainService.Controllers
         [HttpPost("register")]
         public ActionResult<UserData> CreateNewUser()
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             _userService.SaveNewUser(userData);
             return Ok();
         }
@@ -74,9 +63,7 @@ namespace MainService.Controllers
         [HttpGet("accessrequest/{gardenId}")]
         public ActionResult<UserData> AccessRequest(string gardenId)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             _userService.AccessRequest(userData, gardenId);
             return Ok();
         }
@@ -84,18 +71,13 @@ namespace MainService.Controllers
         [HttpGet("requested")]
         public ActionResult<List<string>> GetRequestedGardenList()
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
+            UserData userData = HttpContext.Features.Get<UserData>()!;
             return Ok(_userService.GetRequestedGardenList(userData));
         }
 
         [HttpGet("changestatus/{gardenId}/{userId}")]
         public ActionResult<UserData> Changestatus(string gardenId, string userId)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
             _userService.Changestatus(gardenId, userId);
             return Ok();
         }
@@ -103,10 +85,6 @@ namespace MainService.Controllers
         [HttpGet("bridges/{gardenId}")]
         public ActionResult<List<string>> GetBridges(string gardenId)
         {
-            UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-            if (!userData.IsAuthorized)
-                return Unauthorized();
-
             return Ok(_userService.GetBridges(gardenId));
         }
     }

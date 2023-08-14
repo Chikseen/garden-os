@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using Keycloak.AuthServices.Authentication;
 using dotenv.net;
+using Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<MainHub>("/hub");
+app.UseRequestCulture();
 
 MainDB.Init();
 

@@ -1,9 +1,7 @@
-using System.Net;
 using System.Net.Http.Headers;
 using dotenv.net;
 using ExtensionMethods;
 using MainService.DB;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
 namespace Services.User
@@ -33,8 +31,7 @@ namespace Services.User
                 {"audience", clientId},
             };
             Request.Headers.TryGetValue("Authorization", out StringValues bearer);
-            if (StringValues.IsNullOrEmpty(bearer))
-                throw new UnauthorizedAccessException("Accesstoken not found");
+    
 
             string token = ((string)bearer!).Replace("Bearer", "").Trim();
             var client = new HttpClient();
@@ -43,8 +40,6 @@ namespace Services.User
             var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
             var contents = await response.Content.ReadAsStringAsync();
 
-            if (string.IsNullOrEmpty(contents))
-                return new();
             return new UserData(contents);
         }
 
