@@ -54,10 +54,10 @@ namespace Services.Device
 
             if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
             {
-                MainDB.Query(query);
                 _lastEntryList[data.DeviceId] = DateTime.Now;
                 _cacheList.Remove(data.DeviceId);
             }
+            MainDB.Query(query);
 
 
             ReponseDevice response = GetDeviceFromRPI(garden, data);
