@@ -37,7 +37,6 @@ namespace Services.Device
             Garden garden = new();
             garden.SetGardenIdByRPI(rpiId, false);
 
-            string query = QueryService.SaveDataToDatabaseQuery(garden, data);
 
             Console.WriteLine("Start saving data");
             Console.WriteLine("Now: " + DateTime.Now);
@@ -65,6 +64,8 @@ namespace Services.Device
                 _cacheList.Remove(data.DeviceId);
             }
             Console.WriteLine("Insert in DB");
+
+            string query = QueryService.SaveDataToDatabaseQuery(garden, data);
             MainDB.Query(query);
 
 

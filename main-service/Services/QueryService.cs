@@ -48,7 +48,7 @@ public static class QueryService
 	{
 		return @$"
 			SET TIMEZONE = 'Europe/Berlin';
-			INSERT INTO DATALOG{garden.Id} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
+			INSERT INTO DATALOG{garden.Id.Replace("-", "")} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
 			VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.DeviceId}')".Clean();
 	}
 
