@@ -39,6 +39,9 @@ namespace Services.Device
 
             string query = QueryService.SaveDataToDatabaseQuery(garden, data);
 
+            Console.WriteLine("Start saving data");
+            Console.WriteLine("Now: " + DateTime.Now);
+
             RPIDevices? devicesData = GetRPIDevices(rpiId, rpiKey);
             if (devicesData == null)
                 return null;
@@ -46,6 +49,10 @@ namespace Services.Device
             RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == data.DeviceId).FirstOrDefault();
             if (deviceData == null)
                 return null;
+
+            Console.WriteLine("has devicedata");
+            Console.WriteLine(deviceData.DeviceName);
+            Console.WriteLine(deviceData.Value);
 
             TimeSpan interval = deviceData.DataUpdateInterval;
             if (!_lastEntryList.ContainsKey(data.DeviceId))
@@ -57,6 +64,7 @@ namespace Services.Device
                 _lastEntryList[data.DeviceId] = DateTime.Now;
                 _cacheList.Remove(data.DeviceId);
             }
+            Console.WriteLine("Insert in DB");
             MainDB.Query(query);
 
 
@@ -66,7 +74,7 @@ namespace Services.Device
             else
                 _cacheList[data.DeviceId] = response;
 
-
+            Console.WriteLine("Sned");
             return response;
         }
 

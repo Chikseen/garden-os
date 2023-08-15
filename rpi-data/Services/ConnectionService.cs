@@ -35,7 +35,7 @@ namespace RPI.Connection
                         {
                             RpiId = MainHardware._RpiId,
                             Message = "Manuel Reboot triggerd",
-                            Status = "reboot",
+                            Status = "warning",
                             TriggerdBy = "hub"
                         };
 
