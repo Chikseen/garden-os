@@ -21,7 +21,6 @@ namespace MainService.Hub
 
         public MainHub(IHubContext<MainHub, IMainHub> hubContext)
         {
-            Console.WriteLine("hi");
             if (!isInit)
             {
                 Init();
@@ -34,7 +33,6 @@ namespace MainService.Hub
         // One Time Init
         public void Init()
         {
-            Console.WriteLine("Main Hub Init");
             // MainHardware.ProcessCompleted += PrepareEventToSend; // register with an event
         }
 
@@ -56,9 +54,6 @@ namespace MainService.Hub
             string conId = Context.ConnectionId;
 
             _rpiList[rpiId] = conId;
-
-            Console.WriteLine(rpiId);
-            Console.WriteLine(conId);
         }
     }
 }

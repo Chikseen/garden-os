@@ -28,8 +28,6 @@ namespace MainService.Hardware
                 Value = value
             };
 
-            Console.WriteLine("Save And Send Data");
-
             try
             {
                 ApiService api = new();

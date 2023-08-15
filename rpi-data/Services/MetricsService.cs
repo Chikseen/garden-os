@@ -9,11 +9,8 @@ namespace MainService.Hardware
 
 		public static void ReadAndSetMetrics(RPIDevice device)
 		{
-			Console.WriteLine("start met", device.ID);
-			Console.WriteLine(device.ID);
 			if (_MetricsCounter > _MetricsLimit)
 			{
-				Console.WriteLine("in met");
 				var output = "";
 
 				ProcessStartInfo info = new("free -m")
@@ -30,8 +27,6 @@ namespace MainService.Hardware
 
 				var lines = output.Split("\n");
 				var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
-
-				Console.WriteLine("val " + float.Parse(memory[2]));
 
 				HardwareEvents.SaveDataToDatabase(device, float.Parse(memory[2]));
 				_MetricsCounter = 0;

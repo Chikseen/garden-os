@@ -13,7 +13,6 @@ export default {
 	},
 	methods: {
 		mouseDown() {
-			console.log("mousedown")
 			this.timer = setTimeout(() => {
 				this.$emit("trigger")
 			}, 3000);
@@ -21,7 +20,6 @@ export default {
 		},
 		mouseUp() {
 			clearTimeout(this.timer);
-			console.log("timerstoped")
 			this.$refs.cahbutton.classList.remove("clickandholdanimation")
 		},
 	},

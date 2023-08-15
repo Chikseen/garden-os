@@ -37,10 +37,6 @@ namespace Services.Device
             Garden garden = new();
             garden.SetGardenIdByRPI(rpiId, false);
 
-
-            Console.WriteLine("Start saving data");
-            Console.WriteLine("Now: " + DateTime.Now);
-
             RPIDevices? devicesData = GetRPIDevices(rpiId, rpiKey);
             if (devicesData == null)
                 return null;
@@ -49,25 +45,24 @@ namespace Services.Device
             if (deviceData == null)
                 return null;
 
-            Console.WriteLine("has devicedata");
-            Console.WriteLine(deviceData.DeviceName);
-            Console.WriteLine(deviceData.Value);
-
             TimeSpan interval = deviceData.DataUpdateInterval;
             if (!_lastEntryList.ContainsKey(data.DeviceId))
                 _lastEntryList.Add(data.DeviceId, DateTime.Now);
-
 
             if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
             {
                 _lastEntryList[data.DeviceId] = DateTime.Now;
                 _cacheList.Remove(data.DeviceId);
             }
-            Console.WriteLine("Insert in DB");
 
-            string query = QueryService.SaveDataToDatabaseQuery(garden, data);
-            MainDB.Query(query);
 
+            if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
+            {
+                string query = QueryService.SaveDataToDatabaseQuery(garden, data);
+                MainDB.Query(query);
+                _lastEntryList[data.DeviceId] = DateTime.Now;
+                _cacheList.Remove(data.DeviceId);
+            }
 
             ReponseDevice response = GetDeviceFromRPI(garden, data);
             if (!_cacheList.ContainsKey(data.DeviceId))
@@ -75,7 +70,6 @@ namespace Services.Device
             else
                 _cacheList[data.DeviceId] = response;
 
-            Console.WriteLine("Sned");
             return response;
         }
 

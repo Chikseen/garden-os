@@ -31,8 +31,6 @@ export default createStore({
 			state.deviceData = payload;
 		},
 		setDeviceData(state, payload) {
-			console.log(state.deviceData);
-			console.log(payload);
 			const devices = state.deviceData.devices;
 
 			let i = devices.findIndex((d) => d.device_id === payload.device_id);
