@@ -58,11 +58,11 @@ namespace Services.Device
 
             if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
             {
-                string query = QueryService.SaveDataToDatabaseQuery(garden, data);
-                MainDB.Query(query);
                 _lastEntryList[data.DeviceId] = DateTime.Now;
                 _cacheList.Remove(data.DeviceId);
             }
+            string query = QueryService.SaveDataToDatabaseQuery(garden, data);
+            MainDB.Query(query);
 
             ReponseDevice response = GetDeviceFromRPI(garden, data);
             if (!_cacheList.ContainsKey(data.DeviceId))

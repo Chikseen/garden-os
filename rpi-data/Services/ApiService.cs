@@ -25,6 +25,8 @@ public class ApiService
             "application/json"
         );
 
+        Console.WriteLine(json);
+
         return _client.PostAsync($"{_url}{route}", content).Result;
     }
 }
