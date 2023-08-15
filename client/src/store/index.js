@@ -8,7 +8,7 @@ export default createStore({
 		gardenMeta: null,
 		gardenList: null,
 		deviceData: null,
-		deviceStatus: null
+		deviceStatus: null,
 	},
 	getters: {},
 	mutations: {
@@ -27,8 +27,16 @@ export default createStore({
 				localStorage.clear();
 			}
 		},
-		setDeviceData(state, payload) {
+		setAllDevicesData(state, payload) {
 			state.deviceData = payload;
+		},
+		setDeviceData(state, payload) {
+			console.log(state.deviceData);
+			console.log(payload);
+			const devices = state.deviceData.devices;
+
+			let i = devices.findIndex((d) => d.device_id === payload.device_id);
+			state.deviceData.devices[i] = payload;
 		},
 		setKeycloak(state, payload) {
 			state.keycloak = payload;

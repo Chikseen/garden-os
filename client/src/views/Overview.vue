@@ -81,7 +81,7 @@ export default {
     },
     async mounted() {
         this.$store.commit("setGardenList", await fetchGardenMeta())
-        this.$store.commit("setDeviceData", await fetchDevices(localStorage.getItem("selectedGarden")))
+        this.$store.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")))
         this.isLoading = false
         this.$hub.invoke("setUserToGarden", localStorage.getItem("selectedGarden"));
     }

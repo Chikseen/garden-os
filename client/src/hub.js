@@ -6,7 +6,7 @@ export default {
 	},
 
 	async CheckConnection(Vue, ip) {
-		const connection = new HubConnectionBuilder().withUrl(`${ip}hub`).configureLogging(LogLevel.Information).build();
+		const connection = new HubConnectionBuilder().withUrl(`${ip}hub`).build();
 
 		Vue.config.globalProperties.emitter.on("closeConnection", () => {
 			connection.stop;
@@ -24,13 +24,6 @@ export default {
 		connection.on("NewDeviceStatus", (payload) => {
 			Vue.config.globalProperties.emitter.emit("NewDeviceStatus", payload);
 		});
-
-		/*connection.disconnected(() => {
-      setTimeout(async () => {
-        console.log("try to reconnect");
-        await this.CheckConnection(Vue, ip);
-      }, 1000);
-    });*/
 
 		Vue.provide("$hub", connection);
 		Vue.config.globalProperties.$hub = connection;

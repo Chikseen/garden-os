@@ -4,7 +4,7 @@ public class SaveDataRequest
 {
     [JsonInclude]
     [JsonPropertyName("device_id")]
-    public String Device_ID = String.Empty;
+    public string DeviceId = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("value")]
@@ -17,14 +17,14 @@ public class ResponseDevices
     [JsonPropertyName("devices")]
     public List<ReponseDevice> Devices = new();
 
-    public ResponseDevices(List<Dictionary<String, String>> data)
+    public ResponseDevices(List<Dictionary<string, string>> data)
     {
         List<ReponseDevice> devices = new();
-        foreach (Dictionary<String, String> device in data)
+        foreach (Dictionary<string, string> device in data)
         {
             devices.Add(new ReponseDevice(device));
         }
-        this.Devices = devices;
+        Devices = devices;
     }
 
     [JsonConstructor]
@@ -35,11 +35,11 @@ public class ReponseDevice
 {
     [JsonInclude]
     [JsonPropertyName("device_id")]
-    public String DeviceID = String.Empty;
+    public string DeviceID = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("entry_id")]
-    public String EntryID = String.Empty;
+    public string EntryID = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("value")]
@@ -55,19 +55,19 @@ public class ReponseDevice
 
     [JsonInclude]
     [JsonPropertyName("name")]
-    public String Name = String.Empty;
+    public string Name = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("display_id")]
-    public String DisplayID = String.Empty;
+    public string DisplayID = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("upper_limit")]
-    public Int32 UpperLimit = 100;
+    public int UpperLimit = 100;
 
     [JsonInclude]
     [JsonPropertyName("lower_limit")]
-    public Int32 LowerLimit = 0;
+    public int LowerLimit = 0;
 
     [JsonInclude]
     [JsonPropertyName("sort_order")]
@@ -75,33 +75,33 @@ public class ReponseDevice
 
     [JsonInclude]
     [JsonPropertyName("group_id")]
-    public String GroupId = String.Empty;
+    public string GroupId = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("unit")]
-    public String Unit = String.Empty;
+    public string Unit = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("special_id")]
-    public String SpecialId = String.Empty;
+    public string SpecialId = string.Empty;
 
-    public Boolean IsInverted = false;
+    public bool IsInverted = false;
 
-    public ReponseDevice(Dictionary<String, String> data)
+    public ReponseDevice(Dictionary<string, string> data)
     {
-        this.DeviceID = DeviceStatic.GetString(data, DeviceStatic.DeviceId);
-        this.EntryID = DeviceStatic.GetString(data, DeviceStatic.ID);
-        this.Value = DeviceStatic.GetFloat(data, DeviceStatic.Value, 0);
-        this.date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
-        this.Name = DeviceStatic.GetString(data, DeviceStatic.Name);
-        this.DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
-        this.UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
-        this.LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
-        this.SortOrder = DeviceStatic.GetInt(data, DeviceStatic.SortOrder, -1);
-        this.GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
-        this.Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
-        this.IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
-        this.SpecialId = DeviceStatic.GetString(data, DeviceStatic.SpecialId);
+        DeviceID = DeviceStatic.GetString(data, DeviceStatic.DeviceId);
+        EntryID = DeviceStatic.GetString(data, DeviceStatic.ID);
+        Value = DeviceStatic.GetFloat(data, DeviceStatic.Value, 0);
+        date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
+        Name = DeviceStatic.GetString(data, DeviceStatic.Name);
+        DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
+        UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
+        LowerLimit = DeviceStatic.GetInt(data, DeviceStatic.LowerLimit, 0);
+        SortOrder = DeviceStatic.GetInt(data, DeviceStatic.SortOrder, -1);
+        GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
+        Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
+        IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
+        SpecialId = DeviceStatic.GetString(data, DeviceStatic.SpecialId);
 
         Invert();
         AdjustSpecial();
@@ -109,29 +109,29 @@ public class ReponseDevice
 
     public void SetNewValue(float value)
     {
-        this.Value = value;
-        this.date = DateTime.Now;
+        Value = value;
+        date = DateTime.Now;
         Invert();
         AdjustSpecial();
     }
 
     private void Invert()
     {
-        if (this.IsInverted)
-            this.CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
+        if (IsInverted)
+            CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
         else
-            this.CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
+            CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (float)(UpperLimit - LowerLimit);
     }
 
     private void AdjustSpecial()
     {
-        if (!String.IsNullOrEmpty(this.SpecialId))
+        if (!string.IsNullOrEmpty(SpecialId))
         {
-            switch (this.SpecialId)
+            switch (SpecialId)
             {
                 case "brightness":
                     {
-                        this.CorrectedValue /= 10;
+                        CorrectedValue /= 10;
                     }
                     break;
             }

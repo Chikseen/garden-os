@@ -173,7 +173,7 @@ export default {
   },
   async mounted() {
     this.$store.commit("setGardenList", await fetchGardenMeta())
-    this.$store.commit("setDeviceData", await fetchDevices(localStorage.getItem("selectedGarden")))
+    this.$store.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")))
     this.fetchData()
   },
 }

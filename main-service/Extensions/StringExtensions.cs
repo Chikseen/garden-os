@@ -4,7 +4,7 @@ namespace ExtensionMethods
     {
         public static string Clean(this string str)
         {
-            return str.Replace("\n", "").Replace("\r", "");
+            return str.Replace("\n", " ").Replace("\r", " ").Replace("\t", " ");
         }
     }
 }

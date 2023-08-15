@@ -49,37 +49,35 @@ public static class QueryService
 		return @$"
 			SET TIMEZONE = 'Europe/Berlin';
 			INSERT INTO DATALOG{garden.Id} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
-			VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.Device_ID}')".Clean();
+			VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.DeviceId}')".Clean();
 	}
 
 	public static string OverviewQuery(string gardenId)
 	{
 		return @$"
-			{OverviewSelect()}
+			{OverviewSelectDistinct()}
 			FROM
 				DATALOG{gardenId.Replace("-", "")} AS DATALOG
 				JOIN devices ON devices.id = DATALOG.device_id
 				AND devices.garden_id = '{gardenId}'
 			ORDER BY
 				DEVICE_ID,
-				UPLOAD_DATE DESC;";
+				UPLOAD_DATE DESC;".Clean();
 	}
 
-	public static string OverviewFromRPIQuery(string rpiId, string rpiKey, string gardenId)
+	public static string OverviewDeviceFromRPI(string gardenId, string deviceId)
 	{
 		return @$"
-			{OverviewSelect()}
+			{OverviewSelectDistinct()}
 			FROM
 				DATALOG{gardenId.Replace("-", "")} AS DATALOG
 				JOIN DEVICES
-				ON DEVICES.ID = DEVICE_ID 
-				JOIN RPIS
-				ON RPIS.ID = '{rpiId}'
-				AND RPIS.API_KEY = '{rpiKey}'
-				AND RPIS.GARDEN_ID = DEVICES.GARDEN_ID
+				ON DATALOG.DEVICE_ID = '{deviceId}'
+				AND DEVICES.ID = '{deviceId}'
+				AND DEVICES.GARDEN_ID = '{gardenId}'
 			ORDER BY
 				DEVICE_ID,
-				UPLOAD_DATE DESC;";
+				UPLOAD_DATE DESC;".Clean();
 	}
 
 	public static string DetailedViewQuery(string gardenId, TimeFrame timeFrame)
@@ -115,7 +113,7 @@ public static class QueryService
 				AND DATALOG.DATE BETWEEN '{timeFrame.Start.ConvertToPGString()}'
 				AND '{timeFrame.End.ConvertToPGString()}'
 			ORDER BY
-				UPLOAD_DATE DESC;";
+				UPLOAD_DATE DESC;".Clean();
 	}
 
 	public static string SetStatusQuery(DeveiceStatus status)
@@ -172,7 +170,7 @@ public static class QueryService
 				20;".Clean();
 	}
 
-	private static string OverviewSelect()
+	private static string OverviewSelectDistinct()
 	{
 		return @$"
 			SELECT

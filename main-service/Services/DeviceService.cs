@@ -5,8 +5,8 @@ namespace Services.Device
 {
     public class DeviceService
     {
-        private static readonly Dictionary<string, DateTime> lastEntryList = new();
-        private static readonly Dictionary<string, Dictionary<string, float>> _deviceCache = new();
+        private static readonly Dictionary<string, DateTime> _lastEntryList = new();
+        private static readonly Dictionary<string, ReponseDevice> _cacheList = new();
 
         public RPIData? GetRpiMeta(string rpiId, string apiKey)
         {
@@ -32,10 +32,10 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices? SaveDataToDB(SaveDataRequest data, string rpiId, string rpiKey)
+        public ReponseDevice? SaveDataToDB(SaveDataRequest data, string rpiId, string rpiKey)
         {
             Garden garden = new();
-            garden.SetGardenIdByRPI(rpiId);
+            garden.SetGardenIdByRPI(rpiId, false);
 
             string query = QueryService.SaveDataToDatabaseQuery(garden, data);
 
@@ -43,36 +43,29 @@ namespace Services.Device
             if (devicesData == null)
                 return null;
 
-            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == data.Device_ID).FirstOrDefault();
+            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == data.DeviceId).FirstOrDefault();
             if (deviceData == null)
                 return null;
 
             TimeSpan interval = deviceData.DataUpdateInterval;
-            if (!lastEntryList.ContainsKey(data.Device_ID))
-                lastEntryList.Add(data.Device_ID, DateTime.Now);
+            if (!_lastEntryList.ContainsKey(data.DeviceId))
+                _lastEntryList.Add(data.DeviceId, DateTime.Now);
 
-            if (lastEntryList[data.Device_ID] < DateTime.Now - interval)
+
+            if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
             {
                 MainDB.Query(query);
-                lastEntryList[data.Device_ID] = DateTime.Now;
+                _lastEntryList[data.DeviceId] = DateTime.Now;
+                _cacheList.Remove(data.DeviceId);
             }
 
-            if (!_deviceCache.ContainsKey(garden.Id))
-                _deviceCache.Add(garden.Id, new());
-            if (!_deviceCache[garden.Id].ContainsKey(data.Device_ID))
-                _deviceCache[garden.Id].Add(data.Device_ID, 0.0f);
-            _deviceCache[garden.Id][data.Device_ID] = data.Value;
 
-            ResponseDevices response = GetOverviewFromRPI(rpiId, rpiKey, garden.Id);
+            ReponseDevice response = GetDeviceFromRPI(garden, data);
+            if (!_cacheList.ContainsKey(data.DeviceId))
+                _cacheList.Add(data.DeviceId, response);
+            else
+                _cacheList[data.DeviceId] = response;
 
-            foreach (ReponseDevice device in response.Devices)
-            {
-                if (_deviceCache[garden.Id].ContainsKey(device.DeviceID))
-                {
-                    int i = response.Devices.FindIndex(d => d.DeviceID == device.DeviceID);
-                    response.Devices[i].SetNewValue(_deviceCache[garden.Id][device.DeviceID]);
-                }
-            }
 
             return response;
         }
@@ -85,15 +78,26 @@ namespace Services.Device
 
             List<Dictionary<string, string>> result = MainDB.Query(query);
             ResponseDevices devices = new(result);
+
+            for (int i = 0; i < devices.Devices.Count; i++)
+            {
+                ReponseDevice device = devices.Devices[i];
+                if (_cacheList.ContainsKey(device.DeviceID))
+                    devices.Devices[i] = _cacheList[device.DeviceID];
+            }
+
             return devices;
         }
 
-        public ResponseDevices GetOverviewFromRPI(string rpiId, string rpiKey, string gardenId)
+        public ReponseDevice GetDeviceFromRPI(Garden garden, SaveDataRequest data)
         {
-            string query = QueryService.OverviewFromRPIQuery(rpiId, rpiKey, gardenId);
+            string query = QueryService.OverviewDeviceFromRPI(garden.Id, data.DeviceId);
 
-            List<Dictionary<string, string>> result = MainDB.Query(query);
-            ResponseDevices devices = new(result);
+            List<Dictionary<string, string>> devicelist = MainDB.Query(query);
+            Dictionary<string, string> deviceDic = devicelist.FirstOrDefault()!;
+            deviceDic["value"] = data.Value.ToString();
+            deviceDic["date"] = DateTime.Now.ToString();
+            ReponseDevice devices = new(deviceDic);
             return devices;
         }
 

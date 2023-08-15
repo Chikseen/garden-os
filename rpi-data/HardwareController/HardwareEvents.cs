@@ -24,7 +24,7 @@ namespace MainService.Hardware
 
             SaveDataRequest data = new()
             {
-                Device_ID = device.ID,
+                DeviceId = device.ID,
                 Value = value
             };
 

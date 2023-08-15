@@ -60,7 +60,7 @@ namespace MainService.Controllers
             Garden garden = new ();
             garden.SetGardenIdByRPI(rpiid);
 
-            ResponseDevices? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
+            ReponseDevice? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
 
             if (response == null)
                 return BadRequest();
