@@ -43,8 +43,9 @@ namespace MainService.DB
                 con.Close();
                 return results;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 return new List<Dictionary<string, string>>();
             }
         }

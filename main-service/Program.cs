@@ -66,6 +66,8 @@ app.MapHub<MainHub>("/hub");
 app.UseRequestCulture();
 
 MainDB.Init();
+TimeService dbCleanupTimer = new();
+dbCleanupTimer.SetUpDailyTimer(new TimeSpan(8, 33, 0)); // Clean the DB every day at 2 am
 
 app.Run();
 
