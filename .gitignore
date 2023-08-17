@@ -479,3 +479,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+!C:\Users\gta_f\Desktop\garden-os\rpi-data\bin\Release\net7.0\linux-arm64\publish\libclrgc.so

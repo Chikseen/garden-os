@@ -1,32 +1,25 @@
 
-path=/home/pi/garden-os/rpi-data
+srcPath=./bin/Release/net7.0/linux-arm64/publish
+targetPath=../rpi-binary
 
-if [ -z "$1" ]
-then
-    echo "No SSH host specified"
-    read -
-    n 1 -p "Press any key to continue \n"
-    exit 1
-fi
+json= cat ${targetPath}/build.json
+
+json=`cat ${targetPath}/build.json`
+buildnumber=`grep -o '[0-9]*' <<< $json`
+buildnumber=$((buildnumber+1))
+echo Clean 
+rm -r ${targetPath}/*
 
 echo Build
-dotnet publish --runtime linux-arm64 --self-contained;
-if [ $? -eq 0 ] 
-then
-    echo Remove old data
-    ssh $1 "rm ${path}/*"
+pwd
+dotnet publish --runtime linux-arm64 --self-contained -c Release
 
-    echo Send Programm to RPI
-    scp ./bin/Debug/net7.0/linux-arm64/publish/* "$1:${path}"
-    scp ./.env "$1:${path}"
+echo Copy
+cp -r $srcPath/rpi-data $targetPath
 
-    echo Grand access 
-    ssh $1 "sudo chmod u+x ${path}/*"
-    echo Run Programm 
-    ./start.sh -main
-        read -n 1 -p "Press any key to continue \n"
-else
-    echo "build failed"
+echo Build number $buildnumber
+echo "
+{
+	\"build\": ${buildnumber}
+}" | tee ${targetPath}/build.json
     read -n 1 -p "Press any key to continue \n"
-    exit 1
-fi
