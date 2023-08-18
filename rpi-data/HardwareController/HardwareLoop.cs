@@ -17,6 +17,7 @@ namespace MainService.Hardware
         {
             DeviceInit();
 
+            // Set Status
             DeveiceStatus status = new()
             {
                 RpiId = MainHardware._RpiId,
@@ -26,6 +27,14 @@ namespace MainService.Hardware
 
             ApiService api = new();
             api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
+            // Set device version
+
+            using StreamReader reader = new("./build.json");
+            var json = reader.ReadToEnd();
+            Console.WriteLine(json);
+            api.Post($"/devices/version", json);
+            Console.WriteLine("t");
 
             while (true)
             {

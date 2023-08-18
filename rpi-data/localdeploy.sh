@@ -10,14 +10,14 @@ then
 fi
 
 echo Build
-dotnet publish --runtime linux-arm64 --self-contained -c Release -p:PublishSingleFile=true;
+dotnet publish --runtime linux-arm64 --self-contained -c Release
 if [ $? -eq 0 ] 
 then
     echo Remove old data
-    ssh $1 "rm ${path}/*"
+    ssh $1 "rm ${path}/rpi-data"
 
     echo Send Programm to RPI
-    scp ./bin/Debug/net7.0/linux-arm64/publish/* "$1:${path}"
+    scp ./bin/Release/net7.0/linux-arm64/publish/rpi-data "$1:${path}"
     scp ./.env "$1:${path}"
 
     echo Grand access 

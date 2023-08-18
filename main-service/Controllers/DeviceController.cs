@@ -57,7 +57,7 @@ namespace MainService.Controllers
         public ActionResult<ResponseDevices> SaveDataToDB(string rpiid, SaveDataRequest data)
         {
             string apiKey = _userService.GetApiKey(Request);
-            Garden garden = new ();
+            Garden garden = new();
             garden.SetGardenIdByRPI(rpiid);
 
             ReponseDevice? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
@@ -81,6 +81,16 @@ namespace MainService.Controllers
             _hubContext.Clients.Group(garden.Id).NewDeviceStatus(response);
 
             return Ok(response);
+        }
+
+        [HttpPost("verion")]
+        public ActionResult<ResponseDevices> SetStatus(DeviceVersion version)
+        {
+            Console.WriteLine("Recived Version");
+            Console.WriteLine(version);
+            Console.WriteLine(version.Version);
+
+            return Ok();
         }
     }
 }
