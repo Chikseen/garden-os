@@ -83,7 +83,7 @@ namespace MainService.Controllers
             return Ok(response);
         }
 
-        [HttpPost("verion")]
+        [HttpPost("version")]
         public ActionResult<ResponseDevices> SetStatus(DeviceVersion version)
         {
             Console.WriteLine("Recived Version");
