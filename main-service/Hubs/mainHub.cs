@@ -4,10 +4,9 @@ namespace MainService.Hub
 {
     public interface IMainHub
     {
-        public Task SendMyEvent(ResponseDevices message);
         public Task SendCurrentDeviceData(ReponseDevice message);
         public Task NewDeviceStatus(DeveiceStatus message);
-        public Task HardwareRequestRPI();
+        public Task NewVersion();
         public Task SendRebootRequest();
     }
 

@@ -142,6 +142,7 @@ public static class QueryService
 				rpilog.status,
 				rpilog.triggerd_by,
 				rpilog.message
+				rpis.build
 			FROM
 				rpilog
 				JOIN rpis ON rpis.garden_id = '{gardenId}'
@@ -168,6 +169,17 @@ public static class QueryService
 				rpilog.date DESC
 			LIMIT
 				20;".Clean();
+	}
+
+	public static string GetSetVersionQuery(string rpiId, string build)
+	{
+		return @$"
+			UPDATE
+				rpis
+			SET
+				build = '{build}'
+			WHERE
+				id = '{rpiId}';".Clean();
 	}
 
 	private static string OverviewSelectDistinct()

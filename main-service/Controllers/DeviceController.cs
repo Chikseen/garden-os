@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
 using Services.Device;
 using Services.User;
+using MainService.DB;
+using System.Text.Json;
 
 namespace MainService.Controllers
 {
@@ -83,13 +85,21 @@ namespace MainService.Controllers
             return Ok(response);
         }
 
-        [HttpPost("version")]
-        public ActionResult<ResponseDevices> SetStatus(DeviceVersion version)
+        [HttpPost("{rpiId}/version")]
+        public ActionResult<DeviceVersion> SetVersion(string rpiId, DeviceVersion version)
         {
-            Console.WriteLine("Recived Version");
-            Console.WriteLine(version);
-            Console.WriteLine(version.Version);
-
+            string query = QueryService.GetSetVersionQuery(rpiId, version.Build);
+            MainDB.Query(query);
+            using StreamReader reader = new("./build.json");
+            var json = reader.ReadToEnd();
+            DeviceVersion deviceversion = JsonSerializer.Deserialize<DeviceVersion>(json)!;
+            if (int.Parse(version.Build) < int.Parse(version.Build))
+            {
+                Garden garden = new();
+                garden.SetGardenIdByRPI(rpiId);
+                _hubContext.Clients.Group(garden.Id).NewVersion();
+            }
+            Console.WriteLine(json);
             return Ok();
         }
     }

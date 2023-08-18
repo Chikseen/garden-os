@@ -45,6 +45,24 @@ namespace RPI.Connection
                         SystemService.Reboot();
                     });
 
+                HubConnection.On("NewVersion", () =>
+                    {
+                        Console.WriteLine("New Version avaliable");
+
+                        DeveiceStatus status = new()
+                        {
+                            RpiId = MainHardware._RpiId,
+                            Message = "Update Hub",
+                            Status = "warning",
+                            TriggerdBy = "hub"
+                        };
+
+                        ApiService api = new();
+                        api.Post($"/devices/status", JsonSerializer.Serialize(status));
+
+                        //SystemService.Reboot();
+                    });
+
                 HubConnection.On<string>("SendMyEvent", (user) =>
                     {
                         GetMessage(user, "message");

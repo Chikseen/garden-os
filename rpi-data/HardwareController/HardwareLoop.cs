@@ -29,12 +29,10 @@ namespace MainService.Hardware
             api.Post($"/devices/status", JsonSerializer.Serialize(status));
 
             // Set device version
-
             using StreamReader reader = new("./build.json");
             var json = reader.ReadToEnd();
             Console.WriteLine(json);
-            api.Post($"/devices/version", json);
-            Console.WriteLine("t");
+            api.Post($"/devices/{MainHardware._RpiId}/version", json);
 
             while (true)
             {

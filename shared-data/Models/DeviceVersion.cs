@@ -3,6 +3,6 @@ using System.Text.Json.Serialization;
 public class DeviceVersion
 {
 	[JsonInclude]
-	[JsonPropertyName("version")]
-	public string Version = "-1";
+	[JsonPropertyName("build")]
+	public string Build = "-1";
 }

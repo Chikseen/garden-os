@@ -22,13 +22,22 @@ public class DeveiceStatus
     [JsonPropertyName("date")]
     public DateTime Date;
 
+    [JsonInclude]
+    [JsonPropertyName("current_build")]
+    public string CurrentBuild = "-1";
+
+    [JsonInclude]
+    [JsonPropertyName("need_Update")]
+    public bool NeedUpdate = false;
+
     public DeveiceStatus(Dictionary<String, String> data)
     {
-        this.RpiId = DeviceStatic.GetString(data, DeviceStatic.RPIID);
-        this.TriggerdBy = DeviceStatic.GetString(data, DeviceStatic.TriggerdBy);
-        this.Status = DeviceStatic.GetString(data, DeviceStatic.Status);
-        this.Message = DeviceStatic.GetString(data, DeviceStatic.Message);
-        this.Date = DeviceStatic.GetDateTime(data, DeviceStatic.Date);
+        RpiId = DeviceStatic.GetString(data, DeviceStatic.RPIID);
+        TriggerdBy = DeviceStatic.GetString(data, DeviceStatic.TriggerdBy);
+        Status = DeviceStatic.GetString(data, DeviceStatic.Status);
+        Message = DeviceStatic.GetString(data, DeviceStatic.Message);
+        Date = DeviceStatic.GetDateTime(data, DeviceStatic.Date);
+        CurrentBuild = DeviceStatic.GetString(data, DeviceStatic.Build);
     }
 
     [JsonConstructor]

@@ -39,6 +39,7 @@ public static class DeviceStatic
     public readonly static String Status = "status";
     public readonly static String Message = "message";
     public readonly static String SpecialId = "special_id";
+    public readonly static String Build = "build";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {
