@@ -141,7 +141,7 @@ public static class QueryService
 				rpilog.date,
 				rpilog.status,
 				rpilog.triggerd_by,
-				rpilog.message
+				rpilog.message,
 				rpis.build
 			FROM
 				rpilog
