@@ -34,12 +34,12 @@ public static class DeviceStatic
     public readonly static String SortOrder = "sort_order";
     public readonly static String GroupId = "group_id";
     public readonly static String Unit = "unit";
-    public readonly static String IsApproved = "is_approved";
     public readonly static String TriggerdBy = "triggerd_by";
     public readonly static String Status = "status";
     public readonly static String Message = "message";
     public readonly static String SpecialId = "special_id";
     public readonly static String Build = "build";
+    public readonly static String UserRole = "userrole_id";
 
     public static String? GetString(Dictionary<String, String> dict, String key, bool allowNull = true)
     {

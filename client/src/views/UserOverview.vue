@@ -3,21 +3,22 @@
 		<h1>User Settings</h1>
 		<LC v-if="isUserListLoading" />
 		<span v-else>
-			<h2>Approved User</h2>
 			<List>
-				<div v-for="user in userList?.userList.filter(u => u.isApproved)" :key="user" class="grid_item item"
-					@click="toggleUserStatus(user)">
-					<h2> {{ user.given_name }} {{ user.family_name }} </h2>
-					<h3> {{ user.user_id }} </h3>
-				</div>
-			</List>
-
-			<h2>Requests to join the garden</h2>
-			<List>
-				<div v-for="user in userList?.userList.filter(u => !u.isApproved)" :key="user" class="grid_item item"
-					@click="toggleUserStatus(user)">
-					<h2> {{ user.given_name }} {{ user.family_name }} </h2>
-					<h3> {{ user.user_id }} </h3>
+				<div v-for="user in userList?.userList.filter(u => u.user_id != user.preferred_username)" :key="user"
+					class="grid_item item userOverview_item">
+					<div>
+						<h4> Name: {{ user.given_name }} {{ user.family_name }} </h4>
+						<h4> ID: {{ user.user_id }} </h4>
+						<h4> Role: {{ nameRole(user.userrole_id) }}</h4>
+					</div>
+					<div class="userOverview_item_buttons">
+						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '20' }"
+							@click="toggleUserStatus(user.user_id, '20')">Admin</button>
+						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '10' }"
+							@click="toggleUserStatus(user.user_id, '10')">Maintainer</button>
+						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '0' }"
+							@click="toggleUserStatus(user.user_id, '0')">Viewer</button>
+					</div>
 				</div>
 			</List>
 		</span>
@@ -28,8 +29,9 @@
 import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
-import { fetchGardenMeta } from "@/apiService.js"
 import { mapState } from "vuex";
+import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
+import { getRoleNameById } from "@/services/userroleService.js"
 
 export default {
 	components: {
@@ -43,6 +45,9 @@ export default {
 		}
 	},
 	methods: {
+		nameRole(id) {
+			return getRoleNameById(id)
+		},
 		async fetchuser() {
 			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${this.selectedGarden}/users`, {
 				method: "GET",
@@ -55,18 +60,31 @@ export default {
 
 			this.isUserListLoading = false;
 		},
-		async toggleUserStatus(user) {
+		async toggleUserStatus(userId, roleId) {
 			this.isUserListLoading = true;
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/${user.garden_id}/changestatus/${user.user_id}`, {
-				method: "GET",
+			await fetch(`${process.env.VUE_APP_PI_HOST}user/changestatus`, {
+				method: "POST",
+				body: JSON.stringify({
+					"user_id": userId,
+					"userrole_id": roleId,
+					"garden_id": localStorage.getItem("selectedGarden")
+				}),
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
 				},
 			});
 			await this.fetchuser()
 		},
 	},
+	computed: {
+		...mapState({
+			user: (state) => state.user,
+		}),
+	},
 	async mounted() {
+		this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
 		this.selectedGarden = localStorage.getItem('selectedGarden')
 		this.$store.commit("setGardenList", await fetchGardenMeta())
 		this.fetchuser()
@@ -77,16 +95,34 @@ export default {
 <style lang="scss">
 .userOverview {
 	&_wrapper {
-		max-width: 750px;
+		max-width: 500px;
 		width: 100%;
 		margin: 0 auto;
-		padding: 15px 0;
 
-		h1,
-		h2,
+		h4,
 		p {
 			padding-left: 15px;
 		}
 	}
+
+	&_item {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 25px;
+
+		&_buttons {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+
+			&_button {
+				&_active {
+					cursor: not-allowed;
+					background-color: #00800080;
+				}
+			}
+		}
+	}
 }
-</style>
+</style>services/apiService.js

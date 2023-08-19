@@ -31,8 +31,8 @@ public class User
     public string GardenId = string.Empty;
 
     [JsonInclude]
-    [JsonPropertyName("isApproved")]
-    public bool IsApproved = false;
+    [JsonPropertyName("userrole_id")]
+    public int UserRole = -10;
 
     [JsonInclude]
     [JsonPropertyName("given_name")]
@@ -46,7 +46,7 @@ public class User
     {
         UserId = DeviceStatic.GetString(data, DeviceStatic.UserId);
         GardenId = DeviceStatic.GetString(data, DeviceStatic.GardenID);
-        IsApproved = DeviceStatic.GetBool(data, DeviceStatic.IsApproved);
+        UserRole = DeviceStatic.GetInt(data, DeviceStatic.UserRole, 0);
         GivenName = DeviceStatic.GetString(data, DeviceStatic.GivenName);
         FamilyName = DeviceStatic.GetString(data, DeviceStatic.FamilyName);
     }

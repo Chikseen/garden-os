@@ -50,7 +50,7 @@ ChartJS.register(
   TimeScale
 )
 
-import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
+import { fetchGardenMeta, fetchDevices } from "@/services/apiService.js"
 import { toUTCISOString } from "@/dates.js"
 import { mapState } from "vuex";
 
@@ -211,4 +211,4 @@ export default {
 .tomorrow {
   max-width: 750px;
 }
-</style>
+</style>services/apiService.js

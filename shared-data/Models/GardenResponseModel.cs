@@ -6,7 +6,7 @@ public class GardenResponseModel
     [JsonPropertyName("garden_data")]
     public List<GardenData> GardenData = new();
 
-    public GardenResponseModel(List<Dictionary<String, String>> data)
+    public GardenResponseModel(List<Dictionary<string, string>> data)
     {
         foreach (var item in data)
         {
@@ -22,30 +22,25 @@ public class GardenResponseModel
 public class GardenData
 {
     [JsonInclude]
-    [JsonPropertyName("user_name")]
-    public String UserName = "";
-
-    [JsonInclude]
     [JsonPropertyName("garden_id")]
-    public String GardenID = "";
+    public string GardenID = "";
 
     [JsonInclude]
     [JsonPropertyName("garden_name")]
-    public String GardenName = "";
+    public string GardenName = "";
 
     [JsonInclude]
     [JsonPropertyName("weather_location_id")]
-    public String WeatherLocationId = "";
+    public string WeatherLocationId = "";
 
     [JsonInclude]
     [JsonPropertyName("hubs")]
-    public List<String> Hubs = new();
-    
-    public GardenData(Dictionary<String, String> data)
+    public List<string> Hubs = new();
+
+    public GardenData(Dictionary<string, string> data)
     {
-        this.UserName = $"{DeviceStatic.GetString(data, DeviceStatic.GivenName)} {DeviceStatic.GetString(data, DeviceStatic.FamilyName)}";
-        this.GardenID = DeviceStatic.GetString(data, DeviceStatic.GardenID);
-        this.GardenName = DeviceStatic.GetString(data, DeviceStatic.GardenName);
-        this.WeatherLocationId = DeviceStatic.GetString(data, DeviceStatic.WeatherLocationId);
+        GardenID = DeviceStatic.GetString(data, DeviceStatic.GardenID);
+        GardenName = DeviceStatic.GetString(data, DeviceStatic.GardenName);
+        WeatherLocationId = DeviceStatic.GetString(data, DeviceStatic.WeatherLocationId);
     }
 }

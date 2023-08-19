@@ -35,7 +35,7 @@
 import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
-import { fetchGardenMeta } from "@/apiService.js"
+import { fetchGardenMeta } from "@/services/apiService.js"
 import { mapState } from "vuex";
 
 import Keycloak from "keycloak-js"
@@ -151,4 +151,4 @@ export default {
 		}
 	}
 }
-</style>
+</style>services/apiService.js

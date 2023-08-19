@@ -1,70 +1,95 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ExtensionMethods;
 using MainService.DB;
 
 public class UserData
 {
     [JsonInclude]
     [JsonPropertyName("email_verified")]
-    public Boolean EmailVerified = false;
+    public bool EmailVerified = false;
 
     [JsonInclude]
     [JsonPropertyName("given_name")]
-    public String GivenName = String.Empty;
+    public string GivenName = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("family_name")]
-    public String FamilyName = String.Empty;
+    public string FamilyName = string.Empty;
 
     [JsonInclude]
     [JsonPropertyName("preferred_username")]
-    public String Id = String.Empty;
+    public string Id = string.Empty;
 
-    public List<String> GardenAccessList = new();
+    [JsonInclude]
+    [JsonPropertyName("gardenData")]
+    public UserGardenData GardenData = null!;
 
-    public Boolean IsAuthorized = false;
+    public List<string> GardenAccessList = new();
 
-    public UserData(String jsonString)
+    public bool IsAuthorized = false;
+
+    public UserData(string jsonString)
     {
         UserData? userData = JsonSerializer.Deserialize<UserData>(jsonString);
 
         if (userData is not null)
         {
-            this.EmailVerified = userData.EmailVerified;
-            this.GivenName = userData.GivenName;
-            this.FamilyName = userData.FamilyName;
-            this.Id = userData.Id;
-            this.IsAuthorized = true;
+            EmailVerified = userData.EmailVerified;
+            GivenName = userData.GivenName;
+            FamilyName = userData.FamilyName;
+            Id = userData.Id;
+            IsAuthorized = true;
         }
     }
 
     [JsonConstructor]
     public UserData() { }
 
-    public void CheckGardenAccess(String gardenId)
+    public void CheckGardenAccess(string gardenId)
     {
         if (GardenAccessList.Count < 1)
-            this.SetGardenAccessList();
+            SetGardenAccessList();
 
         if (!GardenAccessList.Contains(gardenId))
             throw new Exception("No Access");
     }
 
+    public void AddGardenData(string gardenId)
+    {
+        string query = @$"
+                SELECT
+                    gardenuser.garden_id,
+                    gardenuser.userrole_id
+                FROM
+                    users
+                    JOIN gardenuser ON gardenuser.user_id = '{Id}'
+                    AND users.id = '{Id}'
+                    AND gardenuser.garden_id = '{gardenId}'".Clean();
+        List<Dictionary<string, string>> results = MainDB.Query(query);
+        Dictionary<string, string> user = results.FirstOrDefault()!;
+
+        GardenData = new(
+            DeviceStatic.GetString(user, DeviceStatic.GardenID),
+            DeviceStatic.GetInt(user, DeviceStatic.UserRole, 0));
+    }
+
     private void SetGardenAccessList()
     {
-        String query = @$"
+        string query = @$"
             SELECT
                 garden_id
             FROM
                 gardenUser
             WHERE
-                user_id = '{this.Id}'";
-        List<Dictionary<String, String>> results = MainDB.Query(query);
+                user_id = '{Id}'";
+        List<Dictionary<string, string>> results = MainDB.Query(query);
 
         foreach (var item in results)
         {
             GardenAccessList.Add(DeviceStatic.GetString(item, DeviceStatic.GardenID));
         }
-
     }
 }
+
+public record UserGardenData(string GardenId, int UserRole);

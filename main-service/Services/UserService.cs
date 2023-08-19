@@ -31,7 +31,7 @@ namespace Services.User
                 {"audience", clientId},
             };
             Request.Headers.TryGetValue("Authorization", out StringValues bearer);
-    
+
 
             string token = ((string)bearer!).Replace("Bearer", "").Trim();
             var client = new HttpClient();
@@ -58,7 +58,7 @@ namespace Services.User
                     JOIN garden ON gardenuser.garden_id = garden.id
                     JOIN users ON gardenuser.user_id = '{userData.Id}'
                     AND users.id = '{userData.Id}'
-                    AND gardenuser.is_approved = true;".Clean();
+                    AND gardenuser.userrole_id >= 0;".Clean();
             List<Dictionary<string, string>> results = MainDB.Query(query);
 
             GardenResponseModel reponse = new(results);
@@ -87,7 +87,7 @@ namespace Services.User
                 SELECT
                     gardenuser.garden_id,
                     gardenuser.user_id,
-                    gardenuser.is_approved,
+                    gardenuser.userrole_id,
                     users.given_name,
                     users.family_name
                 FROM
@@ -105,11 +105,11 @@ namespace Services.User
                 INSERT INTO GARDENUSER (
                    garden_id,
                    user_id,
-                   is_approved
+                   userrole_id
                 ) VALUES (
                     '{gardenId}',
                     '{user.Id}',
-                    false
+                    -10
                 ) ON CONFLICT DO NOTHING;".Clean();
             List<Dictionary<string, string>> result = MainDB.Query(query);
 
@@ -125,7 +125,7 @@ namespace Services.User
                     gardenUser
                 WHERE
                     user_id = '{user.Id}'
-                    AND is_approved = false;".Clean();
+                    AND userrole_id < 0;".Clean();
             List<Dictionary<string, string>> result = MainDB.Query(query);
 
             List<string> list = new();
@@ -137,13 +137,17 @@ namespace Services.User
             return list;
         }
 
-        public UserList Changestatus(string gardenId, string userId)
+        public UserList Changestatus(ChangeUserStatusModel model)
         {
             string query = @$"
-                UPDATE  gardenuser
-                SET is_approved = NOT is_approved 
-                WHERE garden_id = '{gardenId}'
-                AND user_id = '{userId}'".Clean();
+                UPDATE 
+                    gardenuser
+                SET 
+                    userrole_id = '{model.Role}' 
+                WHERE 
+                    garden_id = '{model.GardenId}'
+                AND 
+                    user_id = '{model.UserId}'".Clean();
             List<Dictionary<string, string>> result = MainDB.Query(query);
 
             return new(result);

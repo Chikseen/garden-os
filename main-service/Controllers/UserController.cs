@@ -21,6 +21,14 @@ namespace MainService.Controllers
             _userService = new();
         }
 
+        [HttpGet("{gardenId}")]
+        public ActionResult<UserData> GetuserData(string gardenId)
+        {
+            UserData userData = HttpContext.Features.Get<UserData>()!;
+            userData.AddGardenData(gardenId);
+            return Ok(userData);
+        }
+
         [HttpGet("garden")]
         public ActionResult<GardenResponseModel> GetGardenData()
         {
@@ -52,10 +60,10 @@ namespace MainService.Controllers
             return Ok(_userService.GetRequestedGardenList(userData));
         }
 
-        [HttpGet("{gardenId}/changestatus/{userId}")]
-        public ActionResult<UserData> Changestatus(string gardenId, string userId)
+        [HttpPost("changestatus")]
+        public ActionResult<UserData> Changestatus(ChangeUserStatusModel model)
         {
-            _userService.Changestatus(gardenId, userId);
+            _userService.Changestatus(model);
             return Ok();
         }
     }

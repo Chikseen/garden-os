@@ -3,17 +3,22 @@ import router from "@/router/index";
 
 export default createStore({
 	state: {
+		user: null,
 		keycloak: null,
 		isAuth: false,
 		gardenMeta: null,
 		gardenList: null,
 		deviceData: null,
 		deviceStatus: null,
+		noDataRecived: true,
 	},
 	getters: {},
 	mutations: {
 		setAuthState(state, payload) {
 			state.isAuth = payload;
+		},
+		setUser(state, payload) {
+			state.user = payload;
 		},
 		setGardenMeta(state, payload) {
 			state.gardenMeta = payload;
@@ -28,6 +33,13 @@ export default createStore({
 			}
 		},
 		setAllDevicesData(state, payload) {
+			const sixHoursAgo = Date.now() - 60 * 60 * 60 * 6;
+
+			state.noDataRecived = true;
+			payload.devices.forEach((device) => {
+				const deviceDate = new Date(device.date).getTime();
+				if (sixHoursAgo < deviceDate) state.noDataRecived = false;
+			});
 			state.deviceData = payload;
 		},
 		setDeviceData(state, payload) {
@@ -40,6 +52,10 @@ export default createStore({
 			state.keycloak = payload;
 		},
 		setNewDeviceStatus(state, payload) {
+			if (state.noDataRecived) {
+				payload.message = "No data in recived in the last 6 hours";
+				payload.status = "error";
+			}
 			state.deviceStatus = payload;
 		},
 	},

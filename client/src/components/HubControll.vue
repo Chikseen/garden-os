@@ -7,9 +7,12 @@
 			<StatusIcon :status="deviceStatus?.status" />
 			<h4>{{ deviceStatus?.status }}</h4>
 		</div>
-		<h5>{{ deviceStatus?.CurrentBuild }}</h5>
-		<h5>{{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h5>
-		<ClickAndHoldButton v-if="showRebootButton" @trigger="sendRebootRequest">Reboot (click & hold)</ClickAndHoldButton>
+		<h5>{{ deviceStatus?.message }}</h5>
+		<h6>{{ deviceStatus?.CurrentBuild }}</h6>
+		<h6>{{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h6>
+		<ClickAndHoldButton v-if="showRebootButton && user.gardenData.userRole >= 20" @trigger="sendRebootRequest">
+			Reboot (click & hold)
+		</ClickAndHoldButton>
 	</div>
 </template>
 
@@ -17,7 +20,9 @@
 import ClickAndHoldButton from "@/components/ClickAndHoldButton.vue"
 import StatusIcon from "@/assets/StatusIcon.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
+
 import { formatToDateTime } from "@/dates.js";
+import { fetchUser } from "@/services/apiService.js"
 import { mapState } from "vuex";
 
 
@@ -38,12 +43,8 @@ export default {
 	computed: {
 		...mapState({
 			deviceStatus: (state) => state.deviceStatus,
+			user: (state) => state.user,
 		}),
-	},
-	watch: {
-		deviceStatus() {
-			this.hub = this.deviceStatus
-		}
 	},
 	methods: {
 		formatTime(d) {
@@ -69,7 +70,8 @@ export default {
 			});
 		},
 	},
-	mounted() {
+	async mounted() {
+		this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
 		this.getHubStatus()
 	}
 

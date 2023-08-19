@@ -8,11 +8,13 @@
             </span>
             <span @click="ctc(gardenMeta.garden_id)">
                 <h3> GardenID: </h3>
-                <h3> {{ gardenMeta.garden_id }} </h3>
+                <h3> {{ gardenMeta.garden_id }}
+                    <CTC />
+                </h3>
             </span>
             <span>
                 <h3> User: </h3>
-                <h3> {{ gardenMeta.user_name }} </h3>
+                <h3> {{ user?.given_name }} {{ user?.family_name }} : {{ userRoleName }} </h3>
             </span>
         </div>
         <DynamicGrid v-if="deviceData">
@@ -22,7 +24,7 @@
                 <HubControll :showRebootButton="false" />
             </div>
             <div class="grid_item grid_item_settings grid_item_text">
-                <button @click="$router.push('/user')">User Access</button>
+                <button v-if="user.gardenData.userRole >= 20" @click="$router.push('/user')">User controll</button>
                 <button @click="$router.push('/garden')">Change Garden</button>
                 <button @click="logout">Logout</button>
             </div>
@@ -36,8 +38,10 @@ import DeviceList from "@/components/Devices/DeviceList.vue"
 import WeatherBox from "@/components/WeatherBox.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 import HubControll from "@/components/HubControll.vue"
+import CTC from "@/assets/CopyToClipboardIcon.vue"
 
-import { fetchGardenMeta, fetchDevices } from "@/apiService.js"
+import { fetchGardenMeta, fetchDevices, fetchUser } from "@/services/apiService.js"
+import { getRoleNameById } from "@/services/userroleService.js"
 import { mapState } from "vuex";
 
 import Keycloak from "keycloak-js"
@@ -48,7 +52,8 @@ export default {
         DeviceList,
         WeatherBox,
         LC,
-        HubControll
+        HubControll,
+        CTC,
     },
     data() {
         return {
@@ -73,13 +78,18 @@ export default {
         },
     },
     computed: {
+        userRoleName() {
+            return getRoleNameById(this.user.gardenData.userRole)
+        },
         ...mapState({
             gardenMeta: (state) => state.gardenMeta,
             deviceData: (state) => state.deviceData,
             keycloak: (state) => state.keycloak,
+            user: (state) => state.user,
         }),
     },
     async mounted() {
+        this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
         this.$store.commit("setGardenList", await fetchGardenMeta())
         this.$store.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")))
         this.isLoading = false
@@ -103,6 +113,15 @@ export default {
             h1,
             h3 {
                 width: 100%;
+                position: relative;
+
+                svg {
+                    position: absolute;
+                    top: 0;
+                    left: -1.5rem;
+                    height: 1.5rem;
+                    width: 1rem;
+                }
             }
         }
     }
@@ -112,3 +131,4 @@ export default {
     max-width: 750px;
 }
 </style>
+services/apiService.js
