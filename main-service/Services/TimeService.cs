@@ -12,8 +12,9 @@ public class TimeService
 			timeToGo += new TimeSpan(24, 0, 0); // assign it as "+" since the time to go will be negative
 		}
 		Console.WriteLine("Timer will activate in " + timeToGo);
-		_ = new Timer(x =>
+		_ = new System.Threading.Timer(x =>
 		{
+			Thread.Sleep(1000);
 			CleanDB();
 			SetUpDailyTimer(alertTime);
 		}, null, timeToGo, Timeout.InfiniteTimeSpan);
@@ -52,6 +53,7 @@ public class TimeService
 				FROM
 					tempTable;
 			COMMIT;".Clean();
-		MainDB.Query(query);
+		var result = MainDB.Query(query);
+		Console.WriteLine(result);
 	}
 }
