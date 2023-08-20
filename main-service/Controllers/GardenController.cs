@@ -7,7 +7,7 @@ using shared_data.Models;
 
 namespace MainService.Controllers
 {
-    [ApiController]
+	[ApiController]
 	[Route("garden")]
 	public class GardenController : ControllerBase
 	{
@@ -71,6 +71,13 @@ namespace MainService.Controllers
 			List<DeveiceStatus> response = _deviceService.GetStatusLog(gardenId);
 
 			return Ok(response);
+		}
+
+		[HttpPatch("changedevice")]
+		public ActionResult<List<DeveiceStatus>> PatchDevice(PatchDeviceRequest device)
+		{
+			_deviceService.PatchDevice(device);
+			return Ok();
 		}
 	}
 }

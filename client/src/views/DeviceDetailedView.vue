@@ -50,9 +50,9 @@ ChartJS.register(
   TimeScale
 )
 
-import { fetchGardenMeta, fetchDevices } from "@/services/apiService.js"
+import { fetchGardenMeta } from "@/services/apiService.js"
 import { toUTCISOString } from "@/dates.js"
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   components: {
@@ -151,7 +151,10 @@ export default {
       });
       this.data = { labels: labels, datasets: datasets }
       this.isDataLoading = false
-    }
+    },
+    ...mapActions({
+      fetchDevices: 'fetchDevices'
+    })
   },
   computed: {
     currentDevice() {
@@ -173,7 +176,7 @@ export default {
   },
   async mounted() {
     this.$store.commit("setGardenList", await fetchGardenMeta())
-    this.$store.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")))
+    this.fetchDevices()
     this.fetchData()
   },
 }

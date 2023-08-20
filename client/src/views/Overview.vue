@@ -24,7 +24,13 @@
                 <HubControll :showRebootButton="false" />
             </div>
             <div class="grid_item grid_item_settings grid_item_text">
-                <button v-if="user.gardenData.userRole >= 20" @click="$router.push('/user')">User controll</button>
+                <h3>Garden settings</h3>
+                <button @click="$router.push('/user')">User controll</button>
+                <button v-if="user.gardenData.userRole >= 10" @click="$router.push('/devicesetting')">Device
+                    setting</button>
+            </div>
+            <div class="grid_item grid_item_settings grid_item_text">
+                <h3>You</h3>
                 <button @click="$router.push('/garden')">Change Garden</button>
                 <button @click="logout">Logout</button>
             </div>
@@ -40,9 +46,9 @@ import LC from "@/components/ui/LoadingComponent.vue"
 import HubControll from "@/components/HubControll.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
 
-import { fetchGardenMeta, fetchDevices, fetchUser } from "@/services/apiService.js"
+import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import Keycloak from "keycloak-js"
 
@@ -76,6 +82,9 @@ export default {
                 .init({})
             keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
         },
+        ...mapActions({
+            fetchDevices: 'fetchDevices'
+        })
     },
     computed: {
         userRoleName() {
@@ -91,7 +100,7 @@ export default {
     async mounted() {
         this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
         this.$store.commit("setGardenList", await fetchGardenMeta())
-        this.$store.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")))
+        this.fetchDevices()
         this.isLoading = false
         this.$hub.invoke("setUserToGarden", localStorage.getItem("selectedGarden"));
     }

@@ -147,5 +147,11 @@ namespace Services.Device
 
             return list;
         }
+
+        public void PatchDevice(PatchDeviceRequest device)
+        {
+            string query = QueryService.GetPatchDeviceQuery(device);
+            MainDB.Query(query);
+        }
     }
 }

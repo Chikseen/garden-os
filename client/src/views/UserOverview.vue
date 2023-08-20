@@ -4,7 +4,7 @@
 		<LC v-if="isUserListLoading" />
 		<span v-else>
 			<List>
-				<div v-for="user in userList?.userList.filter(u => u.user_id != user.preferred_username)" :key="user"
+				<div v-for="user in userList?.userList.filter(u => u.user_id != currentUser.preferred_username)" :key="user"
 					class="grid_item item userOverview_item">
 					<div class="userOverview_item_box">
 						<h4> Name: {{ user.given_name }} {{ user.family_name }} </h4>
@@ -13,7 +13,7 @@
 							:style="`background-color: ${getRoleColor(user.userrole_id)};`"> Role: {{
 								nameRole(user.userrole_id) }}</h4>
 					</div>
-					<div class="userOverview_item_box">
+					<div v-if="currentUser?.gardenData?.userRole >= 20" class="userOverview_item_box">
 						<button v-if="user.userrole_id != '20'" @click="toggleUserStatus(user.user_id, '20')">Admin</button>
 						<button v-if="user.userrole_id != '10'"
 							@click="toggleUserStatus(user.user_id, '10')">Maintainer</button>
@@ -94,7 +94,7 @@ export default {
 	},
 	computed: {
 		...mapState({
-			user: (state) => state.user,
+			currentUser: (state) => state.user,
 		}),
 	},
 	async mounted() {
@@ -111,9 +111,9 @@ export default {
 	&_wrapper {
 		max-width: 500px;
 		width: 100%;
-		margin: 0 auto;
+		margin: 15px auto;
 
-		h4,
+		h1,
 		p {
 			padding-left: 15px;
 		}

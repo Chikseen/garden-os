@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import router from "@/router/index";
+import { fetchGardenMeta, fetchDevices, fetchUser } from "@/services/apiService.js";
 
 export default createStore({
 	state: {
@@ -59,6 +60,10 @@ export default createStore({
 			state.deviceStatus = payload;
 		},
 	},
-	actions: {},
+	actions: {
+		async fetchDevices(context) {
+			context.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")));
+		},
+	},
 	modules: {},
 });

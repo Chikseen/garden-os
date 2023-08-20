@@ -75,6 +75,7 @@ button {
   height: 2rem;
 }
 
+select,
 input {
   border-radius: 10px;
   border: none;

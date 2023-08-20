@@ -183,6 +183,23 @@ public static class QueryService
 				id = '{rpiId}';".Clean();
 	}
 
+	public static string GetPatchDeviceQuery(PatchDeviceRequest device)
+	{
+		return @$"
+			UPDATE
+				devices
+			SET
+				name = '{device.Name}',
+				display_id = '{device.DisplayID}',
+				upper_limit = '{device.UpperLimit}',
+				lower_limit = '{device.LowerLimit}',
+				sort_order = '{device.SortOrder}',
+				group_id = '{device.GroupId}',
+				unit = '{device.Unit}'
+			WHERE
+				id = '{device.DeviceId}';".Clean();
+	}
+
 	private static string OverviewSelectDistinct()
 	{
 		return @$"

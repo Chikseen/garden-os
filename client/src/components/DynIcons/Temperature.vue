@@ -6,12 +6,11 @@
 					d="M25 38C22.464 39.093 20.763 41.592 20.743 43.994 20.821 45.478 21.427 46.884 22.482 47.88 23.692 48.935 24.942 49.677 26.427 49.833 28.126 49.892 29.473 49.091 30.606 47.919 31.544 46.787 32.032 45.732 32.247 43.974 32.051 41.416 30.88 39.697 28.103 37.941V5.41A1 1 0 0025.018 5.49V37.582" />
 			</svg>
 			<div class="temp-icon">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="100%" height="100%">
-				<path :fill="color" d="M15 1A1 1 0 0115 29 1 1 0 0115 1M15 2A1 1 0 0015 28 1 1 0 0015 2" />
-			</svg>
-			<div class="uvi-icon_cover" :style="`bottom: ${value * 10}%;`"></div>
-		</div>
-			<div class="temp-icon_cover" :style="`bottom: ${((value + 10) * 2)}%;`"></div>
+				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="100%" height="100%">
+					<path :fill="color" d="M15 1A1 1 0 0115 29 1 1 0 0115 1M15 2A1 1 0 0015 28 1 1 0 0015 2" />
+				</svg>
+			</div>
+			<div class="temp-icon_cover" :style="`bottom: ${((value * 1) + 5) * 2.75}%;`"></div>
 		</div>
 		<svg class="temp-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 65 65" width="100%"
 			height="100%">

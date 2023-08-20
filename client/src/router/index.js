@@ -7,6 +7,7 @@ import Overview from "@/views/Overview";
 import GardenOverview from "@/views/GardenOverview";
 import UserOverview from "@/views/UserOverview";
 import HubLog from "@/views/HubLog";
+import DeviceSetting from "@/views/DeviceSettingView";
 
 
 const routes = [
@@ -43,6 +44,10 @@ const routes = [
   {
     path: '/hublog',
     component: HubLog,
+  },
+  {
+    path: '/devicesetting',
+    component: DeviceSetting,
   },
 ];
 
