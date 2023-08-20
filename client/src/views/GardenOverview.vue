@@ -61,7 +61,7 @@ export default {
 		async sendAccessRequest() {
 			this.isAccessRequestLoading = true
 			if (this.newGardenId) {
-				const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/accessrequest/${this.newGardenId}`, {
+				const response = await fetch(`${process.env.VUE_APP_PI_HOST}user/${this.newGardenId}/accessrequest`, {
 					method: "GET",
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

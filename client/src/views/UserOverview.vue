@@ -6,18 +6,20 @@
 			<List>
 				<div v-for="user in userList?.userList.filter(u => u.user_id != user.preferred_username)" :key="user"
 					class="grid_item item userOverview_item">
-					<div>
+					<div class="userOverview_item_box">
 						<h4> Name: {{ user.given_name }} {{ user.family_name }} </h4>
 						<h4> ID: {{ user.user_id }} </h4>
-						<h4> Role: {{ nameRole(user.userrole_id) }}</h4>
+						<h4 class="userOverview_item_box_role"
+							:style="`background-color: ${getRoleColor(user.userrole_id)};`"> Role: {{
+								nameRole(user.userrole_id) }}</h4>
 					</div>
-					<div class="userOverview_item_buttons">
-						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '20' }"
-							@click="toggleUserStatus(user.user_id, '20')">Admin</button>
-						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '10' }"
+					<div class="userOverview_item_box">
+						<button v-if="user.userrole_id != '20'" @click="toggleUserStatus(user.user_id, '20')">Admin</button>
+						<button v-if="user.userrole_id != '10'"
 							@click="toggleUserStatus(user.user_id, '10')">Maintainer</button>
-						<button :class="{ userOverview_item_buttons_button_active: user.userrole_id == '0' }"
-							@click="toggleUserStatus(user.user_id, '0')">Viewer</button>
+						<button v-if="user.userrole_id != '0'" @click="toggleUserStatus(user.user_id, '0')">Viewer</button>
+						<button v-if="user.userrole_id != -'10'" @click="toggleUserStatus(user.user_id, '-10')">No
+							Access</button>
 					</div>
 				</div>
 			</List>
@@ -48,6 +50,18 @@ export default {
 		nameRole(id) {
 			return getRoleNameById(id)
 		},
+		getRoleColor(id) {
+			switch (id) {
+				case 0:
+					return "#33cc33"
+				case 10:
+					return "#0099ff"
+				case 20:
+					return "#ff9900"
+				default:
+					return "#ff5050"
+			}
+		},
 		async fetchuser() {
 			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${this.selectedGarden}/users`, {
 				method: "GET",
@@ -57,7 +71,7 @@ export default {
 			});
 
 			this.userList = await response.json();
-
+			this.userList.userList = this.userList?.userList.sort((a, b) => b.userrole_id - a.userrole_id)
 			this.isUserListLoading = false;
 		},
 		async toggleUserStatus(userId, roleId) {
@@ -111,16 +125,20 @@ export default {
 		justify-content: space-between;
 		gap: 25px;
 
-		&_buttons {
+		&_box {
 			display: flex;
 			flex-direction: column;
+			justify-content: space-evenly;
 			gap: 5px;
+			width: 100%;
 
-			&_button {
-				&_active {
-					cursor: not-allowed;
-					background-color: #00800080;
-				}
+			h4 {
+				height: 100%;
+				padding: 5px;
+			}
+
+			&_role {
+				border-radius: 10px;
 			}
 		}
 	}
