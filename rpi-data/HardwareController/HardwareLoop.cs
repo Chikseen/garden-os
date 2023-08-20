@@ -2,6 +2,7 @@ using System.Device.I2c;
 using System.Text.Json;
 using Iot.Device.Ads1115;
 using Iot.Device.DHTxx;
+using shared_data.Models;
 using UnitsNet;
 
 namespace MainService.Hardware
@@ -125,7 +126,7 @@ namespace MainService.Hardware
                     _Filter[$"adc1{device.Address}"].RemoveAt(0);
 
                     float avgValue = _Filter[$"adc1{device.Address}"].Sum() / 50.0f;
-                    if (Math.Abs(device.LastSavedValue - avgValue) > 0.1f)
+                    if (Math.Abs(device.LastSavedValue - avgValue) > device.Threshold)
                     {
                         HardwareEvents.SaveDataToDatabase(device, avgValue);
                     }

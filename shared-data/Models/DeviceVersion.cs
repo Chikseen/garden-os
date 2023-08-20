@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
 
-public class DeviceVersion
+namespace shared_data.Models
 {
-	[JsonInclude]
-	[JsonPropertyName("build")]
-	public string Build = "-1";
+    public class DeviceVersion
+    {
+        [JsonInclude]
+        [JsonPropertyName("build")]
+        public string Build = "-1";
+    }
 }

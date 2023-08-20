@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using shared_data.Models;
 
 namespace MainService.Hub
 {

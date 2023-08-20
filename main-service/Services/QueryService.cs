@@ -1,6 +1,6 @@
 using System.Globalization;
 using ExtensionMethods;
-
+using shared_data.Models;
 
 public static class QueryService
 {
@@ -34,7 +34,8 @@ public static class QueryService
 				DEVICES.DATA_UPDATE_INTERVAL, 
 				DEVICES.SORT_ORDER, 
 				DEVICES.GROUP_ID, 
-				DEVICES.UNIT 
+				DEVICES.UNIT,
+				DEVICES.threshold
 			FROM
 				RPIS
 				JOIN GARDEN

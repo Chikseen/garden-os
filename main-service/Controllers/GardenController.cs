@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
 using Services.Device;
 using Services.User;
+using shared_data.Models;
 
 namespace MainService.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("garden")]
 	public class GardenController : ControllerBase
 	{

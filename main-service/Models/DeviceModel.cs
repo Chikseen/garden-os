@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using shared_data.Models;
 
 public class Device
 {

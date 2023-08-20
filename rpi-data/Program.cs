@@ -1,6 +1,7 @@
 using System.Text.Json;
 using MainService.Hardware;
 using RPI.Connection;
+using shared_data.Models;
 
 Console.WriteLine("--- Garden OS ---");
 new Connection();

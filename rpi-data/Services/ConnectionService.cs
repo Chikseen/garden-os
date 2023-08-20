@@ -3,6 +3,7 @@ using System.Text.Json;
 using dotenv.net;
 using MainService.Hardware;
 using Microsoft.AspNetCore.SignalR.Client;
+using shared_data.Models;
 
 namespace RPI.Connection
 {

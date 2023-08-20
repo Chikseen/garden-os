@@ -19,38 +19,12 @@ public class AuthMiddleware
         string path = context.Request.Path.Value!;
 
         if (path.Contains("/user/") || path.Contains("/garden/"))
+            await GetUserData(context);
+
+        if (path.Contains("/devices/"))
         {
-            DotEnv.Load();
-            string realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
-            string clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
-
-            Dictionary<string, string> data = new()
-            {
-                {"grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket"},
-                {"audience", clientId},
-            };
-            context.Request.Headers.TryGetValue("Authorization", out StringValues bearer);
-            if (StringValues.IsNullOrEmpty(bearer))
-            {
-                await ReturnErrorResponse(context);
-                return;
-            }
-
-            string token = ((string)bearer!).Replace("Bearer", "").Trim();
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
-            var contents = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrEmpty(contents))
-            {
-                await ReturnErrorResponse(context);
-                return;
-            }
-            context.Features.Set(new UserData(contents));
+            // Do auth check here later like for user but need to refine device controller
         }
-        //put auth here
         await _next(context);
     }
 
@@ -59,6 +33,39 @@ public class AuthMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
         await context.Response.StartAsync();
+    }
+
+    private static async Task GetUserData(HttpContext context)
+    {
+        DotEnv.Load();
+        string realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
+        string clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
+
+        Dictionary<string, string> data = new()
+            {
+                {"grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket"},
+                {"audience", clientId},
+            };
+        context.Request.Headers.TryGetValue("Authorization", out StringValues bearer);
+        if (StringValues.IsNullOrEmpty(bearer))
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+
+        string token = ((string)bearer!).Replace("Bearer", "").Trim();
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
+        var contents = await response.Content.ReadAsStringAsync();
+
+        if (string.IsNullOrEmpty(contents))
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+        context.Features.Set(new UserData(contents));
     }
 }
 

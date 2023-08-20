@@ -53,7 +53,7 @@ export default createStore({
 		},
 		setNewDeviceStatus(state, payload) {
 			if (state.noDataRecived) {
-				payload.message = "No data in recived in the last 6 hours";
+				payload.message = "No data recived in the last 6 hours";
 				payload.status = "error";
 			}
 			state.deviceStatus = payload;

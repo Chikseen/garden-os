@@ -1,5 +1,6 @@
 using System.Text.Json;
 using dotenv.net;
+using shared_data.Models;
 
 namespace MainService.Hardware
 {

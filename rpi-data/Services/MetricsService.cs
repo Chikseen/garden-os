@@ -1,8 +1,9 @@
 using System.Diagnostics;
+using shared_data.Models;
 
 namespace MainService.Hardware
 {
-	public static class Metrics
+    public static class Metrics
 	{
 		private static int _MetricsCounter = 99;
 		private static readonly int _MetricsLimit = 10;

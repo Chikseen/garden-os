@@ -1,27 +1,30 @@
 using System.Text.Json.Serialization;
 
-public class RPIData
+namespace shared_data.Models
 {
-    [JsonInclude]
-    [JsonPropertyName("rpi_id")]
-    public String Id = "";
-
-    [JsonInclude]
-    [JsonPropertyName("name")]
-    public String GardenName = "";
-
-    [JsonInclude]
-    [JsonPropertyName("garden_id")]
-    public String GardenId = "";
-
-    public RPIData(List<Dictionary<String, String>> data)
+    public class RPIData
     {
-        var rpi = data.FirstOrDefault()!;
-        this.Id = DeviceStatic.GetString(rpi, DeviceStatic.RPIID);
-        this.GardenName = DeviceStatic.GetString(rpi, DeviceStatic.Name);
-        this.GardenId = DeviceStatic.GetString(rpi, DeviceStatic.GardenID);
-    }
+        [JsonInclude]
+        [JsonPropertyName("rpi_id")]
+        public string Id = "";
 
-    [JsonConstructor]
-    public RPIData() { }
+        [JsonInclude]
+        [JsonPropertyName("name")]
+        public string GardenName = "";
+
+        [JsonInclude]
+        [JsonPropertyName("garden_id")]
+        public string GardenId = "";
+
+        public RPIData(List<Dictionary<string, string>> data)
+        {
+            var rpi = data.FirstOrDefault()!;
+            Id = DeviceStatic.GetString(rpi, DeviceStatic.RPIID);
+            GardenName = DeviceStatic.GetString(rpi, DeviceStatic.Name);
+            GardenId = DeviceStatic.GetString(rpi, DeviceStatic.GardenID);
+        }
+
+        [JsonConstructor]
+        public RPIData() { }
+    }
 }
