@@ -98,11 +98,17 @@ export default {
         }),
     },
     async mounted() {
-        this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
-        this.$store.commit("setGardenList", await fetchGardenMeta())
-        this.fetchDevices()
-        this.isLoading = false
-        this.$hub.invoke("setUserToGarden", localStorage.getItem("selectedGarden"));
+        const gardenid = localStorage.getItem("selectedGarden")
+        if (gardenid?.length > 0) {
+            this.$store.commit("setUser", await fetchUser(gardenid))
+            this.$store.commit("setGardenList", await fetchGardenMeta())
+            this.fetchDevices()
+            this.$hub.invoke("setUserToGarden", gardenid);
+            this.isLoading = false
+        }
+        else {
+            this.$router.push("garden")
+        }
     }
 }
 </script>
