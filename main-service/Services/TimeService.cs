@@ -1,59 +1,36 @@
-using ExtensionMethods;
-using MainService.DB;
+using shared_data.Models;
 
-public class TimeService
+namespace MainService.Services
 {
-	public void SetUpDailyTimer(TimeSpan alertTime)
+	public class TimeService
 	{
-		TimeSpan timeToGo = alertTime - DateTime.Now.TimeOfDay;
-		if (timeToGo < TimeSpan.Zero)
+		public List<TimeEvent> _Events = new();
+		private bool _IsTimerRunning = false;
+
+		public void SetUpDailyTimer(TimeSpan executeAt, Action method)
 		{
-			Console.WriteLine("Set timer for next day");
-			timeToGo += new TimeSpan(24, 0, 0); // assign it as "+" since the time to go will be negative
+			if (!_IsTimerRunning)
+				Task.Factory.StartNew(Start);
+
+			_Events.Add(new TimeEvent(executeAt, method));
 		}
-		Console.WriteLine("Timer will activate in " + timeToGo);
-		_ = new System.Threading.Timer(x =>
+
+		private void Start()
 		{
-			Thread.Sleep(1000);
-			CleanDB();
-			SetUpDailyTimer(alertTime);
-		}, null, timeToGo, Timeout.InfiniteTimeSpan);
-	}
-
-	private static void CleanDB()
-	{
-		Console.WriteLine("Auto clean DB");
-		string query = @$"
-			BEGIN;
-				CREATE TEMPORARY TABLE IF NOT EXISTS tempTable ON COMMIT DROP AS TABLE datalogaccd30d2739240b78a086d9ac9cc22b6;
-
-				DELETE FROM
-					tempTable;
-
-				INSERT INTO
-					tempTable
-				SELECT
-					gen_random_uuid(),
-					AVG (value) AS VALUE,
-					date_trunc('hour', UPLOAD_DATE) AS DATE,
-					DEVICE_ID
-				FROM
-					datalogaccd30d2739240b78a086d9ac9cc22b6
-				GROUP BY
-					DATE,
-					DEVICE_ID;
-
-				DELETE FROM
-					datalogaccd30d2739240b78a086d9ac9cc22b6;
-
-				INSERT INTO
-					datalogaccd30d2739240b78a086d9ac9cc22b6
-				SELECT
-					*
-				FROM
-					tempTable;
-			COMMIT;".Clean();
-		var result = MainDB.Query(query);
-		Console.WriteLine(result);
+			_IsTimerRunning = true;
+			while (_IsTimerRunning)
+			{
+				List<TimeEvent> toBeExecuted = _Events.Where(e => e.ExecuteAt < DateTime.Now).ToList();
+				foreach (TimeEvent timeEvent in toBeExecuted)
+				{
+					Console.WriteLine(timeEvent);
+					timeEvent.Execute();
+					_Events.Remove(timeEvent);
+					_Events.Add(new TimeEvent(timeEvent.ExecuteTimeSpan, timeEvent.Method));
+				}
+				// wait 30 sec
+				Thread.Sleep(5000);
+			}
+		}
 	}
 }

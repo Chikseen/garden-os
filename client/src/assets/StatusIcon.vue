@@ -23,7 +23,11 @@ export default {
 	&_ok {
 		background-color: #b0e95a;
 	}
-
+	
+	&_info {
+		background-color: #3746cf;
+	}
+	
 	&_warning {
 		background-color: #e9e05a;
 	}
@@ -31,6 +35,7 @@ export default {
 	&_error {
 		background-color: #e95a5a;
 	}
+
 	&_noData {
 		background-color: #c0c0c0;
 	}

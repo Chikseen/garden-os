@@ -5,7 +5,7 @@
 		<div class="grid_item_status">
 			<h4>Status:</h4>
 			<StatusIcon :status="deviceStatus?.status" />
-			<h4>{{ deviceStatus?.status }}</h4>
+			<h4>{{ deviceStatus?.status.charAt(0).toUpperCase() + deviceStatus?.status.slice(1) }}</h4>
 		</div>
 		<h5>{{ deviceStatus?.message }}</h5>
 		<h6>{{ deviceStatus?.CurrentBuild }}</h6>

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using Keycloak.AuthServices.Authentication;
 using dotenv.net;
 using Middleware;
+using MainService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +68,7 @@ app.UseRequestCulture();
 
 MainDB.Init();
 TimeService dbCleanupTimer = new();
-dbCleanupTimer.SetUpDailyTimer(new TimeSpan(19, 37, 0)); // Clean the DB every day at 2 am
+dbCleanupTimer.SetUpDailyTimer(new TimeSpan(12, 0, 0), MainDB.CleanDB); // Clean the DB every day at 12 am
 
 app.Run();
 

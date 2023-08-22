@@ -7,7 +7,7 @@
 				<div class="grid_item_status">
 					<h4>Status:</h4>
 					<StatusIcon :status="log.status" />
-					<h4>{{ log.status }}</h4>
+					<h4>{{ log.status.charAt(0).toUpperCase() + log.status.slice(1) }}</h4>
 				</div>
 				<p>{{ log.message }}</p>
 				<h4>Date: {{ formatTime(log.date) }}</h4>
