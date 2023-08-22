@@ -138,8 +138,8 @@ namespace RPI.Connection
             DeveiceStatus status = new()
             {
                 RpiId = MainHardware._RpiId,
-                Message = "Connection: Connection reconnected ",
-                Status = "warning",
+                Message = "Connection reconnected ",
+                Status = "info",
                 TriggerdBy = "hub"
             };
 
