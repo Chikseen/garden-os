@@ -88,6 +88,9 @@ public class AuthMiddleware
             return;
         }
 
+        if (context.Request.RouteValues.ContainsKey("gardenId"))
+            userData.CheckGardenAccess(context.Request.RouteValues["gardenId"]!.ToString()!);
+
         context.Features.Set(userData);
     }
 }

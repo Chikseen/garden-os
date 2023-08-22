@@ -105,10 +105,8 @@ namespace Services.Device
             return devices;
         }
 
-        public ResponseDevices GetDetailed(UserData userData, string gardenId, TimeFrame timeFrame)
+        public ResponseDevices GetDetailed(string gardenId, TimeFrame timeFrame)
         {
-            userData.CheckGardenAccess(gardenId);
-
             string query = QueryService.DetailedViewQuery(gardenId, timeFrame);
             List<Dictionary<string, string>> result = MainDB.Query(query);
             ResponseDevices devices = new(result);
@@ -152,6 +150,14 @@ namespace Services.Device
         {
             string query = QueryService.GetPatchDeviceQuery(device);
             MainDB.Query(query);
+        }
+
+        public GardenInfo GetGardenInfo(string gardenId)
+        {
+            TimeFrame timeframe = new();
+            ResponseDevices detailed = GetDetailed(gardenId, timeframe);
+            GardenInfo info = new(detailed);
+            return info;
         }
     }
 }

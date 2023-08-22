@@ -14,11 +14,11 @@ export default {
 
 <style lang="scss">
 .LoadingIcon {
+	height: 100%;
 	user-select: none;
 	margin: auto;
 	display: flex;
 	justify-content: center;
-	height: 100%;
 
 	img {
 		max-width: 100%;

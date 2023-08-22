@@ -53,7 +53,7 @@ namespace shared_data.Models
 
         [JsonInclude]
         [JsonPropertyName("date")]
-        public DateTime date = DateTime.Now;
+        public DateTime Date = DateTime.Now;
 
         [JsonInclude]
         [JsonPropertyName("name")]
@@ -94,7 +94,7 @@ namespace shared_data.Models
             DeviceID = DeviceStatic.GetString(data, DeviceStatic.DeviceId);
             EntryID = DeviceStatic.GetString(data, DeviceStatic.ID);
             Value = DeviceStatic.GetFloat(data, DeviceStatic.Value, 0);
-            date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
+            Date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
             Name = DeviceStatic.GetString(data, DeviceStatic.Name);
             DisplayID = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
             UpperLimit = DeviceStatic.GetInt(data, DeviceStatic.UpperLimit, 100);
@@ -112,7 +112,7 @@ namespace shared_data.Models
         public void SetNewValue(float value)
         {
             Value = value;
-            date = DateTime.Now;
+            Date = DateTime.Now;
             Invert();
             AdjustSpecial();
         }

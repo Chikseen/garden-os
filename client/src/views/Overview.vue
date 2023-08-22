@@ -19,6 +19,7 @@
         </div>
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_weather" />
+            <Informations class="grid_item"/>
             <DeviceList :devices=deviceData?.devices></DeviceList>
             <div class="grid_item" style="background-color: #ffffff;" @click="$router.push('/hublog')">
                 <HubControll :showRebootButton="false" />
@@ -43,6 +44,7 @@ import DynamicGrid from "@/layout/DynamicGridLayout.vue";
 import DeviceList from "@/components/Devices/DeviceList.vue"
 import WeatherBox from "@/components/WeatherBox.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
+import Informations from "@/components/InformationsComponent.vue"
 import HubControll from "@/components/HubControll.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
 
@@ -60,6 +62,7 @@ export default {
         LC,
         HubControll,
         CTC,
+        Informations
     },
     data() {
         return {

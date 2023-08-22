@@ -33,8 +33,7 @@ namespace MainService.Controllers
 		[HttpPost("{gardenId}/detailed")]
 		public ActionResult<ResponseDevices> GetDetailed(string gardenId, TimeFrame timeFrame)
 		{
-			UserData userData = HttpContext.Features.Get<UserData>()!;
-			ResponseDevices response = _deviceService.GetDetailed(userData, gardenId, timeFrame);
+			ResponseDevices response = _deviceService.GetDetailed(gardenId, timeFrame);
 			return Ok(response);
 		}
 
@@ -54,9 +53,6 @@ namespace MainService.Controllers
 		[HttpGet("{gardenId}/status")]
 		public ActionResult<DeveiceStatus> GetStatus(string gardenId)
 		{
-			UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-			if (!userData.IsAuthorized)
-				return Unauthorized();
 			DeveiceStatus response = _deviceService.GetStatus(gardenId);
 
 			return Ok(response);
@@ -65,9 +61,6 @@ namespace MainService.Controllers
 		[HttpGet("{gardenId}/status/log")]
 		public ActionResult<List<DeveiceStatus>> GetStatusLog(string gardenId)
 		{
-			UserData userData = _userService.GetUserDataFromKeycloak(Request).Result;
-			if (!userData.IsAuthorized)
-				return Unauthorized();
 			List<DeveiceStatus> response = _deviceService.GetStatusLog(gardenId);
 
 			return Ok(response);
@@ -78,6 +71,14 @@ namespace MainService.Controllers
 		{
 			_deviceService.PatchDevice(device);
 			return Ok();
+		}
+
+		[HttpGet("{gardenId}/info")]
+		public ActionResult<GardenInfo> GetGardenInfo(string gardenId)
+		{
+			GardenInfo response = _deviceService.GetGardenInfo(gardenId);
+
+			return Ok(response);
 		}
 	}
 }
