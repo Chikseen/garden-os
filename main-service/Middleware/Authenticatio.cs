@@ -18,14 +18,20 @@ public class AuthMiddleware
     {
         string path = context.Request.Path.Value!;
 
-        if (path.Contains("/user/") || path.Contains("/garden/"))
+        if (path.Contains("/user") || path.Contains("/garden"))
             await GetUserData(context);
 
         if (path.Contains("/devices/"))
         {
             // Do auth check here later like for user but need to refine device controller
         }
-        await _next(context);
+
+        if (context.Response.StatusCode >= 400)
+        {
+
+        }
+        else
+            await _next(context);
     }
 
     private static async Task ReturnErrorResponse(HttpContext context)
@@ -37,6 +43,14 @@ public class AuthMiddleware
 
     private static async Task GetUserData(HttpContext context)
     {
+        if (context.Request.RouteValues.ContainsKey("gardenId")
+            && string.IsNullOrWhiteSpace(context.Request.RouteValues["gardenId"]!.ToString())
+            && context.Request.RouteValues["gardenId"]! == null)
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+
         DotEnv.Load();
         string realm = Environment.GetEnvironmentVariable("AUTH_REALM")!;
         string clientId = Environment.GetEnvironmentVariable("AUTH_CLIENT_ID")!;
@@ -58,6 +72,7 @@ public class AuthMiddleware
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
+
         var contents = await response.Content.ReadAsStringAsync();
 
         if (string.IsNullOrEmpty(contents))
@@ -65,7 +80,15 @@ public class AuthMiddleware
             await ReturnErrorResponse(context);
             return;
         }
-        context.Features.Set(new UserData(contents));
+
+        UserData userData = new(contents);
+        if (userData == null)
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+
+        context.Features.Set(userData);
     }
 }
 

@@ -36,6 +36,7 @@ async function fetchDevices(gardenId) {
 }
 async function fetchUser(gardenId) {
 	let response;
+	if (gardenId == null || gardenId == undefined || gardenId.length == 0) return null;
 	if (localStorage.getItem("accessToken")) {
 		response = await fetch(`${process.env.VUE_APP_PI_HOST}user/${gardenId}`, {
 			method: "GET",
