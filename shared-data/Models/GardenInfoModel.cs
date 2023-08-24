@@ -45,10 +45,10 @@ namespace shared_data.Models
 									Titel: $"{latestSoilMoisture.Name} ist etwas trocken",
 									Text: "Du solltest deine Beete immer ausreichend bewässern"
 								));
-							if (latestSoilMoisture.CorrectedValue > 110.0f)
+							if (latestSoilMoisture.CorrectedValue > 100.0f)
 								GardenInfoList.Add(new(
 									Titel: $"{latestSoilMoisture.Name} ist etwas zu nass",
-									Text: "Zu viel Wasser tut deinen Beeten nicht gut, du kannst das Gießen auslassen"
+									Text: "Zu viel Wasser kann schädlich für deine Pflanzen sein, du kannst das Gießen auslassen"
 								));
 						}
 						break;

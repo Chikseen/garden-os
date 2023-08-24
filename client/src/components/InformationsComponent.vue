@@ -1,10 +1,10 @@
 <template>
 	<div v-if="data?.garden_info?.length > 0">
 		<LC v-if="isLoading" />
-		<div v-else>
-			<div class="info">
-				<h2> {{ data.garden_info[currentTile]?.titel }} </h2>
-				<p> {{ data.garden_info[currentTile]?.text }} </p>
+		<div v-else class="info_wrapper" ref="infowrapper">
+			<div class="info" v-for="(info, i) in data.garden_info" :key="i">
+				<h3> {{ info.titel }} </h3>
+				<p> {{ info.text }} </p>
 			</div>
 		</div>
 	</div>
@@ -21,16 +21,22 @@ export default {
 		return {
 			isLoading: true,
 			data: null,
-			currentTile: 0,
 		}
 	},
 	methods: {
-		nextTile() {
+		nextTile(counter) {
 			setTimeout(() => {
-				this.currentTile++;
-				if (this.data.garden_info.length <= this.currentTile)
-					this.currentTile = 0;
-				this.nextTile()
+
+				const elm = this.$refs.infowrapper
+				const width = elm.offsetWidth
+				const numberOfElemnts = this.data.garden_info.length
+
+				elm.scrollTo({ top: 0, left: width * counter, behavior: "smooth" });
+
+				if (counter >= (numberOfElemnts - 1))
+					counter = -1
+
+				this.nextTile(counter + 1)
 			}, 5000);
 		},
 		async load() {
@@ -44,7 +50,7 @@ export default {
 			this.data = await response.json();
 
 			if (this.data?.garden_info.length > 1)
-				this.nextTile()
+				this.nextTile(1)
 
 			this.isLoading = false
 		}
@@ -61,9 +67,26 @@ export default {
 	flex-direction: column;
 	justify-content: center;
 	gap: 10px;
-	height: 100%;
+	height: calc(100% - 20px);
+	padding: 10px;
+	min-width: calc(100% - 20px);
+	scroll-snap-align: center;
 
-	h2,
+	&_wrapper {
+		display: flex;
+		flex-direction: row;
+		overflow-x: scroll;
+		scroll-snap-type: x mandatory;
+		height: 100%;
+
+		&::-webkit-scrollbar {
+			display: none;
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+	}
+
+	h3,
 	p {
 		text-align: center;
 	}
