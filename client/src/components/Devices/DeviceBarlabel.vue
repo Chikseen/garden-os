@@ -7,7 +7,7 @@
 			<div class="diagram_liniar" v-if="device.display_id === ''">
 				<div class="diagram_liniar_bar" :style="`width: ${device.corrected_value}%;`"></div>
 			</div>
-			<h5> {{ formatTime(device.date) }} </h5>
+			<h5> Vor {{ formatTime(device.date) }} </h5>
 		</span>
 	</div>
 </template>
@@ -15,7 +15,7 @@
 <script>
 import DynLogo from "@/components/DynIcons/DynLogo.vue"
 
-import { formatToDateTime } from "@/dates.js";
+import { dynamicTimeDisplay } from "@/dates.js";
 
 export default {
 	components: {
@@ -26,7 +26,7 @@ export default {
 	},
 	methods: {
 		formatTime(d) {
-			return formatToDateTime(d)
+			return dynamicTimeDisplay(d)
 		}
 	},
 }

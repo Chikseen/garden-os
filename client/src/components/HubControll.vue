@@ -9,7 +9,7 @@
 		</div>
 		<h5>{{ deviceStatus?.message }}</h5>
 		<h6>{{ deviceStatus?.CurrentBuild }}</h6>
-		<h6>{{ formatTime(deviceStatus?.date) }} <!-- - Triggerd by: {{ deviceStatus?.triggerd_by }}--></h6>
+		<h6> Vor {{ formatTime(deviceStatus?.date) }} </h6>
 		<ClickAndHoldButton v-if="showRebootButton && user.gardenData.userRole >= 20" @trigger="sendRebootRequest">
 			Reboot (click & hold)
 		</ClickAndHoldButton>
@@ -21,7 +21,7 @@ import ClickAndHoldButton from "@/components/ClickAndHoldButton.vue"
 import StatusIcon from "@/assets/StatusIcon.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 
-import { formatToDateTime } from "@/dates.js";
+import { dynamicTimeDisplay } from "@/dates.js";
 import { fetchUser } from "@/services/apiService.js"
 import { mapState } from "vuex";
 
@@ -48,7 +48,7 @@ export default {
 	},
 	methods: {
 		formatTime(d) {
-			return formatToDateTime(d)
+			return dynamicTimeDisplay(d)
 		},
 		async getHubStatus() {
 			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/status`, {
