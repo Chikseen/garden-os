@@ -54,4 +54,22 @@ async function fetchUser(gardenId) {
 	const res = await response.json();
 	return res;
 }
-export { fetchGardenMeta, fetchDevices, fetchUser };
+async function fetchControlls(gardenId) {
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}controlls/${gardenId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
+	return res;
+}
+export { fetchGardenMeta, fetchDevices, fetchUser, fetchControlls };

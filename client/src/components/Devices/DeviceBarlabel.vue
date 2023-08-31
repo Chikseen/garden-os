@@ -22,11 +22,12 @@ export default {
 		DynLogo
 	},
 	props: {
-		device: { type: Object }
+		device: { type: Object },
 	},
 	data() {
 		return {
-			timeLabel: null
+			timeLabel: null,
+			timer: null,
 		}
 	},
 	methods: {
@@ -34,15 +35,17 @@ export default {
 			return dynamicTimeDisplay(d)
 		},
 		calcTime() {
-			console.log("calc")
 			this.timeLabel = this.formatTime(this.device.date)
-			setTimeout(() => {
+			this.timer = setTimeout(() => {
 				this.calcTime()
 			}, 1000);
 		}
 	},
 	mounted() {
 		this.calcTime()
+	},
+	beforeUnmount() {
+		clearTimeout(this.timer)
 	}
 }
 </script>

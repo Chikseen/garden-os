@@ -20,7 +20,8 @@
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_weather" />
             <Informations class="grid_item" />
-            <DeviceList :devices=deviceData?.devices></DeviceList>
+            <DeviceList :devices=deviceData?.devices />
+            <DeviceControll />
             <div class="grid_item" style="background-color: #ffffff;" @click="$router.push('/hublog')">
                 <HubControll :showRebootButton="false" />
             </div>
@@ -45,8 +46,9 @@ import DeviceList from "@/components/Devices/DeviceList.vue"
 import WeatherBox from "@/components/WeatherBox.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 import Informations from "@/components/InformationsComponent.vue"
-import HubControll from "@/components/HubControll.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
+import HubControll from "@/components/HubControll.vue"
+import DeviceControll from "@/components/DeviceControll/DeviceControll.vue"
 
 import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
@@ -57,10 +59,11 @@ export default {
         DynamicGrid,
         DeviceList,
         WeatherBox,
-        LC,
         HubControll,
+        Informations,
+        DeviceControll,
+        LC,
         CTC,
-        Informations
     },
     data() {
         return {
@@ -72,6 +75,7 @@ export default {
             navigator.clipboard.writeText(value);
         },
         ...mapActions({
+            fetchControlls: 'fetchControlls',
             fetchDevices: 'fetchDevices',
             logout: 'logout'
         })
@@ -93,6 +97,7 @@ export default {
             this.$store.commit("setUser", await fetchUser(gardenid))
             this.$store.commit("setGardenList", await fetchGardenMeta())
             this.fetchDevices()
+            this.fetchControlls()
             this.$hub.invoke("setUserToGarden", gardenid);
             this.isLoading = false
         }

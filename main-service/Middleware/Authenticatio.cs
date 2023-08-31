@@ -18,7 +18,7 @@ public class AuthMiddleware
     {
         string path = context.Request.Path.Value!;
 
-        if (path.Contains("/user") || path.Contains("/garden"))
+        if (path.Contains("/user") || path.Contains("/garden") || path.Contains("/controlls"))
             await GetUserData(context);
 
         if (path.Contains("/devices/"))

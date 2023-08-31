@@ -200,6 +200,21 @@ public static class QueryService
 				id = '{device.DeviceId}';".Clean();
 	}
 
+	public static string GetControllerOverviewQuery(string gardenId)
+	{
+		return @$"
+			SELECT
+				controlls.id,
+				controlls.name,
+				controlls.garden_id
+			FROM
+				controlls
+			WHERE
+				controlls.garden_id = '{gardenId}'".Clean();
+	}
+
+
+
 	private static string OverviewSelectDistinct()
 	{
 		return @$"

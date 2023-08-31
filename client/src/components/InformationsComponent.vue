@@ -28,15 +28,17 @@ export default {
 			setTimeout(() => {
 
 				const elm = this.$refs.infowrapper
-				const width = elm.offsetWidth
-				const numberOfElemnts = this.data.garden_info.length
+				if (elm) {
+					const width = elm.offsetWidth
+					const numberOfElemnts = this.data.garden_info.length
 
-				elm.scrollTo({ top: 0, left: width * counter, behavior: "smooth" });
+					elm.scrollTo({ top: 0, left: width * counter, behavior: "smooth" });
 
-				if (counter >= (numberOfElemnts - 1))
-					counter = -1
+					if (counter >= (numberOfElemnts - 1))
+						counter = -1
 
-				this.nextTile(counter + 1)
+					this.nextTile(counter + 1)
+				}
 			}, 5000);
 		},
 		async load() {
