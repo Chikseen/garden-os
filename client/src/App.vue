@@ -20,27 +20,22 @@ export default {
       this.$store.commit('setNewDeviceStatus', payload)
     });
   },
-  async beforeMount() {
-    if (!localStorage.getItem("accessToken")) {
-      const keycloak = new Keycloak({
-        url: "https://auth.drunc.net",
-        realm: process.env.VUE_APP_AUTH_REALM,
-        clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+  async mounted() {
+    const keycloak = new Keycloak({
+      url: "https://auth.drunc.net",
+      realm: process.env.VUE_APP_AUTH_REALM,
+      clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+    });
+    await keycloak.init({
+      onLoad: "login-required",
+      redirectUri: process.env.VUE_APP_AUTH_REDIRECT
+    });
 
-      });
-      await keycloak
-        .init({
-          onLoad: 'login-required',
-          redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
-        })
-
-      if (keycloak.authenticated) {
-        localStorage.setItem("userName", keycloak.idTokenParsed.preferred_username)
-        localStorage.setItem("accessToken", keycloak.token)
-        this.$store.commit("setKeycloak", keycloak)
-      }
+    if (keycloak?.authenticated) {
+      localStorage.setItem("accessToken", keycloak.token)
+      this.$store.commit("setKeycloak", keycloak)
+      this.authPending = false
     }
-    this.authPending = false
   },
 };
 </script>

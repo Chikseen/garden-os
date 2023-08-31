@@ -64,6 +64,9 @@ export default createStore({
 		async fetchDevices(context) {
 			context.commit("setAllDevicesData", await fetchDevices(localStorage.getItem("selectedGarden")));
 		},
+		async logout(context) {
+			context.state.keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT });
+		},
 	},
 	modules: {},
 });

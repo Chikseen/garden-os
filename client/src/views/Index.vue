@@ -1,14 +1,5 @@
 <template>
-  <Landing />
+  <div class="landing_wrapper">
+    <img src="@/assets/gardenOSTransparent.png" alt="title image Garden os">
+  </div>
 </template>
-
-<script>
-import Landing from "@/views/Landing.vue";
-
-export default {
-  name: "Index",
-  components: {
-    Landing,
-  },
-};
-</script>

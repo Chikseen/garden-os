@@ -16,7 +16,7 @@
 					<LC v-if="isAccessRequestLoading" />
 					<p v-else>Request Access</p>
 				</button>
-				<button @click="logout">Logout</button>
+				<button @click="logout">LogoutD</button>
 			</div>
 
 		</List>
@@ -36,9 +36,7 @@ import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
 import { fetchGardenMeta } from "@/services/apiService.js"
-import { mapState } from "vuex";
-
-import Keycloak from "keycloak-js"
+import { mapState, mapActions } from "vuex";
 
 export default {
 	components: {
@@ -82,18 +80,9 @@ export default {
 
 			this.isAccessRequestLoading = false
 		},
-		async logout() {
-			localStorage.clear();
-			const keycloak = new Keycloak({
-				url: "https://auth.drunc.net",
-				realm: process.env.VUE_APP_AUTH_REALM,
-				clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
-
-			});
-			await keycloak
-				.init({})
-			keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
-		},
+		...mapActions({
+			logout: 'logout'
+		})
 	},
 	computed: {
 		...mapState({

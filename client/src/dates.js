@@ -34,7 +34,7 @@ function dynamicTimeDisplay(payload) {
 	const now = new Date();
 	const diff = (now - date) / 1000;
 
-	if (diff < 60) return `${diff} Sekunden`;
+	if (diff < 60) return `${diff.toFixed(0)} Sekunden`;
 	else if (diff < 3600) return `${(diff / 60).toFixed(0)} Minuten`;
 	else if (diff < 216000) return `${(diff / 3600).toFixed(0)} Stunden`;
 	else if (diff < 5184000) return `${(diff / 86400).toFixed(0)} Tagen`;

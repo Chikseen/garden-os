@@ -19,7 +19,7 @@
         </div>
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_weather" />
-            <Informations class="grid_item"/>
+            <Informations class="grid_item" />
             <DeviceList :devices=deviceData?.devices></DeviceList>
             <div class="grid_item" style="background-color: #ffffff;" @click="$router.push('/hublog')">
                 <HubControll :showRebootButton="false" />
@@ -52,8 +52,6 @@ import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
 import { mapState, mapActions } from "vuex";
 
-import Keycloak from "keycloak-js"
-
 export default {
     components: {
         DynamicGrid,
@@ -73,20 +71,9 @@ export default {
         ctc(value) {
             navigator.clipboard.writeText(value);
         },
-        async logout() {
-            localStorage.clear();
-            const keycloak = new Keycloak({
-                url: "https://auth.drunc.net",
-                realm: process.env.VUE_APP_AUTH_REALM,
-                clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
-
-            });
-            await keycloak
-                .init({})
-            keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT })
-        },
         ...mapActions({
-            fetchDevices: 'fetchDevices'
+            fetchDevices: 'fetchDevices',
+            logout: 'logout'
         })
     },
     computed: {

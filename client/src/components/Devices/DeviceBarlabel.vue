@@ -7,7 +7,7 @@
 			<div class="diagram_liniar" v-if="device.display_id === ''">
 				<div class="diagram_liniar_bar" :style="`width: ${device.corrected_value}%;`"></div>
 			</div>
-			<h5> Vor {{ formatTime(device.date) }} </h5>
+			<h5> Vor {{ timeLabel }} </h5>
 		</span>
 	</div>
 </template>
@@ -24,11 +24,26 @@ export default {
 	props: {
 		device: { type: Object }
 	},
+	data() {
+		return {
+			timeLabel: null
+		}
+	},
 	methods: {
 		formatTime(d) {
 			return dynamicTimeDisplay(d)
+		},
+		calcTime() {
+			console.log("calc")
+			this.timeLabel = this.formatTime(this.device.date)
+			setTimeout(() => {
+				this.calcTime()
+			}, 1000);
 		}
 	},
+	mounted() {
+		this.calcTime()
+	}
 }
 </script>
 
