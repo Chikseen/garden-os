@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import DeviceDetailedView from "@/views/DeviceDetailedView";
 import NotFound from "@/views/NotFound";
 import Index from "@/views/Index";
-import Login from "@/views/Login";
 import Overview from "@/views/Overview";
 import GardenOverview from "@/views/GardenOverview";
 import UserOverview from "@/views/UserOverview";
@@ -28,10 +27,6 @@ const routes = [
   {
     path: '/overview',
     component: Overview,
-  },
-  {
-    path: '/login',
-    component: Login,
   },
   {
     path: '/garden',

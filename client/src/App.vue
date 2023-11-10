@@ -28,11 +28,14 @@ export default {
     });
     await keycloak.init({
       onLoad: "login-required",
-      redirectUri: process.env.VUE_APP_AUTH_REDIRECT
+      redirectUri: process.env.VUE_APP_AUTH_REDIRECT,
+      token: localStorage.getItem("accessToken"),
+      refreshtoken: localStorage.getItem("refreshToken"),
     });
 
     if (keycloak?.authenticated) {
       localStorage.setItem("accessToken", keycloak.token)
+      localStorage.setItem("refreshToken", keycloak.refreshtoken)
       this.$store.commit("setKeycloak", keycloak)
       this.authPending = false
     }
