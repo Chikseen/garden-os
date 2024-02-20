@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using shared_data.Models;
+using Shared.Models;
 
 namespace MainService.Hardware
 {

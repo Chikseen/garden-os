@@ -3,7 +3,7 @@ using dotenv.net;
 using ExtensionMethods;
 using MainService.DB;
 using Microsoft.Extensions.Primitives;
-using shared_data.Models;
+using Shared.Models;
 
 namespace Services.User
 {

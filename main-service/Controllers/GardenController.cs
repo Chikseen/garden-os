@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
 using Services.Device;
 using Services.User;
-using shared_data.Models;
+using Shared.Models;
 
 namespace MainService.Controllers
 {

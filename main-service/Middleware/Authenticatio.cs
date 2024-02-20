@@ -1,7 +1,11 @@
+using dotenv.net;
+using ESP_sensor.Models;
+using MainService.Services;
+using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Net.Http.Headers;
-using dotenv.net;
-using Microsoft.Extensions.Primitives;
+using System.Text;
+using System.Text.Json;
 
 namespace Middleware;
 
@@ -21,17 +25,15 @@ public class AuthMiddleware
         if (path.Contains("/user") || path.Contains("/garden") || path.Contains("/controlls"))
             await GetUserData(context);
 
-        if (path.Contains("/devices/"))
+        else if (path.Contains("/standalone"))
+            await CheckStandaloneDevice(context);
+
+        else if (path.Contains("/devices"))
         {
             // Do auth check here later like for user but need to refine device controller
         }
 
-        if (context.Response.StatusCode >= 400)
-        {
-
-        }
-        else
-            await _next(context);
+        await _next(context);
     }
 
     private static async Task ReturnErrorResponse(HttpContext context)
@@ -92,6 +94,40 @@ public class AuthMiddleware
             userData.CheckGardenAccess(context.Request.RouteValues["gardenId"]!.ToString()!);
 
         context.Features.Set(userData);
+    }
+
+    private static async Task CheckStandaloneDevice(HttpContext context)
+    {
+        StandaloneDevice body = await GetBody<StandaloneDevice>(context.Request);
+        if (body == null)
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+
+        StandaloneService standaloneService = new();
+        if (!standaloneService.IsCredentialsValid(body))
+        {
+            await ReturnErrorResponse(context);
+            return;
+        }
+
+        context.Features.Set(body);
+    }
+
+    private static async Task<T?> GetBody<T>(HttpRequest request)
+    {
+        if (request.Method == HttpMethods.Post && request.ContentLength > 0)
+        {
+            request.EnableBuffering();
+            byte[] buffer = new byte[Convert.ToInt32(request.ContentLength)];
+            await request.Body.ReadAsync(buffer, 0, buffer.Length);
+            string requestContent = Encoding.UTF8.GetString(buffer);
+            request.Body.Position = 0;
+            T body = JsonSerializer.Deserialize<T>(requestContent)!;
+            return body;
+        }
+        return default;
     }
 }
 

@@ -1,6 +1,6 @@
 
 using MainService.DB;
-using shared_data.Models;
+using Shared.Models;
 
 namespace Services.Device
 {

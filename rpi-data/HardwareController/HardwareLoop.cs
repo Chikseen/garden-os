@@ -2,7 +2,7 @@ using System.Device.I2c;
 using System.Text.Json;
 using Iot.Device.Ads1115;
 using Iot.Device.DHTxx;
-using shared_data.Models;
+using Shared.Models;
 using UnitsNet;
 
 namespace MainService.Hardware

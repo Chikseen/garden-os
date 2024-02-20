@@ -4,7 +4,7 @@ using MainService.Hub;
 using Services.Device;
 using Services.User;
 using MainService.Services;
-using shared_data.Models;
+using Shared.Models;
 
 namespace MainService.Controllers
 {

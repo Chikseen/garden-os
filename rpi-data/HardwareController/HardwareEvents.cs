@@ -1,6 +1,6 @@
 using System.Device.Gpio;
 using System.Text.Json;
-using shared_data.Models;
+using Shared.Models;
 
 namespace MainService.Hardware
 {

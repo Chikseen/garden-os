@@ -1,6 +1,6 @@
 using System.Globalization;
 using ExtensionMethods;
-using shared_data.Models;
+using Shared.Models;
 
 public static class QueryService
 {

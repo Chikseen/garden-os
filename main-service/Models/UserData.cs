@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ExtensionMethods;
 using MainService.DB;
-using shared_data.Models;
+using Shared.Models;
 
 public class UserData
 {

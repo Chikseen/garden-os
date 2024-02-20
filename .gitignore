@@ -481,3 +481,4 @@ $RECYCLE.BIN/
 *.lnk
 
 !C:\Users\gta_f\Desktop\garden-os\rpi-data\bin\Release\net7.0\linux-arm64\publish\libclrgc.so
+ESP.Modules/Esp32.Shared/src/secrets.cpp

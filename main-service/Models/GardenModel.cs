@@ -1,5 +1,5 @@
 using MainService.DB;
-using shared_data.Models;
+using Shared.Models;
 
 public class Garden
 {

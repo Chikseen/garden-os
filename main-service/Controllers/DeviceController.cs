@@ -5,7 +5,7 @@ using Services.Device;
 using Services.User;
 using MainService.DB;
 using System.Text.Json;
-using shared_data.Models;
+using Shared.Models;
 
 namespace MainService.Controllers
 {
