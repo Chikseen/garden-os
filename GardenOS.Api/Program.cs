@@ -5,6 +5,7 @@ using MainService.DB;
 using MainService.Hub;
 using MainService.Services;
 using Middleware;
+using Services.Device;
 using System.Net;
 using System.Net.Sockets;
 
@@ -28,7 +29,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors();
 builder.Services.AddKeycloakAuthentication(authenticationOptions);
 
-builder.Services.AddSingleton<IStandaloneService, StandaloneService>();
+builder.Services.AddSingleton<IDeviceService, DeviceService>();
 
 var app = builder.Build();
 

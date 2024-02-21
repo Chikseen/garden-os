@@ -5,7 +5,7 @@ namespace upload
 {
 	static std::string serverAddress = "192.168.2.100";
 	static const int serverPort = 5082;
-	static std::string serverPath = "/standalone";
+	static std::string serverPath = "/devices";
 
 	static void send(int value)
 	{

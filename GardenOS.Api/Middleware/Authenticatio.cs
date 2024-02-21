@@ -11,7 +11,7 @@ namespace Middleware;
 
 public class AuthMiddleware(
         RequestDelegate next,
-        IStandaloneService _standaloneService)
+        IDeviceService _standaloneService)
 {
 
     private readonly RequestDelegate _next = next;

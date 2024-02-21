@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import router from "@/router/index";
-import { fetchGardenMeta, fetchDevices, fetchUser, fetchControlls} from "@/services/apiService.js";
+import { fetchGardenMeta, fetchDevices, fetchUser, fetchControlls } from "@/services/apiService.js";
 
 export default createStore({
 	state: {

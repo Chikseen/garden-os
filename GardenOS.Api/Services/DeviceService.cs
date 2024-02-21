@@ -1,10 +1,13 @@
-
+using API.Interfaces;
+using ESP_sensor.Models;
 using MainService.DB;
+using Shared;
 using Shared.Models;
+using System.Reflection;
 
 namespace Services.Device
 {
-    public class DeviceService
+    public class DeviceService : IDeviceService
     {
         private static readonly Dictionary<string, DateTime> _lastEntryList = new();
         private static readonly Dictionary<string, ReponseDevice> _cacheList = new();
@@ -33,43 +36,43 @@ namespace Services.Device
             return devices;
         }
 
-        public ReponseDevice? SaveDataToDB(SaveDataRequest data, string rpiId, string rpiKey)
+        public ReponseDevice? SaveDataToDB(SaveDataRequest model, string rpiId, string rpiKey)
         {
-            Garden garden = new();
+            GardenId garden = new();
             garden.SetGardenIdByRPI(rpiId, false);
 
             RPIDevices? devicesData = GetRPIDevices(rpiId, rpiKey);
             if (devicesData == null)
                 return null;
 
-            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == data.DeviceId).FirstOrDefault();
+            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == model.DeviceId).FirstOrDefault();
             if (deviceData == null)
                 return null;
 
             TimeSpan interval = deviceData.DataUpdateInterval;
-            if (!_lastEntryList.ContainsKey(data.DeviceId))
-                _lastEntryList.Add(data.DeviceId, DateTime.Now);
+            if (!_lastEntryList.ContainsKey(model.DeviceId))
+                _lastEntryList.Add(model.DeviceId, DateTime.Now);
 
-            if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
+            if (_lastEntryList[model.DeviceId] < DateTime.Now - interval)
             {
-                _lastEntryList[data.DeviceId] = DateTime.Now;
-                _cacheList.Remove(data.DeviceId);
+                _lastEntryList[model.DeviceId] = DateTime.Now;
+                _cacheList.Remove(model.DeviceId);
             }
 
 
-            if (_lastEntryList[data.DeviceId] < DateTime.Now - interval)
+            if (_lastEntryList[model.DeviceId] < DateTime.Now - interval)
             {
-                _lastEntryList[data.DeviceId] = DateTime.Now;
-                _cacheList.Remove(data.DeviceId);
+                _lastEntryList[model.DeviceId] = DateTime.Now;
+                _cacheList.Remove(model.DeviceId);
             }
-            string query = QueryService.SaveDataToDatabaseQuery(garden, data);
+            string query = QueryService.SaveDataToDatabaseQuery(garden, model);
             MainDB.Query(query);
 
-            ReponseDevice response = GetDeviceFromRPI(garden, data);
-            if (!_cacheList.ContainsKey(data.DeviceId))
-                _cacheList.Add(data.DeviceId, response);
+            ReponseDevice response = GetDevice(garden, model.DeviceId, model.Value);
+            if (!_cacheList.ContainsKey(model.DeviceId))
+                _cacheList.Add(model.DeviceId, response);
             else
-                _cacheList[data.DeviceId] = response;
+                _cacheList[model.DeviceId] = response;
 
             return response;
         }
@@ -93,13 +96,13 @@ namespace Services.Device
             return devices;
         }
 
-        public ReponseDevice GetDeviceFromRPI(Garden garden, SaveDataRequest data)
+        public ReponseDevice GetDevice(GardenId garden, string deviceId, double value)
         {
-            string query = QueryService.OverviewDeviceFromRPI(garden.Id, data.DeviceId);
+            string query = QueryService.OverviewDeviceQuery(garden.Id, deviceId);
 
             List<Dictionary<string, string>> devicelist = MainDB.Query(query);
             Dictionary<string, string> deviceDic = devicelist.FirstOrDefault()!;
-            deviceDic["value"] = data.Value.ToString();
+            deviceDic["value"] = value.ToString();
             deviceDic["date"] = DateTime.Now.ToString();
             ReponseDevice devices = new(deviceDic);
             return devices;
@@ -118,7 +121,7 @@ namespace Services.Device
             string insertQuery = QueryService.SetStatusQuery(status);
             MainDB.Query(insertQuery);
 
-            Garden garden = new();
+            GardenId garden = new();
             garden.SetGardenIdByRPI(status.RpiId, false);
 
             return GetStatus(garden.Id);
@@ -158,6 +161,27 @@ namespace Services.Device
             ResponseDevices detailed = GetDetailed(gardenId, timeframe);
             GardenInfo info = new(detailed);
             return info;
+        }
+
+        public ReponseDevice StoreData(DeviceInput model)
+        {
+            string query = QueryService.InsertNewDataQuery(model);
+            MainDB.Query(query);
+
+            GardenId gardenId = new(model.GardenId);
+            ReponseDevice response = GetDevice(gardenId, model.DeviceId, model.Value);
+
+            return response;
+        }
+
+        public bool IsCredentialsValid(StandaloneDevice data)
+        {
+            string query = QueryService.CheckCredentialsQuery(data);
+            List<Dictionary<string, string>> response = MainDB.Query(query);
+
+            if (response.Count != 1)
+                return false;
+            return true;
         }
     }
 }

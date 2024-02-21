@@ -38,7 +38,7 @@ namespace MainService.Hub
 
         public void SetUserToGarden(string gId)
         {
-            string gardenId = gId.Replace("-", "");
+            string gardenId = gId;
             string userId = Context.ConnectionId;
 
 

@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
+import { HubConnectionBuilder } from "@aspnet/signalr";
 
 export default {
 	async install(Vue) {

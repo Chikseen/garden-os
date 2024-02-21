@@ -1,13 +1,18 @@
 using MainService.DB;
 using Shared.Models;
 
-public class Garden
+public class GardenId
 {
     public string Id = string.Empty;
 
-    public Garden()
+    public GardenId()
     {
 
+    }
+
+    public GardenId(string id)
+    {
+        Id = id;
     }
 
     public void SetGardenIdByUser(string id)

@@ -1,0 +1,14 @@
+name: DeployDev
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Create New Images
+        run: docker-compose build --no-cache
+      - name: Start Docker Compose
+        run: docker-compose up -d --build
