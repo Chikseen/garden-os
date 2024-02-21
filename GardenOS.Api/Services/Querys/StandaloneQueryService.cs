@@ -1,5 +1,6 @@
 using ESP_sensor.Models;
 using ExtensionMethods;
+using Shared;
 using System.Globalization;
 
 public static class StandaloneQueryService
@@ -13,12 +14,11 @@ public static class StandaloneQueryService
 				STANDALONEDEVICES
 			WHERE 
 				ID = '{data.DeviceId}'
-				AND NAME = '{data.Name}'
 				AND GARDEN_ID = '{data.GardenId}'
 				AND API_KEY = '{data.ApiKey}'".Clean();
 	}
 
-    public static string InsertNewDataQuery(StandaloneDevice data)
+    public static string InsertNewDataQuery(DeviceInput data)
     {
         return @$"
 			SET TIMEZONE = 'Europe/Berlin';

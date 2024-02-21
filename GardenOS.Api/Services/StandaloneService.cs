@@ -1,12 +1,13 @@
 using API.Interfaces;
 using ESP_sensor.Models;
 using MainService.DB;
+using Shared;
 
 namespace MainService.Services
 {
     public class StandaloneService : IStandaloneService
     {
-        public bool StoreData(StandaloneDevice data)
+        public bool StoreData(DeviceInput data)
         {
             string query = StandaloneQueryService.InsertNewDataQuery(data);
             MainDB.Query(query);

@@ -2,5 +2,5 @@
 	"editor.semanticHighlighting.enabled": true,
 	"csharp.semanticHighlighting.enabled": true,
 	"dotnet.defaultSolution": "garden-os.sln",
-	"cmake.sourceDirectory": "I:/_User/Desktop/garden-os/ESP.Modules/Esp32.Shared"
+	"cmake.sourceDirectory": "I:/_User/Desktop/GardenOS/GardenOS.ESP/Esp32.Shared"
 }

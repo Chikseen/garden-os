@@ -59,8 +59,10 @@ public static class QueryService
 			{OverviewSelectDistinct()}
 			FROM
 				DATALOG{gardenId.Replace("-", "")} AS DATALOG
-				JOIN devices ON devices.id = DATALOG.device_id
+				LEFT JOIN devices ON devices.id = DATALOG.device_id
 				AND devices.garden_id = '{gardenId}'
+				LEFT JOIN standalonedevices ON standalonedevices.id = DATALOG.device_id
+				AND standalonedevices.garden_id = '{gardenId}'
 			ORDER BY
 				DEVICE_ID,
 				UPLOAD_DATE DESC;".Clean();

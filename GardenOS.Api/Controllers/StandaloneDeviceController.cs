@@ -1,6 +1,6 @@
 ﻿using API.Interfaces;
-using ESP_sensor.Models;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 using Shared.Models;
 
 namespace MainService.Controllers
@@ -11,7 +11,7 @@ namespace MainService.Controllers
     {
 
         [HttpPost()]
-        public ActionResult<ControllerResponseModel> PostNewDeviceData(StandaloneDevice data)
+        public ActionResult<ControllerResponseModel> PostNewDeviceData(DeviceInput data)
         {
             bool IsTaskSuccess = _standaloneQueryService.StoreData(data);
             if (IsTaskSuccess)
