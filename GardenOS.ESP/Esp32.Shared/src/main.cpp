@@ -38,7 +38,7 @@ void loop()
 	analogValue = analogRead(analogInputPin);
 	Serial.println(analogValue);
 	delay(2000);
-	if (WiFi.status() == WL_CONNECTED)
+	/*if (WiFi.status() == WL_CONNECTED)
 	{
 		HTTPClient http;
 

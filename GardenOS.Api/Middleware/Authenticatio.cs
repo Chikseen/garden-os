@@ -1,6 +1,6 @@
+using API.Interfaces;
 using dotenv.net;
 using ESP_sensor.Models;
-using MainService.Services;
 using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Net.Http.Headers;
@@ -9,14 +9,12 @@ using System.Text.Json;
 
 namespace Middleware;
 
-public class AuthMiddleware
+public class AuthMiddleware(
+        RequestDelegate next,
+        IStandaloneService _standaloneService)
 {
-    private readonly RequestDelegate _next;
 
-    public AuthMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -96,7 +94,7 @@ public class AuthMiddleware
         context.Features.Set(userData);
     }
 
-    private static async Task CheckStandaloneDevice(HttpContext context)
+    private async Task CheckStandaloneDevice(HttpContext context)
     {
         StandaloneDevice body = await GetBody<StandaloneDevice>(context.Request);
         if (body == null)
@@ -105,8 +103,7 @@ public class AuthMiddleware
             return;
         }
 
-        StandaloneService standaloneService = new();
-        if (!standaloneService.IsCredentialsValid(body))
+        if (!_standaloneService.IsCredentialsValid(body))
         {
             await ReturnErrorResponse(context);
             return;

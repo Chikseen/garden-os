@@ -1,28 +1,21 @@
+using MainService.DB;
+using MainService.Hub;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MainService.Hub;
 using Services.Device;
 using Services.User;
-using MainService.DB;
-using System.Text.Json;
 using Shared.Models;
+using System.Text.Json;
 
 namespace MainService.Controllers
 {
     [ApiController]
     [Route("devices")]
-    public class DeviceController : ControllerBase
+    public class DeviceController(IHubContext<MainHub, IMainHub> questionHub) : ControllerBase
     {
-        private readonly IHubContext<MainHub, IMainHub> _hubContext;
-        private readonly DeviceService _deviceService;
-        private readonly UserService _userService;
-
-        public DeviceController(IHubContext<MainHub, IMainHub> questionHub)
-        {
-            _hubContext = questionHub;
-            _deviceService = new();
-            _userService = new();
-        }
+        private readonly IHubContext<MainHub, IMainHub> _hubContext = questionHub;
+        private readonly DeviceService _deviceService = new();
+        private readonly UserService _userService = new();
 
         [HttpGet("{rpiid}/metadata")]
         public ActionResult<RPIData> GetRpiMeta(string rpiid)

@@ -1,9 +1,10 @@
+using API.Interfaces;
 using ESP_sensor.Models;
 using MainService.DB;
 
 namespace MainService.Services
 {
-    public class StandaloneService
+    public class StandaloneService : IStandaloneService
     {
         public bool StoreData(StandaloneDevice data)
         {
