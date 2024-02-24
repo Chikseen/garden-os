@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.SignalR;
+using Shared.DeviceModels;
 using Shared.Models;
 
 namespace MainService.Hub
 {
     public interface IMainHub
     {
-        public Task SendCurrentDeviceData(ReponseDevice message);
+        public Task SendCurrentDeviceData(Device message);
         public Task NewDeviceStatus(DeveiceStatus message);
         public Task NewVersion();
         public Task SendRebootRequest();

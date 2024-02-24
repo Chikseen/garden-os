@@ -1,13 +1,14 @@
 using API.Interfaces;
 using ESP_sensor.Models;
 using MainService.DB;
-using Shared;
+using MainService.Hub;
+using Microsoft.AspNetCore.SignalR;
+using Shared.DeviceModels;
 using Shared.Models;
-using System.Reflection;
 
-namespace Services.Device
+namespace API.Services
 {
-    public class DeviceService : IDeviceService
+    public class DeviceService(IHubContext<MainHub, IMainHub> _hubContext) : IDeviceService
     {
         private static readonly Dictionary<string, DateTime> _lastEntryList = new();
         private static readonly Dictionary<string, ReponseDevice> _cacheList = new();
@@ -36,52 +37,11 @@ namespace Services.Device
             return devices;
         }
 
-        public ReponseDevice? SaveDataToDB(SaveDataRequest model, string rpiId, string rpiKey)
-        {
-            GardenId garden = new();
-            garden.SetGardenIdByRPI(rpiId, false);
-
-            RPIDevices? devicesData = GetRPIDevices(rpiId, rpiKey);
-            if (devicesData == null)
-                return null;
-
-            RPIDevice? deviceData = devicesData.Devices.Where(d => d.ID == model.DeviceId).FirstOrDefault();
-            if (deviceData == null)
-                return null;
-
-            TimeSpan interval = deviceData.DataUpdateInterval;
-            if (!_lastEntryList.ContainsKey(model.DeviceId))
-                _lastEntryList.Add(model.DeviceId, DateTime.Now);
-
-            if (_lastEntryList[model.DeviceId] < DateTime.Now - interval)
-            {
-                _lastEntryList[model.DeviceId] = DateTime.Now;
-                _cacheList.Remove(model.DeviceId);
-            }
-
-
-            if (_lastEntryList[model.DeviceId] < DateTime.Now - interval)
-            {
-                _lastEntryList[model.DeviceId] = DateTime.Now;
-                _cacheList.Remove(model.DeviceId);
-            }
-            string query = QueryService.SaveDataToDatabaseQuery(garden, model);
-            MainDB.Query(query);
-
-            ReponseDevice response = GetDevice(garden, model.DeviceId, model.Value);
-            if (!_cacheList.ContainsKey(model.DeviceId))
-                _cacheList.Add(model.DeviceId, response);
-            else
-                _cacheList[model.DeviceId] = response;
-
-            return response;
-        }
-
         public ResponseDevices GetOverview(UserData userData, string gardenId)
         {
             userData.CheckGardenAccess(gardenId);
 
-            string query = QueryService.OverviewQuery(gardenId);
+            string query = ViewQueryService.DetailedViewQuery(gardenId);
 
             List<Dictionary<string, string>> result = MainDB.Query(query);
             ResponseDevices devices = new(result);
@@ -96,21 +56,9 @@ namespace Services.Device
             return devices;
         }
 
-        public ReponseDevice GetDevice(GardenId garden, string deviceId, double value)
-        {
-            string query = QueryService.OverviewDeviceQuery(garden.Id, deviceId);
-
-            List<Dictionary<string, string>> devicelist = MainDB.Query(query);
-            Dictionary<string, string> deviceDic = devicelist.FirstOrDefault()!;
-            deviceDic["value"] = value.ToString();
-            deviceDic["date"] = DateTime.Now.ToString();
-            ReponseDevice devices = new(deviceDic);
-            return devices;
-        }
-
         public ResponseDevices GetDetailed(string gardenId, TimeFrame timeFrame)
         {
-            string query = QueryService.DetailedViewQuery(gardenId, timeFrame);
+            string query = ViewQueryService.DetailedViewQuery(gardenId, timeFrame);
             List<Dictionary<string, string>> result = MainDB.Query(query);
             ResponseDevices devices = new(result);
             return devices;
@@ -163,15 +111,13 @@ namespace Services.Device
             return info;
         }
 
-        public ReponseDevice StoreData(DeviceInput model)
+        public void StoreData(DeviceInput model)
         {
-            string query = QueryService.InsertNewDataQuery(model);
+            string query = IncommingDataQuery.InsertNewDataQuery(model);
             MainDB.Query(query);
 
             GardenId gardenId = new(model.GardenId);
-            ReponseDevice response = GetDevice(gardenId, model.DeviceId, model.Value);
-
-            return response;
+            _hubContext.Clients.Group(gardenId.Id).SendCurrentDeviceData(model);
         }
 
         public bool IsCredentialsValid(StandaloneDevice data)

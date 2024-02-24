@@ -27,17 +27,10 @@ public static class QueryService
 			SELECT
 				DEVICES.ID AS DEVICE_ID,
 				DEVICES.NAME AS DEVICE_NAME,
-				DEVICES.LOWER_LIMIT,
-				DEVICES.UPPER_LIMIT,
 				DEVICES.DEVICE_TYP,
-				DEVICES.ADDRESS,
-				DEVICES.SERIAL_ID,
 				DEVICES.DISPLAY_ID,
-				DEVICES.DATA_UPDATE_INTERVAL, 
 				DEVICES.SORT_ORDER, 
-				DEVICES.GROUP_ID, 
-				DEVICES.UNIT,
-				DEVICES.threshold
+				DEVICES.GROUP_ID
 			FROM
 				RPIS
 				JOIN GARDEN
@@ -80,41 +73,6 @@ public static class QueryService
 				AND DEVICES.GARDEN_ID = '{gardenId}'
 			ORDER BY
 				DEVICE_ID,
-				UPLOAD_DATE DESC;".Clean();
-    }
-
-    public static string DetailedViewQuery(string gardenId, TimeFrame timeFrame)
-    {
-        return @$"
-			SELECT
-				DATALOG.DATE AS UPLOAD_DATE,
-				DATALOG.device_id AS DEVICE_ID,
-				DATALOG.VALUE AS VALUE,
-				DEVICES.NAME,
-				DEVICES.DISPLAY_ID,
-				DEVICES.UPPER_LIMIT,
-				DEVICES.LOWER_LIMIT,
-				DEVICES.SORT_ORDER, 
-				DEVICES.GROUP_ID, 
-				DEVICES.UNIT,
-				DEVICES.SPECIAL_ID
-			FROM
-				(
-					SELECT
-						date_trunc('hour', UPLOAD_DATE) AS DATE,
-						AVG (value) AS VALUE,
-						DEVICE_ID
-					FROM
-						DATALOG{gardenId.Replace("-", "")}
-					GROUP BY
-						DATE,
-						DEVICE_ID
-				) AS DATALOG
-				JOIN DEVICES ON DEVICES.ID = DEVICE_ID
-				AND DEVICES.GARDEN_ID = '{gardenId}'
-				AND DATALOG.DATE BETWEEN '{timeFrame.Start.ConvertToPGString()}'
-				AND '{timeFrame.End.ConvertToPGString()}'
-			ORDER BY
 				UPLOAD_DATE DESC;".Clean();
     }
 
@@ -214,8 +172,6 @@ public static class QueryService
 				controlls.garden_id = '{gardenId}'".Clean();
     }
 
-
-
     private static string OverviewSelectDistinct()
     {
         return @$"
@@ -226,12 +182,8 @@ public static class QueryService
 				DATALOG.VALUE AS VALUE,
 				DEVICES.NAME,
 				DEVICES.DISPLAY_ID,
-				DEVICES.UPPER_LIMIT,
-				DEVICES.LOWER_LIMIT,
 				DEVICES.SORT_ORDER, 
-				DEVICES.GROUP_ID, 
-				DEVICES.UNIT,
-				DEVICES.SPECIAL_ID";
+				DEVICES.GROUP_ID";
     }
 
     public static string CheckCredentialsQuery(StandaloneDevice data)
@@ -245,14 +197,6 @@ public static class QueryService
 				ID = '{data.DeviceId}'
 				AND GARDEN_ID = '{data.GardenId}'
 				AND API_KEY = '{data.ApiKey}'".Clean();
-    }
-
-    public static string InsertNewDataQuery(DeviceInput data)
-    {
-        return @$"
-			SET TIMEZONE = 'Europe/Berlin';
-			INSERT INTO DATALOG{data.GardenId.Replace("-", "")} (ID, VALUE, UPLOAD_DATE, DEVICE_ID) 
-			VALUES (GEN_RANDOM_UUID(), {data.Value.ToString("G", CultureInfo.InvariantCulture)}, Now(), '{data.DeviceId}')".Clean();
     }
 }
 

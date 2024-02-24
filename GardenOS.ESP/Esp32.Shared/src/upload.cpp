@@ -1,32 +1,33 @@
-#include <main.hpp>
-#include "./secrets.h"
+#include <main.h>
+#include <secrets.h>
 
 namespace upload
 {
-	// static std::string serverAddress = "192.168.2.100";
-	// static const int serverPort = 5082;
-	static std::string serverAddress = "157.90.170.184";
-	static const int serverPort = 9992;
-	static std::string serverPath = "/devices";
-
-	static void send(int value)
+	static void send(int16_t batteryValue, int16_t sensorValue)
 	{
 		if (WiFi.status() == WL_CONNECTED)
 		{
 			HTTPClient http;
 
 			// Specify the server and port
-			http.begin(serverAddress.c_str(), serverPort, serverPath.c_str());
+			http.begin(get_server_address().c_str(), get_server_port(), get_server_path().c_str());
 
 			// Start connection and send HTTP header
 			std::stringstream payload;
-			payload << "{\"Value\" :" << value
-					<< ",\"DeviceId\" : \"" << get_device_id().c_str()
-					<< "\",\"GardenId\" : \"" << get_garden_id().c_str()
-					<< "\",\"ApiKey\" : \"" << get_api_key().c_str()
-					<< "\"}";
+			payload
+				<< "{\"ApiKey\" : \"" << get_api_key() << "\","
+				<< "\"GardenId\" : \"" << get_garden_id() << "\","
+				<< "\"DeviceId\" : \"" << get_device_id() << "\","
+				<< "\"Sensor\" : {"
+				<< "\"" << get_battery_id() << "\" : \"" << batteryValue << "\","
+				<< "\"" << get_sensor_id() << "\" : \"" << sensorValue << "\"}"
+				<< "}";
 
 			http.addHeader("Content-Type", "application/json");
+
+			Serial.println("JSON:");
+			Serial.println(payload.str().c_str());
+			Serial.println("");
 			int httpResponseCode = http.POST(payload.str().c_str());
 
 			if (httpResponseCode > 0)

@@ -1,7 +1,7 @@
+using API.Interfaces;
+using MainService.Hub;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MainService.Hub;
-using Services.Device;
 using Services.User;
 using Shared.Models;
 
@@ -9,10 +9,10 @@ namespace MainService.Controllers
 {
     [ApiController]
     [Route("garden")]
-    public class GardenController(IHubContext<MainHub, IMainHub> questionHub) : ControllerBase
+    public class GardenController(
+        IHubContext<MainHub, IMainHub> questionHub,
+        IDeviceService _deviceService) : ControllerBase
     {
-        private readonly IHubContext<MainHub, IMainHub> _hubContext = questionHub;
-        private readonly DeviceService _deviceService = new();
         private readonly UserService _userService = new();
 
         [HttpGet("{gardenId}/overview")]

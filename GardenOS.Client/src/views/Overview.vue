@@ -22,9 +22,6 @@
             <Informations class="grid_item" />
             <DeviceList :devices=deviceData?.devices />
             <DeviceControll />
-            <div class="grid_item" style="background-color: #ffffff;" @click="$router.push('/hublog')">
-                <HubControll :showRebootButton="false" />
-            </div>
             <div class="grid_item grid_item_settings grid_item_text">
                 <h3>Garden settings</h3>
                 <button @click="$router.push('/user')">User controll</button>

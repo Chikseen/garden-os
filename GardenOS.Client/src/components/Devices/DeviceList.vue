@@ -22,12 +22,12 @@ export default {
   },
   computed: {
     groupList() {
-      let list = []
-      this.devices.forEach(g => {
-        if (g.group_id && list.indexOf(g.group_id) < 0)
-          list.push(g.group_id)
+      let groupList = []
+      this.devices.forEach(device => {
+        if (device.group_id && groupList.indexOf(device.group_id) < 0)
+          groupList.push(device.group_id)
       });
-      return list
+      return groupList
     }
   }
 }

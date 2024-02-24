@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Shared.Models;
 
-public class Device
+public class DeviceModel
 {
     [JsonInclude]
     public string Name = string.Empty;
@@ -27,7 +27,9 @@ public class Device
     public TimeSpan DataUpdateInterval = new(24, 24, 24);
     public DateTime LastEntry = DateTime.Now.AddYears(-1);
 
-    public Device(Dictionary<string, string> deviceDictionary)
+    public DeviceModel() { }
+
+    public DeviceModel(Dictionary<string, string> deviceDictionary)
     {
         Name = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceName);
         Id = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceId);

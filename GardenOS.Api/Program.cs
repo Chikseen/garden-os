@@ -1,11 +1,11 @@
 using API.Interfaces;
+using API.Services;
 using dotenv.net;
 using Keycloak.AuthServices.Authentication;
 using MainService.DB;
 using MainService.Hub;
 using MainService.Services;
 using Middleware;
-using Services.Device;
 using System.Net;
 using System.Net.Sockets;
 

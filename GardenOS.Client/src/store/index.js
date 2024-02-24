@@ -46,9 +46,16 @@ export default createStore({
 		},
 		setDeviceData(state, payload) {
 			const devices = state.deviceData.devices;
-
-			let i = devices.findIndex((d) => d.device_id === payload.device_id);
-			state.deviceData.devices[i] = payload;
+			devices.forEach(device => {
+				const sensorKeys = Object.keys(payload.sensor)
+				sensorKeys.forEach(sensorKey => {
+					if (device.sensor_id == sensorKey) {
+						device.corrected_values = payload.sensor[sensorKey]
+						console.log(device.value)
+						device.date = new Date()
+					}
+				})
+			});
 		},
 		setKeycloak(state, payload) {
 			state.keycloak = payload;

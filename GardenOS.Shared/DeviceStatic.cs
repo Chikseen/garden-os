@@ -3,6 +3,7 @@ namespace Shared.Models
     public static class DeviceStatic
     {
         public readonly static string DeviceId = "device_id";
+        public readonly static string SensorId = "sensor_id";
         public readonly static string LogId = "logid";
         public readonly static string RawValue = "rawvalue";
         public readonly static string Value = "value";

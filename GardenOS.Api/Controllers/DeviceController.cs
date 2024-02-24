@@ -4,9 +4,8 @@ using MainService.Hub;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Services.Device;
 using Services.User;
-using Shared;
+using Shared.DeviceModels;
 using Shared.Models;
 using System.Reflection;
 using System.Text.Json;
@@ -16,11 +15,9 @@ namespace MainService.Controllers
     [ApiController]
     [Route("devices")]
     public class DeviceController(
-        IHubContext<MainHub, IMainHub> _questionHub,
+        IHubContext<MainHub, IMainHub> _hubContext,
         IDeviceService _deviceService) : ControllerBase
     {
-        private readonly IHubContext<MainHub, IMainHub> _hubContext = _questionHub;
-        private readonly DeviceService _deviceService = new();
         private readonly UserService _userService = new();
 
         [HttpPost("{rpiId}/version")]
@@ -44,9 +41,7 @@ namespace MainService.Controllers
         [HttpPost()]
         public ActionResult<ControllerResponseModel> PostNewDeviceData(DeviceInput data)
         {
-            ReponseDevice deviceResponse = _deviceService.StoreData(data);
-
-            _hubContext.Clients.Group(data.GardenId).SendCurrentDeviceData(deviceResponse);
+            _deviceService.StoreData(data);
             return Ok();
         }
 
@@ -80,23 +75,6 @@ namespace MainService.Controllers
                 return BadRequest();
 
             return Ok(data);
-        }
-
-        [HttpPost("{rpiid}/save")]
-        public ActionResult<ResponseDevices> SaveDataToDB(string rpiid, SaveDataRequest data)
-        {
-            string apiKey = _userService.GetApiKey(Request);
-            GardenId garden = new();
-            garden.SetGardenIdByRPI(rpiid);
-
-            ReponseDevice? response = _deviceService.SaveDataToDB(data, rpiid, apiKey!);
-
-            if (response == null)
-                return BadRequest();
-
-            _hubContext.Clients.Group(garden.Id).SendCurrentDeviceData(response);
-
-            return Ok(response);
         }
 
         [HttpPost("status")]

@@ -40,6 +40,10 @@ namespace Shared.Models
         public string DeviceID = string.Empty;
 
         [JsonInclude]
+        [JsonPropertyName("sensor_id")]
+        public string SensorId = string.Empty;
+
+        [JsonInclude]
         [JsonPropertyName("entry_id")]
         public string EntryID = string.Empty;
 
@@ -104,6 +108,7 @@ namespace Shared.Models
             Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
             IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
             SpecialId = DeviceStatic.GetString(data, DeviceStatic.SpecialId);
+            SensorId = DeviceStatic.GetString(data, DeviceStatic.SensorId);
 
             Invert();
             AdjustSpecial();

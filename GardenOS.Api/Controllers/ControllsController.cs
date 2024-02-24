@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
-using Services.Device;
 using Services.User;
 using MainService.Services;
 using Shared.Models;

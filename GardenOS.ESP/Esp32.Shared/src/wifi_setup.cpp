@@ -1,6 +1,5 @@
-#include <main.hpp>
-#include "./secrets.h"
-
+#include <main.h>
+#include <secrets.h>
 namespace wifi_setup
 {
 	static void connect()

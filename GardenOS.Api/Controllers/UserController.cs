@@ -1,26 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MainService.Hub;
-using Services.Device;
 using Services.User;
 using Shared.Models;
+using API.Interfaces;
 
 namespace MainService.Controllers
 {
     [ApiController]
     [Route("user")]
-    public class UserController : ControllerBase
+    public class UserController(
+        IHubContext<MainHub, IMainHub> questionHub,
+        IDeviceService _deviceService) : ControllerBase
     {
-        private readonly IHubContext<MainHub, IMainHub> _hubContext;
-        private readonly DeviceService _deviceService;
-        private readonly UserService _userService;
-
-        public UserController(IHubContext<MainHub, IMainHub> questionHub)
-        {
-            _hubContext = questionHub;
-            _deviceService = new();
-            _userService = new();
-        }
+        private readonly UserService _userService = new();
 
         [HttpGet("{gardenId}")]
         public ActionResult<UserData> GetuserData(string gardenId)
