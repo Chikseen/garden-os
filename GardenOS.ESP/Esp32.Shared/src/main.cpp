@@ -8,29 +8,36 @@
 
 void setup()
 {
-  delay(100);
   Serial.begin(9600);
+  delay(1000);
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
 
   wifi_setup::connect();
   set_up();
   mesureAndSend();
+
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) +
+                 " Seconds");
 
   delay(1000);
   Serial.flush();
 
   if (!isDev())
   {
-    esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-    Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) +
-                   " Seconds");
-
-    Serial.println("Going to sleep now");
     esp_deep_sleep_start();
   }
 }
 
 void loop()
 {
-  mesureAndSend();
-  delay(1000);
+  if (isDev())
+  {
+    mesureAndSend();
+    delay(1000);
+  }
+  else
+  {
+    esp_deep_sleep_start();
+  }
 }

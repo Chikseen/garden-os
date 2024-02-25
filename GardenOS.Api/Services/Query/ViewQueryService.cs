@@ -7,6 +7,7 @@ public static class ViewQueryService
     {
         return @$"
 			SELECT
+				{GetDistinct(timeFrame)}
 				{GetSelect(timeFrame)}
 				DATALOG.device_id AS DEVICE_ID
 				,DATALOG.VALUE AS VALUE
@@ -44,10 +45,17 @@ public static class ViewQueryService
 			{GetOrder(timeFrame)}".Clean();
     }
 
+    private static string GetDistinct(TimeFrame? timeFrame)
+    {
+        if (timeFrame is null)
+            return " ";
+        return " DISTINCT ON (UPLOAD_DATE, DEVICE_ID, DATALOG.SENSOR_ID) ";
+    }
+
     private static string GetSelect(TimeFrame? timeFrame)
     {
         if (timeFrame is null)
-            return " DISTINCT ON(DEVICE_SENSORS.SENSOR_ID) ";
+            return " DISTINCT ON(DEVICE_SENSORS.SENSOR_ID) DATALOG.DATE AS UPLOAD_DATE, ";
         return " DATALOG.DATE AS UPLOAD_DATE, ";
     }
 

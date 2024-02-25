@@ -18,7 +18,9 @@ void set_up()
 	if (!adc.begin())
 	{
 		Serial.println("Failed to initialize ADS.");
+		esp_deep_sleep_start();
 	}
+	return;
 }
 
 void mesureAndSend()
@@ -36,4 +38,5 @@ void mesureAndSend()
 	Serial.println(sensorValue);
 
 	upload::send(batteryValue, sensorValue);
+	return;
 }
