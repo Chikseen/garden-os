@@ -7,7 +7,7 @@
 			<div class="diagram_liniar" v-if="device.display_id === ''">
 				<div class="diagram_liniar_bar" :style="`width: ${device.corrected_value}%;`"></div>
 			</div>
-			<h5> Vor {{ timeLabel }} </h5>
+			<h5> {{ timeLabel }} </h5>
 		</span>
 	</div>
 </template>

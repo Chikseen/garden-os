@@ -112,14 +112,7 @@ namespace Shared.Models
 
             Invert();
             AdjustSpecial();
-        }
-
-        public void SetNewValue(float value)
-        {
-            Value = value;
-            Date = DateTime.Now;
-            Invert();
-            AdjustSpecial();
+            SetTimeZone();
         }
 
         private void Invert()
@@ -143,6 +136,11 @@ namespace Shared.Models
                         break;
                 }
             }
+        }
+
+        private void SetTimeZone()
+        {
+            Date = Date.ToLocalTime();
         }
     }
 }

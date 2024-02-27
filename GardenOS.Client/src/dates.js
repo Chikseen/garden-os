@@ -30,15 +30,13 @@ function toUTCISOString(date) {
 }
 
 function dynamicTimeDisplay(payload) {
-	const date = new Date(payload);
+	const date = new Date(`${payload}`);
 	const now = new Date();
 	const diff = (now - date) / 1000;
-
-	if (diff < 60) return `${diff.toFixed(0)} Sekunden`;
-	else if (diff < 3600) return `${(diff / 60).toFixed(0)} Minuten`;
-	else if (diff < 216000) return `${(diff / 3600).toFixed(0)} Stunden`;
-	else if (diff < 5184000) return `${(diff / 86400).toFixed(0)} Tagen`;
-	return `${(diff / 604800).toFixed(0)} Wochen`;
+	if (diff < 3600) return `${(diff / 60).toFixed(0) <= 1 ? 'Jetzt' : 'Vor ' + (diff / 60).toFixed(0) + ' Minuten'}`;
+	else if (diff < 86400) return `Vor ${(diff / 3600).toFixed(0) == 1 ? ' einer Stunde' : (diff / 3600).toFixed(0) + ' Stunden'}`;
+	else if (diff < 604800) return `Vor ${(diff / 86400).toFixed(0) == 1 ? ' einen Tag' : (diff / 86400).toFixed(0) + ' Tagen'}`;
+	return `Vor ${(diff / 604800).toFixed(0)} Wochen`;
 }
 
 export { formatToDateTime, toUTCISOString, dynamicTimeDisplay };
