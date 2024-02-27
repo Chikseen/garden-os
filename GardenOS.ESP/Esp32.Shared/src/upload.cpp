@@ -1,10 +1,13 @@
 #include <main.h>
 #include <secrets.h>
+#include <wifi_setup.cpp>
 
 namespace upload
 {
 	static void send(int16_t batteryValue, int16_t sensorValue)
 	{
+		wifi_setup::connect();
+
 		if (WiFi.status() == WL_CONNECTED)
 		{
 			HTTPClient http;

@@ -32,7 +32,7 @@ namespace Shared.Models
         public readonly static string FamilyName = "family_name";
         public readonly static string GardenName = "garden_name";
         public readonly static string WeatherLocationId = "weather_location_id";
-        public readonly static string IsInverted = "isinverted";
+        public readonly static string IsInverted = "is_inverted";
         public readonly static string ApiKey = "api_key";
         public readonly static string SortOrder = "sort_order";
         public readonly static string GroupId = "group_id";

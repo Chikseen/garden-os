@@ -1,9 +1,16 @@
 #include <string>
 #include <secrets.h>
 
-bool isDev()
+bool isDev = true;
+
+bool GetIsDev()
 {
-	return false;
+	return isDev;
+}
+
+void SetIsDev(bool value)
+{
+	isDev = value;
 }
 
 // WIFI
@@ -20,14 +27,14 @@ std::string get_wifi_password()
 // CONNECTION
 std::string get_server_address()
 {
-	if (isDev())
+	if (GetIsDev())
 		return "192.168.2.100";
 	return "157.90.170.184";
 }
 
 int get_server_port()
 {
-	if (isDev())
+	if (GetIsDev())
 		return 5082;
 	return 9992;
 }
@@ -45,6 +52,8 @@ std::string get_api_key()
 
 std::string get_garden_id()
 {
+	if (GetIsDev())
+		return "accd30d2-7392-40b7-8a08-6d9ac9cc22b6";
 	return "d1526afc-9eba-4ee6-b933-c2bcd6c6ef92";
 }
 

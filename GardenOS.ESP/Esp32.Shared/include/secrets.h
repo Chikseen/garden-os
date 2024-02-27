@@ -1,6 +1,7 @@
 #include <string>
 
-bool isDev();
+bool GetIsDev();
+void SetIsDev(bool value);
 
 // WIFI
 std::string get_wifi_ssid();

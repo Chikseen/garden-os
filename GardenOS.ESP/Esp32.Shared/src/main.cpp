@@ -1,5 +1,4 @@
 #include <main.h>
-#include <wifi_setup.cpp>
 #include <mesure.h>
 #include <secrets.h>
 
@@ -12,7 +11,6 @@ void setup()
   delay(1000);
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
 
-  wifi_setup::connect();
   set_up();
   mesureAndSend();
 
@@ -23,15 +21,16 @@ void setup()
   delay(1000);
   Serial.flush();
 
-  if (!isDev())
+  if (!GetIsDev())
   {
+
     esp_deep_sleep_start();
   }
 }
 
 void loop()
 {
-  if (isDev())
+  if (GetIsDev())
   {
     mesureAndSend();
     delay(1000);

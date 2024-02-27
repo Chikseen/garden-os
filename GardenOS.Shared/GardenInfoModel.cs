@@ -10,7 +10,6 @@ namespace Shared.Models
 
 		public GardenInfo(ResponseDevices detailed)
 		{
-			Console.WriteLine(detailed);
 			List<IGrouping<string, ReponseDevice>> grouped = detailed.Devices.GroupBy(d => d.DeviceID).ToList();
 
 			foreach (IGrouping<string, ReponseDevice> gDeviceData in grouped)

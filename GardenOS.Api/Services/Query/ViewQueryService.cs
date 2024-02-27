@@ -19,6 +19,8 @@ public static class ViewQueryService
 				,DEVICE_SENSORS.LOWER_LIMIT
 				,DEVICE_SENSORS.SENSOR_ID
 				,DEVICE_SENSORS.UNIT
+				,DEVICE_SENSORS.IS_INVERTED
+
 			FROM
 				(
 					SELECT
