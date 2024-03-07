@@ -3,7 +3,7 @@
 #include <secrets.h>
 
 #define uS_TO_S_FACTOR 1000000LL /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP 60LL       /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP 10000LL    /* Time ESP32 will go to sleep (in seconds) */
 
 void setup()
 {
@@ -23,7 +23,7 @@ void setup()
 
   if (!GetIsDev())
   {
-
+    gpio_hold_en(GPIO_NUM_17);
     esp_deep_sleep_start();
   }
 }
@@ -37,6 +37,7 @@ void loop()
   }
   else
   {
+    gpio_hold_en(GPIO_NUM_17);
     esp_deep_sleep_start();
   }
 }

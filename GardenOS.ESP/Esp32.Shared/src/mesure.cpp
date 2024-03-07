@@ -3,12 +3,9 @@
 
 static const int multisamplingLength = 10;
 
-static const int analogInputPin = 34;
-static const int sensorOutPut = 17;
-static const int isDevInput = 23;
-
-uint32_t batteryValue;
-uint32_t sensorValue;
+static const gpio_num_t analogInputPin = GPIO_NUM_34;
+static const gpio_num_t sensorOutPut = GPIO_NUM_17;
+static const gpio_num_t isDevInput = GPIO_NUM_23;
 
 Adafruit_ADS1115 adc;
 
@@ -18,19 +15,9 @@ void set_up()
 	pinMode(sensorOutPut, OUTPUT);
 	pinMode(isDevInput, INPUT_PULLUP);
 
-	if (digitalRead(isDevInput))
-	{
-		SetIsDev(true);
-		Serial.println("Set to dev mode");
-	}
-	else
-	{
-		SetIsDev(false);
-		Serial.println("Set to prod mode");
-	}
-
 	adc.setGain(GAIN_ONE);
 
+	digitalWrite(sensorOutPut, LOW);
 	if (!adc.begin())
 	{
 		Serial.println("Failed to initialize ADS.");
@@ -41,31 +28,40 @@ void set_up()
 
 void mesureAndSend()
 {
+	uint32_t batteryValue;
+	uint32_t sensorValue;
+
+	digitalWrite(sensorOutPut, LOW);
 	float multiplier = 0.1875F;
 
+	delay(500);
 	for (size_t i = 0; i < multisamplingLength; i++)
 	{
 		Serial.print("nnn111batteryValue: ");
-		Serial.println(batteryValue);
-		batteryValue += adc.readADC_Differential_2_3();
-		delay(10);
+		int16_t value = adc.readADC_SingleEnded(2);
+		Serial.print(" V: ");
+		Serial.print(value * 0.000125f);
+		Serial.print(" T: ");
+		Serial.println(value);
+
+		batteryValue += value;
+		delay(500);
 	}
 
-	digitalWrite(sensorOutPut, HIGH);
 	for (size_t i = 0; i < multisamplingLength; i++)
 	{
 		Serial.print("nnn111sensorValue: ");
-		Serial.println(sensorValue);
-		sensorValue += adc.readADC_Differential_0_1();
-		delay(10);
+		int16_t value = adc.readADC_SingleEnded(0);
+		sensorValue += value;
+		Serial.print(" V: ");
+		Serial.print(value * 0.000125f);
+		Serial.print(" T: ");
+		Serial.println(value);
+
+		delay(500);
 	}
-	digitalWrite(sensorOutPut, LOW);
-
-	Serial.print("111batteryValue: ");
-	Serial.println(batteryValue);
-
-	Serial.print("111sensorValue: ");
-	Serial.println(sensorValue);
+	delay(500);
+	digitalWrite(sensorOutPut, HIGH);
 
 	batteryValue = batteryValue / multisamplingLength;
 	sensorValue = sensorValue / multisamplingLength;
