@@ -13,7 +13,7 @@ namespace wifi_setup
 
 		while (WiFi.status() != WL_CONNECTED)
 		{
-			delay(1000);
+			delay(100);
 			Serial.print(".");
 		}
 

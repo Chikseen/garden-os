@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using MainService.Hub;
+using API.Hub;
 using Services.User;
 using Shared.Models;
 using API.Interfaces;
 
-namespace MainService.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("user")]

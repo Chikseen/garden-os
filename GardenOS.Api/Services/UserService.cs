@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using dotenv.net;
 using ExtensionMethods;
-using MainService.DB;
+using API.DB;
 using Microsoft.Extensions.Primitives;
 using Shared.Models;
 

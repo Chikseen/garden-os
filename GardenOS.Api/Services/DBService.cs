@@ -2,7 +2,7 @@ using Npgsql;
 using dotenv.net;
 using ExtensionMethods;
 
-namespace MainService.DB
+namespace API.DB
 {
     public static class MainDB
     {

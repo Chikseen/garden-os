@@ -1,7 +1,7 @@
-using MainService.DB;
+using API.DB;
 using Shared.Models;
 
-namespace MainService.Services
+namespace API.Services
 {
 	public class ControllsService
 	{

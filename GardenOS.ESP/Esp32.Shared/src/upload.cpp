@@ -7,6 +7,7 @@ namespace upload
 	static void send(int16_t batteryValue, int16_t sensorValue)
 	{
 		wifi_setup::connect();
+		Serial.println("Try to send data:");
 
 		if (WiFi.status() == WL_CONNECTED)
 		{

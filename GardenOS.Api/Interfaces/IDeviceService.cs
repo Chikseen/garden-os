@@ -9,13 +9,10 @@ namespace API.Interfaces
         void StoreData(DeviceInput model);
         ResponseDevices GetDetailed(string gardenId, TimeFrame timeFrame);
         GardenInfo GetGardenInfo(string gardenId);
-        ResponseDevices GetOverview(UserData userData, string gardenId);
-        RPIDevices? GetRPIDevices(string rpiId, string apiKey);
-        RPIData? GetRpiMeta(string rpiId, string apiKey);
-        DeveiceStatus GetStatus(string gardenId);
-        List<DeveiceStatus> GetStatusLog(string gardenId);
-        void PatchDevice(PatchDeviceRequest device);
-        DeveiceStatus SetStatus(DeveiceStatus status);
         bool IsCredentialsValid(StandaloneDevice data);
+        void CreateNewDevice(DeviceCreateModel model);
+        List<DeviceMeta> GetAllDevices(string gardenId);
+        List<DeviceSensorMeta> GetDevice(string deviceId);
+        ReponseDevice GetLastSensorValue(string gardenId, string deviceId, string sensorId);
     }
 }

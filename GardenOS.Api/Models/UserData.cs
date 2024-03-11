@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ExtensionMethods;
-using MainService.DB;
+using API.DB;
 using Shared.Models;
 
 public class UserData

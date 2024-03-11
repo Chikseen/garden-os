@@ -47,6 +47,36 @@ public static class ViewQueryService
 			{GetOrder(timeFrame)}".Clean();
     }
 
+    public static string GetLastSensorValueQuery(string gardenId, string deviceId, string sensorId)
+    {
+        return @$"
+			SELECT
+				DISTINCT ON(DATALOG.SENSOR_ID)
+				DATALOG.{DeviceStatic.Id},
+				DATALOG.{DeviceStatic.Value},
+				DATALOG.{DeviceStatic.UploadDate},
+				DATALOG.{DeviceStatic.DeviceId},
+				DATALOG.{DeviceStatic.SensorId},
+				DEVICE_SENSORS.{DeviceStatic.UpperLimit},
+				DEVICE_SENSORS.{DeviceStatic.LowerLimit},
+				DEVICE_SENSORS.{DeviceStatic.Unit},
+				DEVICE_SENSORS.{DeviceStatic.Name},
+				DEVICE_SENSORS.{DeviceStatic.IsInverted}
+			FROM
+				DATALOG{gardenId.Replace("-", "")} AS DATALOG
+			JOIN 
+				DEVICE_SENSORS
+			ON
+				DATALOG.SENSOR_ID = DEVICE_SENSORS.SENSOR_ID
+			AND 
+				DATALOG.{DeviceStatic.DeviceId} = '{deviceId}'
+			AND 
+				DATALOG.{DeviceStatic.SensorId} = '{sensorId}'
+			ORDER BY 
+				DATALOG.SENSOR_ID, 
+				UPLOAD_DATE".Clean();
+    }
+
     private static string GetDistinct(TimeFrame? timeFrame)
     {
         if (timeFrame is null)

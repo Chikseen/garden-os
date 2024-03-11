@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Shared.DeviceModels;
 using Shared.Models;
 
-namespace MainService.Hub
+namespace API.Hub
 {
     public interface IMainHub
     {

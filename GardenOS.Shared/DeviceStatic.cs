@@ -24,7 +24,7 @@ namespace Shared.Models
         public readonly static string RPIID = "rpi_id";
         public readonly static string GardenID = "garden_id";
         public readonly static string Name = "name";
-        public readonly static string ID = "id";
+        public readonly static string Id = "id";
         public readonly static string JSON = "json";
         public readonly static string UserName = "user_name";
         public readonly static string UserId = "user_id";
@@ -43,6 +43,7 @@ namespace Shared.Models
         public readonly static string SpecialId = "special_id";
         public readonly static string Build = "build";
         public readonly static string UserRole = "userrole_id";
+        public readonly static string IsManual = "is_manual";
 
         public static string? GetString(Dictionary<string, string> dict, string key, bool allowNull = true)
         {

@@ -27,7 +27,7 @@ namespace Shared.Models
 
 		public Controller(Dictionary<string, string> data)
 		{
-			Id = DeviceStatic.GetString(data, DeviceStatic.ID);
+			Id = DeviceStatic.GetString(data, DeviceStatic.Id);
 			Name = DeviceStatic.GetString(data, DeviceStatic.Name);
 			DisplayId = DeviceStatic.GetString(data, DeviceStatic.DisplayId);
 			GardenId = DeviceStatic.GetString(data, DeviceStatic.GardenID);

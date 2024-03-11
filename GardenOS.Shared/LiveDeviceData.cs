@@ -35,68 +35,26 @@ namespace Shared.Models
 
     public class ReponseDevice
     {
-        [JsonInclude]
-        [JsonPropertyName("device_id")]
-        public string DeviceID = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("sensor_id")]
-        public string SensorId = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("entry_id")]
-        public string EntryID = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("value")]
-        public float Value = 0;
-
-        [JsonInclude]
-        [JsonPropertyName("corrected_value")]
-        public float CorrectedValue = 0;
-
-        [JsonInclude]
-        [JsonPropertyName("date")]
-        public DateTime Date = DateTime.Now;
-
-        [JsonInclude]
-        [JsonPropertyName("name")]
-        public string Name = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("display_id")]
-        public string DisplayID = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("upper_limit")]
-        public int UpperLimit = 100;
-
-        [JsonInclude]
-        [JsonPropertyName("lower_limit")]
-        public int LowerLimit = 0;
-
-        [JsonInclude]
-        [JsonPropertyName("sort_order")]
-        public int SortOrder = -1;
-
-        [JsonInclude]
-        [JsonPropertyName("group_id")]
-        public string GroupId = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("unit")]
-        public string Unit = string.Empty;
-
-        [JsonInclude]
-        [JsonPropertyName("special_id")]
-        public string SpecialId = string.Empty;
-
-        public bool IsInverted = false;
+        public string DeviceID { get; set; } = string.Empty;
+        public string SensorId { get; set; } = string.Empty;
+        public string EntryID { get; set; } = string.Empty;
+        public float Value { get; set; } = 0;
+        public float CorrectedValue { get; set; } = 0;
+        public DateTime Date { get; set; } = DateTime.Now;
+        public string Name { get; set; } = string.Empty;
+        public string DisplayID { get; set; } = string.Empty;
+        public int UpperLimit { get; set; } = 100;
+        public int LowerLimit { get; set; } = 0;
+        public int SortOrder { get; set; } = -1;
+        public string GroupId { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
+        public string SpecialId { get; set; } = string.Empty;
+        public bool IsInverted { get; set; } = false;
 
         public ReponseDevice(Dictionary<string, string> data)
         {
             DeviceID = DeviceStatic.GetString(data, DeviceStatic.DeviceId);
-            EntryID = DeviceStatic.GetString(data, DeviceStatic.ID);
+            EntryID = DeviceStatic.GetString(data, DeviceStatic.Id);
             Value = DeviceStatic.GetFloat(data, DeviceStatic.Value, 0);
             Date = DeviceStatic.GetDateTime(data, DeviceStatic.UploadDate);
             Name = DeviceStatic.GetString(data, DeviceStatic.Name);
@@ -114,6 +72,8 @@ namespace Shared.Models
             AdjustSpecial();
             SetTimeZone();
         }
+
+        public ReponseDevice() { }
 
         private void Invert()
         {

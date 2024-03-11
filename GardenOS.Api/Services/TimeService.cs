@@ -1,6 +1,6 @@
 using Shared.Models;
 
-namespace MainService.Services
+namespace API.Services
 {
 	public class TimeService
 	{

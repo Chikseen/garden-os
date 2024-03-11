@@ -20,7 +20,7 @@ public class AuthMiddleware(
     {
         string path = context.Request.Path.Value!;
 
-        if (path.Contains("/user") || path.Contains("/garden") || path.Contains("/controlls"))
+        if (path.Contains("/user") || path.Contains("/garden") || path.Contains("/manualData"))
             await GetUserData(context);
 
         else if (path.Contains("/standalone"))
