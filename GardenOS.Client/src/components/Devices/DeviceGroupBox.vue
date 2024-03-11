@@ -3,8 +3,8 @@
     <h1> {{ group }} </h1>
     <hr>
     <span class="group_items">
-      <div v-for="device in devices.sort((a, b) => a.sort_order - b.sort_order)" :key="device.id" class="group">
-        <DeviceBarlabel :device=device />
+      <div v-for="sensor in sensors.sort((a, b) => a.sortOrder - b.sortOrder)" :key="sensor.sensorId" class="group">
+        <DeviceBarlabel :device="sensor" />
       </div>
     </span>
   </div>
@@ -18,7 +18,7 @@ export default {
     DeviceBarlabel
   },
   props: {
-    devices: {
+    sensors: {
       type: Array,
       default: () => []
     },

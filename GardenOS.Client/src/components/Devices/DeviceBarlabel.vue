@@ -1,12 +1,10 @@
 <template>
-	<div @click="this.$router.push(`device/${device.device_id}`)" class="device_wrapper">
-		<DynLogo :displayId="device.display_id" :value="device.corrected_value" />
-		<span class="device_wrapper_content" :style="device.display_id === '' ? 'width: 100%;' : ''">
-			<h2> {{ device.name }} </h2>
-			<h3> {{ device.corrected_value.toFixed(1) }} {{ device.unit }} </h3>
-			<div class="diagram_liniar" v-if="device.display_id === ''">
-				<div class="diagram_liniar_bar" :style="`width: ${device.corrected_value}%;`"></div>
-			</div>
+	<div v-if="sensorData" @click="this.$router.push(`device/${sensor.deviceId}`)" class="device_wrapper">
+		<LC v-if="isLoading" />
+		<DynLogo v-else :displayId="sensorData.displayId" :value="sensorData.correctedValue" />
+		<span class="device_wrapper_content">
+			<h2> {{ sensor.name }} </h2>
+			<h3> {{ sensorData.correctedValue?.toFixed(1) }} {{ sensor.unit }} </h3>
 			<h5> {{ timeLabel }} </h5>
 		</span>
 	</div>
@@ -14,18 +12,23 @@
 
 <script>
 import DynLogo from "@/components/DynIcons/DynLogo.vue"
+import LC from "@/components/ui/LoadingComponent.vue"
 
 import { dynamicTimeDisplay } from "@/dates.js";
+import { fetchDeviceSensorData } from "@/services/apiService.js"
 
 export default {
 	components: {
-		DynLogo
+		DynLogo,
+		LC
 	},
 	props: {
-		device: { type: Object },
+		sensor: { type: Object },
 	},
 	data() {
 		return {
+			sensorData: null,
+			isLoading: true,
 			timeLabel: null,
 			timer: null,
 		}
@@ -41,8 +44,10 @@ export default {
 			}, 1000);
 		}
 	},
-	mounted() {
-		this.calcTime()
+	async mounted() {
+		//this.calcTime()
+		this.sensorData = await fetchDeviceSensorData(localStorage.getItem("selectedGarden"), this.sensor.deviceId, this.sensor.sensorId);
+		this.isLoading = false;
 	},
 	beforeUnmount() {
 		clearTimeout(this.timer)
@@ -55,7 +60,7 @@ export default {
 	&_wrapper {
 		cursor: pointer;
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: center;
 		gap: 15px;
 		padding: 10px 5px;

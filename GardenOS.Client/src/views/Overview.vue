@@ -20,8 +20,7 @@
         <DynamicGrid v-if="deviceData">
             <WeatherBox class="grid_item grid_item_weather" />
             <Informations class="grid_item" />
-            <DeviceList :devices=deviceData?.devices />
-            <DeviceControll />
+            <DeviceList :devices=deviceData />
             <div class="grid_item grid_item_settings grid_item_text">
                 <h3>Garden settings</h3>
                 <button @click="$router.push('/user')">User controll</button>
@@ -45,7 +44,6 @@ import LC from "@/components/ui/LoadingComponent.vue"
 import Informations from "@/components/InformationsComponent.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
 import HubControll from "@/components/HubControll.vue"
-import DeviceControll from "@/components/DeviceControll/DeviceControll.vue"
 
 import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
@@ -58,7 +56,6 @@ export default {
         WeatherBox,
         HubControll,
         Informations,
-        DeviceControll,
         LC,
         CTC,
     },
@@ -72,7 +69,6 @@ export default {
             navigator.clipboard.writeText(value);
         },
         ...mapActions({
-            fetchControlls: 'fetchControlls',
             fetchDevices: 'fetchDevices',
             logout: 'logout'
         })
@@ -94,7 +90,6 @@ export default {
             this.$store.commit("setUser", await fetchUser(gardenid))
             this.$store.commit("setGardenList", await fetchGardenMeta())
             this.fetchDevices()
-            this.fetchControlls()
             this.$hub.invoke("setUserToGarden", gardenid);
             this.isLoading = false
         }

@@ -112,7 +112,8 @@ export default {
       this.timeframe.end = toUTCISOString(new Date(e.target.value))
     },
     getDeviceById() {
-      return this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
+      console.log("2", this.deviceData.devices)
+      return this.deviceData.devices.find(d => d.deviceId == this.$route.params.id)
     },
     async fetchData() {
       this.isDataLoading = true
@@ -127,24 +128,26 @@ export default {
       });
 
       const chartData = await response.json()
-
+      console.log(chartData);
       // Refine Chart data
       let labels = []
       let datasets = []
-      const routeDevice = this.deviceData.devices.find(d => d.device_id == this.$route.params.id)
+
+      console.log("1", this.deviceData)
+      const routeDevice = this.deviceData.find(d => d.id == this.$route.params.id)
 
       chartData.devices.forEach(device => {
         if (!labels.includes(device.date)) {
           labels.push(device.date)
         }
         if (!datasets.some(d => d.label == device.name)) {
-          const ishidden = routeDevice.group_id != "" ? routeDevice.group_id != device.group_id : routeDevice.device_id != device.device_id
+          //const ishidden = routeDevice.id != "" ? routeDevice.id != device.id : routeDevice.deviceId != device.deviceId
           const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
-          const dataForDevice = devicesInLabel.map(d => { return { y: d.corrected_value, x: new Date(d.date) } })
+          const dataForDevice = devicesInLabel.map(d => { return { y: d.correctedValue, x: new Date(d.date) } })
           datasets.push({
             label: device.name,
             data: dataForDevice,
-            hidden: ishidden,
+            //hidden: ishidden,
             backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
           })
         }
@@ -158,7 +161,8 @@ export default {
   },
   computed: {
     currentDevice() {
-      const currentD = this.deviceData?.devices?.find(d => d.device_id == this.$route.params.id)
+      console.log(this.deviceData?.devices)
+      const currentD = this.deviceData?.devices?.find(d => d.deviceId == this.$route.params.id)
       return currentD
     },
     ...mapState({

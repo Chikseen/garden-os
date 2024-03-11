@@ -16,6 +16,7 @@ async function fetchGardenMeta() {
 	const res = await response.json();
 	return res;
 }
+
 async function fetchDevices(gardenId) {
 	let response;
 	if (localStorage.getItem("accessToken")) {
@@ -34,6 +35,64 @@ async function fetchDevices(gardenId) {
 	const res = await response.json();
 	return res;
 }
+
+async function fetchDeviceMeta(gardenId) {
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${gardenId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
+	return res;
+}
+
+async function fetchDeviceSensorMeta(gardenId, deviceId) {
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${gardenId}/${deviceId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
+	return res;
+}
+
+async function fetchDeviceSensorData(gardenId, deviceId, sesnorId) {
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${gardenId}/${deviceId}/${sesnorId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
+	return res;
+}
+
 async function fetchUser(gardenId) {
 	let response;
 	if (gardenId == null || gardenId == undefined || gardenId.length == 0) return null;
@@ -54,22 +113,11 @@ async function fetchUser(gardenId) {
 	const res = await response.json();
 	return res;
 }
-async function fetchControlls(gardenId) {
-	let response;
-	if (localStorage.getItem("accessToken")) {
-		response = await fetch(`${process.env.VUE_APP_PI_HOST}controlls/${gardenId}`, {
-			method: "GET",
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-			},
-		});
-	}
-
-	if (response?.status > 200) {
-		return null;
-	}
-
-	const res = await response.json();
-	return res;
-}
-export { fetchGardenMeta, fetchDevices, fetchUser, fetchControlls };
+export {
+	fetchGardenMeta,
+	fetchDevices,
+	fetchUser,
+	fetchDeviceMeta,
+	fetchDeviceSensorMeta,
+	fetchDeviceSensorData
+};

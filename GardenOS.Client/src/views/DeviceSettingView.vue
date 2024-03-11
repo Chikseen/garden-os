@@ -4,77 +4,76 @@
 		<LC v-if="isLoading" />
 		<div v-else>
 			<Grid>
-				<div v-for="device in deviceData?.devices" :key="device.device_id"
-					class="grid_item item deviceSetting_list_item">
+				<div v-for="device in deviceMeta" :key="device.id" class="grid_item item deviceSetting_list_item">
 					<span>
 						<input type="text" v-model="device.name" style="font-size: 1.5rem;" />
-						<h4>{{ device.device_id }}</h4>
+						<h4>{{ device.id }}</h4>
 					</span>
-					<div class="deviceSetting_list_item_row">
-						<span>
-							<label>Current Value: </label>
-							<p>{{ (device.value * 1).toFixed(1) }} </p>
-						</span>
-					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
 							<label>Display Id</label>
 							<h6>The display id will define the logo</h6>
 						</span>
-						<select v-model="device.display_id">
+						<select v-model="device.displayId">
 							<option value="soil_moisture">Soil Moisture</option>
 							<option value="uv_index">UV Index</option>
 							<option value="temperature">Temperature</option>
 							<option value="">None</option>
 						</select>
-						<div v-if="device.display_id" class="deviceSetting_list_item_row">
-							<DynLogo :displayId="device.display_id" :value="device.value" />
-							<input v-if="device.display_id == 'soil_moisture'" type="range" min="0" max="130"
+						<div v-if="device.displayId" class="deviceSetting_list_item_row">
+							<input v-if="device.displayId == 'soil_moisture'" type="range" min="0" max="130"
 								v-model="device.value">
-							<input v-if="device.display_id == 'uv_index'" type="range" min="0" max="11"
+							<input v-if="device.displayId == 'uv_index'" type="range" min="0" max="11"
 								v-model="device.value">
-							<input v-if="device.display_id == 'temperature'" type="range" min="-5" max="30"
+							<input v-if="device.displayId == 'temperature'" type="range" min="-5" max="30"
 								v-model="device.value">
 						</div>
-					</div>
-					<div class="deviceSetting_list_item_row">
-						<span>
-							<label>Upper Limit</label>
-							<h6>Defines the Upper Limit on which the value will be adjusted</h6>
-						</span>
-						<input type="number" min="0" max="100" v-model="device.upper_limit">
-					</div>
-					<div class="deviceSetting_list_item_row">
-						<span>
-							<label>Lower Limit</label>
-							<h6>Defines the Lower Limit on which the value will be adjusted</h6>
-						</span>
-						<input type="number" min="0" max="100" v-model="device.lower_limit">
 					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
 							<label>Sort Order</label>
 							<h6>Lower Number will be show before devices with a higher Number</h6>
 						</span>
-						<input type="number" min="0" max="100" v-model="device.sort_order">
+						<input type="number" min="0" max="100" v-model="device.sortOrder">
 					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
 							<label>Group Id</label>
 							<h6>Devices with the same Group Id will be grouped in one box</h6>
 						</span>
-						<input type="text" v-model="device.group_id">
+						<input type="text" v-model="device.groupId">
 					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
-							<label>Unit</label>
+							<label>Is Manual</label>
 						</span>
-						<input type="text" v-model="device.unit">
+						<input type="checkbox" v-model="device.isManual">
 					</div>
-					<div class="deviceSetting_list_item_row">
-						<button @click="saveDevice(device)">Save</button>
-						<button @click="fetchDevices">Load Original</button>
+					<div v-for="sensor in deviceSensorMeta[device.id]" :key="sensor.sensorId">
+						<span>
+							<input type="text" style="font-size: 1.5rem;" :placeholder="sensor.name" />
+							<h4>{{ sensor?.sensorId }}</h4>
+						</span>
+						<div class="deviceSetting_list_item_row">
+							<span>
+								<label>Group Id</label>
+								<h6>Devices with the same Group Id will be grouped in one box</h6>
+							</span>
+							<input type="text" v-model="device.groupId">
+						</div>
 					</div>
+				</div>
+				<div class="grid_item item deviceSetting_list_item">
+					<h1>Add Device</h1>
+					<span>
+						<label for="newDeviceIsManual">Is Manual</label>
+						<input id="newDeviceIsManual" type="checkbox" v-model="newDeviceIsManual">
+					</span>
+					<span>
+						<label for="newDeviceName">Name</label>
+						<input id="newDeviceName" type="text" v-model="newDeviceName">
+					</span>
+					<h1 @click="creatNewDevice">+</h1>
 				</div>
 			</Grid>
 		</div>
@@ -86,7 +85,8 @@ import Grid from "@/layout/DynamicGridLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 import DynLogo from "@/components/DynIcons/DynLogo.vue"
 
-import { mapState, mapActions } from "vuex";
+import { fetchDeviceMeta, fetchDeviceSensorMeta } from "@/services/apiService.js"
+import { mapState } from "vuex";
 
 export default {
 	components: {
@@ -96,7 +96,11 @@ export default {
 	},
 	data() {
 		return {
-			isLoading: true
+			deviceMeta: null,
+			deviceSensorMeta: {},
+			isLoading: true,
+			newDeviceIsManual: "",
+			newDeviceName: "",
 		}
 	},
 	methods: {
@@ -104,13 +108,13 @@ export default {
 			await fetch(`${process.env.VUE_APP_PI_HOST}garden/changedevice`, {
 				method: "PATCH",
 				body: JSON.stringify({
-					"device_id": device.device_id,
+					"id": device.id,
 					"name": device.name,
-					"display_id": device.display_id,
+					"displayId": device.displayId,
 					"upper_limit": device.upper_limit,
 					"lower_limit": device.lower_limit,
-					"sort_order": device.sort_order,
-					"group_id": device.group_id,
+					"sortOrder": device.sortOrder,
+					"groupId": device.groupId,
 					"unit": device.unit,
 				}),
 				headers: {
@@ -120,20 +124,39 @@ export default {
 				},
 			});
 		},
-		...mapActions({
-			fetchDevices: 'fetchDevices'
-		})
+		async creatNewDevice() {
+			await fetch(`${process.env.VUE_APP_PI_HOST}devices/create`, {
+				method: "POST",
+				body: JSON.stringify({
+					"IsManual": this.newDeviceIsManual,
+					"Name": this.newDeviceName,
+					"GardenId": this.gardenMeta.garden_id,
+				}),
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+			});
+		},
+		async fetchDevices() {
+			this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden"))
+			this.deviceMeta.forEach(async device => {
+				let sensorData = await fetchDeviceSensorMeta(localStorage.getItem("selectedGarden"), device.id)
+				this.deviceSensorMeta[device.id] = sensorData;
+			});
+		}
 	},
 	computed: {
 		...mapState({
-			deviceData: (state) => state.deviceData,
+			gardenMeta: (state) => state.gardenMeta,
 		}),
 	},
 	async mounted() {
 		await this.fetchDevices()
 		this.isLoading = false
 	}
-}
+} 
 </script>
 
 <style lang="scss">
@@ -159,6 +182,7 @@ export default {
 
 			&_row {
 				display: flex;
+				justify-content: space-between;
 				gap: 15px;
 			}
 

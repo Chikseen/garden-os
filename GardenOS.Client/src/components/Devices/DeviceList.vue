@@ -1,18 +1,26 @@
 <template>
-  <DeviceGroupBox v-for="group in groupList" :key="group" :devices="devices.filter(d => d.group_id == group)"
-    :group=group style="grid-column-start: span 2"/>
-  <DeviceBox v-for="device in devices.filter(d => d.group_id.length < 1).sort((a, b) => a.sort_order - b.sort_order)"
-    :key="device.device_id" :device="device" />
+  <!--<DeviceGroupBox v-for="group in groupList" :key="group" :devices="devices.filter(d => d.groupId == group)"
+    :group=group style="grid-column-start: span 2" />-->
+  <div v-for="sensor in sensors" :key="sensor.deviceId">
+    <DeviceBox :sensor="sensor" />
+  </div>
 </template>
 
 <script>
 import DeviceBox from "@/components/Devices/DeviceBox.vue"
 import DeviceGroupBox from "@/components/Devices/DeviceGroupBox.vue"
 
+import { fetchDeviceSensorMeta } from "@/services/apiService.js"
+
 export default {
   components: {
     DeviceBox,
     DeviceGroupBox
+  },
+  data() {
+    return {
+      sensors: []
+    }
   },
   props: {
     devices: {
@@ -20,15 +28,13 @@ export default {
       default: () => { }
     }
   },
-  computed: {
-    groupList() {
-      let groupList = []
-      this.devices.forEach(device => {
-        if (device.group_id && groupList.indexOf(device.group_id) < 0)
-          groupList.push(device.group_id)
+  async mounted() {
+    await this.devices.forEach(async device => {
+      let sensorsData = await fetchDeviceSensorMeta(localStorage.getItem("selectedGarden"), device.id)
+      sensorsData.forEach(sensor => {
+        this.sensors.push(sensor)
       });
-      return groupList
-    }
+    });
   }
 }
 </script>

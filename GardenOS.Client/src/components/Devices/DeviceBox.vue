@@ -1,5 +1,5 @@
 <template>
-  <DeviceBarlabel :device=device class="grid_item" />
+  <DeviceBarlabel :sensor="sensor" class="grid_item" />
 </template>
 
 <script>
@@ -10,7 +10,7 @@ export default {
     DeviceBarlabel
   },
   props: {
-    device: {
+    sensor: {
       type: Object,
       default: () => { }
     }
