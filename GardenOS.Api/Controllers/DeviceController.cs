@@ -3,6 +3,7 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Services.User;
+using Shared;
 using Shared.DeviceModels;
 using Shared.Models;
 
@@ -48,6 +49,13 @@ public class DeviceController(
     public ActionResult<ReponseDevice> GetLastSensorValue(string gardenId, string deviceId, string sensorId)
     {
         ReponseDevice devices = _deviceService.GetLastSensorValue(gardenId, deviceId, sensorId);
+        return Ok(devices);
+    }
+
+    [HttpPost("manual")]
+    public ActionResult<ReponseDevice> PostNewManualValue(NewManualValueModel model)
+    {
+        ReponseDevice devices = _deviceService.UploadNewValue(model);
         return Ok(devices);
     }
 }

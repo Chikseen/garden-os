@@ -50,6 +50,7 @@ namespace Shared.Models
         public string Unit { get; set; } = string.Empty;
         public string SpecialId { get; set; } = string.Empty;
         public bool IsInverted { get; set; } = false;
+        public bool IsManual { get; set; } = false;
 
         public ReponseDevice(Dictionary<string, string> data)
         {
@@ -64,9 +65,10 @@ namespace Shared.Models
             SortOrder = DeviceStatic.GetInt(data, DeviceStatic.SortOrder, -1);
             GroupId = DeviceStatic.GetString(data, DeviceStatic.GroupId);
             Unit = DeviceStatic.GetString(data, DeviceStatic.Unit);
-            IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
             SpecialId = DeviceStatic.GetString(data, DeviceStatic.SpecialId);
             SensorId = DeviceStatic.GetString(data, DeviceStatic.SensorId);
+            IsInverted = DeviceStatic.GetBool(data, DeviceStatic.IsInverted, false);
+            IsManual = DeviceStatic.GetBool(data, DeviceStatic.IsManual, false);
 
             Invert();
             AdjustSpecial();

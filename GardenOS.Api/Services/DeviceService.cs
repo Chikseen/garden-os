@@ -3,6 +3,7 @@ using API.Hub;
 using API.Interfaces;
 using ESP_sensor.Models;
 using Microsoft.AspNetCore.SignalR;
+using Shared;
 using Shared.DeviceModels;
 using Shared.Models;
 
@@ -91,6 +92,14 @@ namespace API.Services
             }
             else
                 return new();
+
+        }
+
+        public ReponseDevice UploadNewValue(NewManualValueModel model)
+        {
+            string query = IncommingDataQuery.UploadNewValueQuery(model);
+            MainDB.Query(query);
+            return GetLastSensorValue(model.GardenId, model.DeviceId, model.SensorId);
 
         }
     }

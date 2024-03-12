@@ -93,6 +93,34 @@ async function fetchDeviceSensorData(gardenId, deviceId, sesnorId) {
 	return res;
 }
 
+async function uploadNewValue(gardenId, deviceId, sesnorId, payload) {
+	let response;
+	if (localStorage.getItem("accessToken")) {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/manual`, {
+			method: "POST",
+			body: JSON.stringify(
+				{
+					GardenId: gardenId,
+					DeviceId: deviceId,
+					SensorId: sesnorId,
+					Value: payload * 1,
+				}),
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+		});
+	}
+
+	if (response?.status > 200) {
+		return null;
+	}
+
+	const res = await response.json();
+	return res;
+}
+
 async function fetchUser(gardenId) {
 	let response;
 	if (gardenId == null || gardenId == undefined || gardenId.length == 0) return null;
@@ -119,5 +147,6 @@ export {
 	fetchUser,
 	fetchDeviceMeta,
 	fetchDeviceSensorMeta,
-	fetchDeviceSensorData
+	fetchDeviceSensorData,
+	uploadNewValue
 };

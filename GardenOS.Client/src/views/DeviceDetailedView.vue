@@ -1,6 +1,6 @@
 <template>
-  <div v-if="currentDevice" class="detailed_wrapper">
-    <DeviceBox :device="getDeviceById()" />
+  <div v-if="data" class="detailed_wrapper">
+    <DeviceBox :sensor="getDeviceById()" />
     <div class="detailed_timeframe_wrapper">
       <div class="detailed_timeframe">
         <div>
@@ -112,8 +112,7 @@ export default {
       this.timeframe.end = toUTCISOString(new Date(e.target.value))
     },
     getDeviceById() {
-      console.log("2", this.deviceData.devices)
-      return this.deviceData.devices.find(d => d.deviceId == this.$route.params.id)
+      return this.deviceData.find(d => d.id == this.$route.params.id)
     },
     async fetchData() {
       this.isDataLoading = true
@@ -128,12 +127,10 @@ export default {
       });
 
       const chartData = await response.json()
-      console.log(chartData);
       // Refine Chart data
       let labels = []
       let datasets = []
 
-      console.log("1", this.deviceData)
       const routeDevice = this.deviceData.find(d => d.id == this.$route.params.id)
 
       chartData.devices.forEach(device => {
@@ -141,13 +138,13 @@ export default {
           labels.push(device.date)
         }
         if (!datasets.some(d => d.label == device.name)) {
-          //const ishidden = routeDevice.id != "" ? routeDevice.id != device.id : routeDevice.deviceId != device.deviceId
+          const ishidden = routeDevice.id != "" ? routeDevice.id != device.id : routeDevice.id != device.id
           const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
           const dataForDevice = devicesInLabel.map(d => { return { y: d.correctedValue, x: new Date(d.date) } })
           datasets.push({
             label: device.name,
             data: dataForDevice,
-            //hidden: ishidden,
+            //  hidden: ishidden,
             backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
           })
         }
@@ -162,7 +159,7 @@ export default {
   computed: {
     currentDevice() {
       console.log(this.deviceData?.devices)
-      const currentD = this.deviceData?.devices?.find(d => d.deviceId == this.$route.params.id)
+      const currentD = this.deviceData?.devices?.find(d => d.id == this.$route.params.id)
       return currentD
     },
     ...mapState({

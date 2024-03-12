@@ -1,4 +1,6 @@
 using ExtensionMethods;
+using Shared;
+using Shared.DeviceModels;
 using Shared.Models;
 
 public static class ViewQueryService
@@ -61,20 +63,25 @@ public static class ViewQueryService
 				DEVICE_SENSORS.{DeviceStatic.LowerLimit},
 				DEVICE_SENSORS.{DeviceStatic.Unit},
 				DEVICE_SENSORS.{DeviceStatic.Name},
-				DEVICE_SENSORS.{DeviceStatic.IsInverted}
+				DEVICE_SENSORS.{DeviceStatic.IsInverted},
+				DEVICES.{DeviceStatic.IsManual}
 			FROM
 				DATALOG{gardenId.Replace("-", "")} AS DATALOG
 			JOIN 
 				DEVICE_SENSORS
 			ON
 				DATALOG.SENSOR_ID = DEVICE_SENSORS.SENSOR_ID
+			JOIN
+				DEVICES
+			ON
+				DEVICES.ID = DEVICE_SENSORS.DEVICE_ID
 			AND 
 				DATALOG.{DeviceStatic.DeviceId} = '{deviceId}'
 			AND 
 				DATALOG.{DeviceStatic.SensorId} = '{sensorId}'
 			ORDER BY 
 				DATALOG.SENSOR_ID, 
-				UPLOAD_DATE".Clean();
+				UPLOAD_DATE DESC".Clean();
     }
 
     private static string GetDistinct(TimeFrame? timeFrame)

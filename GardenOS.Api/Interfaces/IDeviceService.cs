@@ -1,4 +1,5 @@
 ﻿using ESP_sensor.Models;
+using Shared;
 using Shared.DeviceModels;
 using Shared.Models;
 
@@ -14,5 +15,6 @@ namespace API.Interfaces
         List<DeviceMeta> GetAllDevices(string gardenId);
         List<DeviceSensorMeta> GetDevice(string deviceId);
         ReponseDevice GetLastSensorValue(string gardenId, string deviceId, string sensorId);
+        ReponseDevice UploadNewValue(NewManualValueModel model);
     }
 }
