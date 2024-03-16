@@ -174,7 +174,7 @@ export default {
     }),
   },
   created() {
-    let dayStart = new Date().setUTCHours(0, 0, 0, 0)
+    let dayStart = new Date(new Date().setDate(new Date().getDate() - 7)).setUTCHours(0, 0, 0, 0)
     let dayEnd = new Date().setUTCHours(23, 59, 0, 0)
 
     // At this point i hink JS is high

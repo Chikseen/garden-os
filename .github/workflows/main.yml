@@ -12,3 +12,5 @@ jobs:
         run: docker-compose build --no-cache
       - name: Start Docker Compose
         run: docker-compose up -d --build
+      - name: Debug start
+        run: docker-compose up -d --build

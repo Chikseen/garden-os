@@ -61,7 +61,7 @@ namespace Shared.Models
                             return;
                         }
 
-                        sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.70f);
+                        sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.715f);
                         sensor.SetValues();
                     }
                 }

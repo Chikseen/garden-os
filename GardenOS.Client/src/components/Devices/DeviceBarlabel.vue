@@ -1,6 +1,7 @@
 <template>
-	<div v-if="sensorData" @click="this.$router.push(`device/${sensorData.deviceID}`)" class="device_wrapper">
-		<DynLogo :displayId="sensorData.displayId" :value="sensorData.correctedValue" />
+	<div v-if="sensorData" @click="this.$router.push(`device/${sensorData.deviceId}`)" class="device_wrapper">
+		<DynLogo v-if="sensorData.correctedValue" :displayId="sensorData.displayId"
+			:value="sensorData.correctedValue" />
 		<span v-if="isAddnewValueActive" class="device_wrapper_content" @click.stop="">
 			<input type="number" v-model="newValue">
 			<h1 class="device_wrapper_content_values_add" @click="submitNewValue">+</h1>
@@ -8,8 +9,9 @@
 		<span v-else class="device_wrapper_content">
 			<span class="device_wrapper_content_values">
 				<h2> {{ sensorData.name }} </h2>
-				<h3> {{ sensorData.correctedValue?.toFixed(1) }} {{ sensorData.unit }} </h3>
-				<h5> {{ timeLabel }} </h5>
+				<h3 v-if="sensorData.correctedValue"> {{ sensorData.correctedValue?.toFixed(1) }} {{ sensorData.unit }}
+				</h3>
+				<h5 v-if="sensorData.date"> {{ timeLabel }} </h5>
 			</span>
 			<span v-if="sensorData.isManual" class="device_wrapper_content_values"
 				@click.stop="isAddnewValueActive = !isAddnewValueActive">
