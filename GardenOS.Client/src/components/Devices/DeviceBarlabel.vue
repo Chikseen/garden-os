@@ -1,15 +1,14 @@
 <template>
-	<div v-if="sensorData" @click="this.$router.push(`device/${sensor.deviceId}`)" class="device_wrapper">
-		<LC v-if="isLoading" />
-		<DynLogo v-else :displayId="sensorData.displayId" :value="sensorData.correctedValue" />
+	<div v-if="sensorData" @click="this.$router.push(`device/${sensorData.deviceID}`)" class="device_wrapper">
+		<DynLogo :displayId="sensorData.displayId" :value="sensorData.correctedValue" />
 		<span v-if="isAddnewValueActive" class="device_wrapper_content" @click.stop="">
 			<input type="number" v-model="newValue">
 			<h1 class="device_wrapper_content_values_add" @click="submitNewValue">+</h1>
 		</span>
 		<span v-else class="device_wrapper_content">
 			<span class="device_wrapper_content_values">
-				<h2> {{ sensor.name }} </h2>
-				<h3> {{ sensorData.correctedValue?.toFixed(1) }} {{ sensor.unit }} </h3>
+				<h2> {{ sensorData.name }} </h2>
+				<h3> {{ sensorData.correctedValue?.toFixed(1) }} {{ sensorData.unit }} </h3>
 				<h5> {{ timeLabel }} </h5>
 			</span>
 			<span v-if="sensorData.isManual" class="device_wrapper_content_values"
@@ -22,23 +21,19 @@
 
 <script>
 import DynLogo from "@/components/DynIcons/DynLogo.vue"
-import LC from "@/components/ui/LoadingComponent.vue"
 
 import { dynamicTimeDisplay } from "@/dates.js";
-import { fetchDeviceSensorData,uploadNewValue } from "@/services/apiService.js"
+import { uploadNewValue } from "@/services/apiService.js"
 
 export default {
 	components: {
-		DynLogo,
-		LC
+		DynLogo
 	},
 	props: {
-		sensor: { type: Object },
+		sensorData: { type: Object },
 	},
 	data() {
 		return {
-			sensorData: null,
-			isLoading: true,
 			timeLabel: null,
 			timer: null,
 			isAddnewValueActive: false,
@@ -56,13 +51,11 @@ export default {
 			}, 1000);
 		},
 		async submitNewValue() {
-			await uploadNewValue(localStorage.getItem("selectedGarden"), this.sensor.deviceId, this.sensor.sensorId, this.newValue);
+			await uploadNewValue(localStorage.getItem("selectedGarden"), this.sensorData.deviceId, this.sensorData.sensorId, this.newValue);
 			this.isAddnewValueActive = false
 		}
 	},
 	async mounted() {
-		this.sensorData = await fetchDeviceSensorData(localStorage.getItem("selectedGarden"), this.sensor.deviceId, this.sensor.sensorId);
-		this.isLoading = false;
 		this.calcTime()
 	},
 	beforeUnmount() {

@@ -1,5 +1,6 @@
-using System.Text.Json.Serialization;
+using API.Enums;
 using Shared.Models;
+using System.Text.Json.Serialization;
 
 public class DeviceModel
 {
@@ -22,7 +23,7 @@ public class DeviceModel
     public int? LowerLimit = null;
 
     public int? SerialId = 0;
-    public string DeviceTyp = string.Empty;
+    public DeviceTypeId DeviceTypId;
     public byte Address = 0x00;
     public TimeSpan DataUpdateInterval = new(24, 24, 24);
     public DateTime LastEntry = DateTime.Now.AddYears(-1);
@@ -36,7 +37,7 @@ public class DeviceModel
         DisplayId = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DisplayId);
         UpperLimit = DeviceStatic.GetInt(deviceDictionary, DeviceStatic.UpperLimit);
         LowerLimit = DeviceStatic.GetInt(deviceDictionary, DeviceStatic.LowerLimit);
-        DeviceTyp = DeviceStatic.GetString(deviceDictionary, DeviceStatic.DeviceTyp);
+        DeviceTypId = (DeviceTypeId)DeviceStatic.GetInt(deviceDictionary, DeviceStatic.DeviceTypId, -1);
         Address = DeviceStatic.GetByte(deviceDictionary, DeviceStatic.Address);
         SerialId = DeviceStatic.GetInt(deviceDictionary, DeviceStatic.SerialId);
         DataUpdateInterval = DeviceStatic.GetTimeSpan(deviceDictionary, DeviceStatic.DataUpdateInterval);

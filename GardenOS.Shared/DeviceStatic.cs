@@ -11,9 +11,11 @@ namespace Shared.Models
         public readonly static string UploadDate = "upload_date";
         public readonly static string Date = "date";
         public readonly static string DeviceName = "device_name";
+        public readonly static string SensorName = "sensor_name";
+        public readonly static string Name = "name";
         public readonly static string UpperLimit = "upper_limit";
         public readonly static string LowerLimit = "lower_limit";
-        public readonly static string DeviceTyp = "device_typ";
+        public readonly static string DeviceTypId = "device_type_id";
         public readonly static string Address = "address";
         public readonly static string SerialId = "serial_id";
         public readonly static string ADC = "ADC";
@@ -23,7 +25,6 @@ namespace Shared.Models
         public readonly static string LastEntry = "logdate";
         public readonly static string RPIID = "rpi_id";
         public readonly static string GardenID = "garden_id";
-        public readonly static string Name = "name";
         public readonly static string Id = "id";
         public readonly static string JSON = "json";
         public readonly static string UserName = "user_name";
@@ -44,6 +45,7 @@ namespace Shared.Models
         public readonly static string Build = "build";
         public readonly static string UserRole = "userrole_id";
         public readonly static string IsManual = "is_manual";
+        public readonly static string SensorTypeId = "sensor_type_id";
 
         public static string? GetString(Dictionary<string, string> dict, string key, bool allowNull = true)
         {

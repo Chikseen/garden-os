@@ -4,20 +4,22 @@
 		<LC v-if="isUserListLoading" />
 		<span v-else>
 			<List>
-				<div v-for="user in userList?.userList.filter(u => u.user_id != currentUser.preferred_username)" :key="user"
-					class="grid_item item userOverview_item">
+				<div v-for="user in userList?.userList.filter(u => u.user_id != currentUser.preferred_username)"
+					:key="user" class="grid_item item userOverview_item">
 					<div class="userOverview_item_box">
 						<h4> Name: {{ user.given_name }} {{ user.family_name }} </h4>
 						<h4> ID: {{ user.user_id }} </h4>
 						<h4 class="userOverview_item_box_role"
 							:style="`background-color: ${getRoleColor(user.userrole_id)};`"> Role: {{
-								nameRole(user.userrole_id) }}</h4>
+			nameRole(user.userrole_id) }}</h4>
 					</div>
 					<div v-if="currentUser?.gardenData?.userRole >= 20" class="userOverview_item_box">
-						<button v-if="user.userrole_id != '20'" @click="toggleUserStatus(user.user_id, '20')">Admin</button>
+						<button v-if="user.userrole_id != '20'"
+							@click="toggleUserStatus(user.user_id, '20')">Admin</button>
 						<button v-if="user.userrole_id != '10'"
 							@click="toggleUserStatus(user.user_id, '10')">Maintainer</button>
-						<button v-if="user.userrole_id != '0'" @click="toggleUserStatus(user.user_id, '0')">Viewer</button>
+						<button v-if="user.userrole_id != '0'"
+							@click="toggleUserStatus(user.user_id, '0')">Viewer</button>
 						<button v-if="user.userrole_id != -'10'" @click="toggleUserStatus(user.user_id, '-10')">No
 							Access</button>
 					</div>
@@ -31,8 +33,7 @@
 import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
-import { mapState } from "vuex";
-import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
+import { mapState, mapActions } from "vuex";
 import { getRoleNameById } from "@/services/userroleService.js"
 
 export default {
@@ -91,6 +92,9 @@ export default {
 			});
 			await this.fetchuser()
 		},
+		...mapActions({
+			fetchGardenMeta: 'fetchGardenMeta'
+		})
 	},
 	computed: {
 		...mapState({
@@ -100,7 +104,7 @@ export default {
 	async mounted() {
 		this.$store.commit("setUser", await fetchUser(localStorage.getItem("selectedGarden")))
 		this.selectedGarden = localStorage.getItem('selectedGarden')
-		this.$store.commit("setGardenList", await fetchGardenMeta())
+		this.fetchGardenMeta()
 		this.fetchuser()
 	}
 }

@@ -35,7 +35,6 @@
 import List from "@/layout/ListLayout.vue";
 import LC from "@/components/ui/LoadingComponent.vue"
 
-import { fetchGardenMeta } from "@/services/apiService.js"
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -81,7 +80,8 @@ export default {
 			this.isAccessRequestLoading = false
 		},
 		...mapActions({
-			logout: 'logout'
+			logout: 'logout',
+			fetchGardenMeta: 'fetchGardenMeta'
 		})
 	},
 	computed: {
@@ -93,7 +93,7 @@ export default {
 	async mounted() {
 		this.isGardenListLoading = true
 		this.selectedGarden = localStorage.getItem('selectedGarden')
-		this.$store.commit("setGardenList", await fetchGardenMeta())
+		this.fetchGardenMeta()
 		await this.loadRequested();
 		this.isGardenListLoading = false
 	}

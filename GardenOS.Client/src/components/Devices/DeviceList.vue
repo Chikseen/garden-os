@@ -10,7 +10,7 @@
 import DeviceBox from "@/components/Devices/DeviceBox.vue"
 import DeviceGroupBox from "@/components/Devices/DeviceGroupBox.vue"
 
-import { fetchDeviceSensorMeta } from "@/services/apiService.js"
+import { fetchDeviceSensorLatestValues } from "@/services/apiService.js"
 
 export default {
   components: {
@@ -30,8 +30,8 @@ export default {
   },
   async mounted() {
     await this.devices.forEach(async device => {
-      let sensorsData = await fetchDeviceSensorMeta(localStorage.getItem("selectedGarden"), device.id)
-      sensorsData.forEach(sensor => {
+      let deviceData = await fetchDeviceSensorLatestValues(localStorage.getItem("selectedGarden"), device.id)
+      deviceData.sensor.forEach(sensor => {
         this.sensors.push(sensor)
       });
     });

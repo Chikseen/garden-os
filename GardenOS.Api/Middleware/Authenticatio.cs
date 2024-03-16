@@ -1,17 +1,12 @@
-using API.Interfaces;
 using dotenv.net;
-using ESP_sensor.Models;
 using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace Middleware;
 
 public class AuthMiddleware(
-        RequestDelegate next,
-        IDeviceService _standaloneService)
+        RequestDelegate next)
 {
 
     private readonly RequestDelegate _next = next;
@@ -22,9 +17,6 @@ public class AuthMiddleware(
 
         if (path.Contains("/user") || path.Contains("/garden") || path.Contains("/manualData"))
             await GetUserData(context);
-
-        else if (path.Contains("/standalone"))
-            await CheckStandaloneDevice(context);
 
         else if (path.Contains("/devices"))
         {
@@ -92,39 +84,6 @@ public class AuthMiddleware(
             userData.CheckGardenAccess(context.Request.RouteValues["gardenId"]!.ToString()!);
 
         context.Features.Set(userData);
-    }
-
-    private async Task CheckStandaloneDevice(HttpContext context)
-    {
-        StandaloneDevice body = await GetBody<StandaloneDevice>(context.Request);
-        if (body == null)
-        {
-            await ReturnErrorResponse(context);
-            return;
-        }
-
-        if (!_standaloneService.IsCredentialsValid(body))
-        {
-            await ReturnErrorResponse(context);
-            return;
-        }
-
-        context.Features.Set(body);
-    }
-
-    private static async Task<T?> GetBody<T>(HttpRequest request)
-    {
-        if (request.Method == HttpMethods.Post && request.ContentLength > 0)
-        {
-            request.EnableBuffering();
-            byte[] buffer = new byte[Convert.ToInt32(request.ContentLength)];
-            await request.Body.ReadAsync(buffer, 0, buffer.Length);
-            string requestContent = Encoding.UTF8.GetString(buffer);
-            request.Body.Position = 0;
-            T body = JsonSerializer.Deserialize<T>(requestContent)!;
-            return body;
-        }
-        return default;
     }
 }
 

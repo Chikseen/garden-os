@@ -50,7 +50,6 @@ ChartJS.register(
   TimeScale
 )
 
-import { fetchGardenMeta } from "@/services/apiService.js"
 import { toUTCISOString } from "@/dates.js"
 import { mapState, mapActions } from "vuex";
 
@@ -116,7 +115,7 @@ export default {
     },
     async fetchData() {
       this.isDataLoading = true
-      const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/detailed`, {
+      const response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${localStorage.getItem("selectedGarden")}/${this.$route.params.id}`, {
         method: "POST",
         body: JSON.stringify(this.timeframe),
         headers: {
@@ -127,39 +126,46 @@ export default {
       });
 
       const chartData = await response.json()
+
       // Refine Chart data
       let labels = []
-      let datasets = []
+      let dataSetsValues = {}
 
-      const routeDevice = this.deviceData.find(d => d.id == this.$route.params.id)
-
-      chartData.devices.forEach(device => {
-        if (!labels.includes(device.date)) {
-          labels.push(device.date)
-        }
-        if (!datasets.some(d => d.label == device.name)) {
-          const ishidden = routeDevice.id != "" ? routeDevice.id != device.id : routeDevice.id != device.id
-          const devicesInLabel = chartData.devices.filter(d => d.name == device.name)
-          const dataForDevice = devicesInLabel.map(d => { return { y: d.correctedValue, x: new Date(d.date) } })
-          datasets.push({
-            label: device.name,
-            data: dataForDevice,
-            //  hidden: ishidden,
-            backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
-          })
-        }
+      chartData.forEach(device => {
+        labels.push(device.date)
+        device.sensor.forEach(sensor => {
+          if (!dataSetsValues.hasOwnProperty(sensor.name))
+            dataSetsValues[sensor.name] = []
+          dataSetsValues[sensor.name].push(sensor.correctedValue)
+        })
       });
-      this.data = { labels: labels, datasets: datasets }
+
+      console.log(dataSetsValues)
+
+      let dataSets = []
+
+      Object.keys(dataSetsValues).forEach(dataset => {
+        dataSets.push({
+          label: dataset,
+          data: dataSetsValues[dataset],
+          //  hidden: ishidden,
+          backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        })
+      });
+
+      this.data = { labels: labels, datasets: dataSets }
+      console.log(this.data)
       this.isDataLoading = false
     },
     ...mapActions({
-      fetchDevices: 'fetchDevices'
+      fetchDevices: 'fetchDevices',
+      fetchGardenMeta: 'fetchGardenMeta'
     })
   },
   computed: {
     currentDevice() {
-      console.log(this.deviceData?.devices)
-      const currentD = this.deviceData?.devices?.find(d => d.id == this.$route.params.id)
+      console.log(this.deviceData)
+      const currentD = this.deviceData?.find(d => d.id == this.$route.params.id)
       return currentD
     },
     ...mapState({
@@ -176,7 +182,7 @@ export default {
     this.timeframe.end = new Date(dayEnd).toISOString()
   },
   async mounted() {
-    this.$store.commit("setGardenList", await fetchGardenMeta())
+    this.fetchGardenMeta()
     this.fetchDevices()
     this.fetchData()
   },

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Services.User;
 using Shared;
 using Shared.DeviceModels;
+using Shared.Enums;
 using Shared.Models;
 
 namespace API.Controllers;
@@ -38,24 +39,23 @@ public class DeviceController(
         return Ok(devices);
     }
 
-    [HttpGet("{gardenId}/{deviceId}")]
-    public ActionResult<List<DeviceSensorMeta>> GetDevice(string deviceId)
+    [HttpGet("{gardenId}/{deviceId}/{timeFrameId}")]
+    public ActionResult<Device> GetSensorValues(string gardenId, string deviceId, int timeFrameId)
     {
-        List<DeviceSensorMeta> devices = _deviceService.GetDevice(deviceId);
+        Device devices = _deviceService.GetSensorValues(gardenId, deviceId, (TimeFrameId)timeFrameId);
         return Ok(devices);
     }
 
-    [HttpGet("{gardenId}/{deviceId}/{sensorId}")]
-    public ActionResult<ReponseDevice> GetLastSensorValue(string gardenId, string deviceId, string sensorId)
+    [HttpPost("{gardenId}/{deviceId}")]
+    public ActionResult<Device> GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame)
     {
-        ReponseDevice devices = _deviceService.GetLastSensorValue(gardenId, deviceId, sensorId);
-        return Ok(devices);
+        return Ok(_deviceService.GetDetailedTimeFrame(gardenId, deviceId, timeFrame));
     }
 
     [HttpPost("manual")]
-    public ActionResult<ReponseDevice> PostNewManualValue(NewManualValueModel model)
+    public ActionResult<Device> PostNewManualValue(NewManualValueModel model)
     {
-        ReponseDevice devices = _deviceService.UploadNewValue(model);
+        Device devices = _deviceService.UploadNewValue(model);
         return Ok(devices);
     }
 }

@@ -5,24 +5,26 @@ using Shared.Models;
 
 public static class ViewQueryService
 {
-    public static string DetailedViewQuery(string gardenId, TimeFrame? timeFrame = null)
+    public static string DetailedViewQuery(string gardenId, string deviceid, TimeFrame timeFrame)
     {
         return @$"
 			SELECT
 				{GetDistinct(timeFrame)}
 				{GetSelect(timeFrame)}
-				DATALOG.device_id AS DEVICE_ID
-				,DATALOG.VALUE AS VALUE
-				,DEVICES.DISPLAY_ID
-				,DEVICES.SORT_ORDER
-				,DEVICES.GROUP_ID
-				,DEVICE_SENSORS.NAME
-				,DEVICE_SENSORS.UPPER_LIMIT
-				,DEVICE_SENSORS.LOWER_LIMIT
-				,DEVICE_SENSORS.SENSOR_ID
-				,DEVICE_SENSORS.UNIT
-				,DEVICE_SENSORS.IS_INVERTED
-
+				DATALOG.{DeviceStatic.DeviceId} AS DEVICE_ID
+				,DATALOG.{DeviceStatic.Value} AS VALUE
+				,DEVICES.{DeviceStatic.DisplayId}
+				,DEVICES.{DeviceStatic.SortOrder}
+				,DEVICES.{DeviceStatic.GroupId}
+				,DEVICES.{DeviceStatic.DeviceName}
+				,DEVICES.{DeviceStatic.DeviceTypId}
+				,DEVICE_SENSORS.{DeviceStatic.SensorName}
+				,DEVICE_SENSORS.{DeviceStatic.UpperLimit}
+				,DEVICE_SENSORS.{DeviceStatic.LowerLimit}
+				,DEVICE_SENSORS.{DeviceStatic.SensorId}
+				,DEVICE_SENSORS.{DeviceStatic.Unit}
+				,DEVICE_SENSORS.{DeviceStatic.IsInverted}
+				,DEVICE_SENSORS.{DeviceStatic.SensorTypeId}
 			FROM
 				(
 					SELECT
@@ -42,29 +44,36 @@ public static class ViewQueryService
 				DEVICES
 			ON 
 				DEVICES.GARDEN_ID = '{gardenId}'
+			AND 
+				DEVICES.ID = '{deviceid}'
 			JOIN 
 				DEVICE_SENSORS
 			ON 
 				DATALOG.SENSOR_ID = DEVICE_SENSORS.SENSOR_ID
+			AND
+				DATALOG.DEVICE_ID = '{deviceid}'
 			{GetOrder(timeFrame)}".Clean();
     }
 
-    public static string GetLastSensorValueQuery(string gardenId, string deviceId, string sensorId)
+    public static string GetSensorValuessQuery(string gardenId, string deviceId)
     {
         return @$"
 			SELECT
 				DISTINCT ON(DATALOG.SENSOR_ID)
-				DATALOG.{DeviceStatic.Id},
-				DATALOG.{DeviceStatic.Value},
-				DATALOG.{DeviceStatic.UploadDate},
-				DATALOG.{DeviceStatic.DeviceId},
-				DATALOG.{DeviceStatic.SensorId},
-				DEVICE_SENSORS.{DeviceStatic.UpperLimit},
-				DEVICE_SENSORS.{DeviceStatic.LowerLimit},
-				DEVICE_SENSORS.{DeviceStatic.Unit},
-				DEVICE_SENSORS.{DeviceStatic.Name},
-				DEVICE_SENSORS.{DeviceStatic.IsInverted},
-				DEVICES.{DeviceStatic.IsManual}
+				DATALOG.{DeviceStatic.Id}
+				,DATALOG.{DeviceStatic.Value}
+				,DATALOG.{DeviceStatic.UploadDate}
+				,DATALOG.{DeviceStatic.DeviceId}
+				,DATALOG.{DeviceStatic.SensorId}
+				,DEVICES.{DeviceStatic.IsManual}
+				,DEVICES.{DeviceStatic.DeviceName}
+				,DEVICES.{DeviceStatic.DeviceTypId}
+				,DEVICE_SENSORS.{DeviceStatic.UpperLimit}
+				,DEVICE_SENSORS.{DeviceStatic.LowerLimit}
+				,DEVICE_SENSORS.{DeviceStatic.Unit}
+				,DEVICE_SENSORS.{DeviceStatic.SensorName}
+				,DEVICE_SENSORS.{DeviceStatic.IsInverted}
+				,DEVICE_SENSORS.{DeviceStatic.SensorTypeId}
 			FROM
 				DATALOG{gardenId.Replace("-", "")} AS DATALOG
 			JOIN 
@@ -77,8 +86,6 @@ public static class ViewQueryService
 				DEVICES.ID = DEVICE_SENSORS.DEVICE_ID
 			AND 
 				DATALOG.{DeviceStatic.DeviceId} = '{deviceId}'
-			AND 
-				DATALOG.{DeviceStatic.SensorId} = '{sensorId}'
 			ORDER BY 
 				DATALOG.SENSOR_ID, 
 				UPLOAD_DATE DESC".Clean();

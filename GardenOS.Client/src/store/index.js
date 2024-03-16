@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import router from "@/router/index";
-import { fetchDeviceMeta } from "@/services/apiService.js";
+import { fetchDeviceMeta, fetchGardenMeta } from "@/services/apiService.js";
 
 export default createStore({
 	state: {
@@ -61,7 +61,12 @@ export default createStore({
 	},
 	actions: {
 		async fetchDevices(context) {
-			context.commit("setAllDevicesData", this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden")));
+			if (!this.deviceMeta)
+				context.commit("setAllDevicesData", this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden")));
+		},
+		async fetchGardenMeta(context) {
+			if (!this.gardenList)
+				context.commit("setGardenList", await fetchGardenMeta());
 		},
 		async logout(context) {
 			context.state.keycloak.logout({ redirectUri: process.env.VUE_APP_AUTH_LOGOUT });

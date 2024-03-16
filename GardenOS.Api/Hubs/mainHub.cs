@@ -6,7 +6,7 @@ namespace API.Hub
 {
     public interface IMainHub
     {
-        public Task SendCurrentDeviceData(Device message);
+        public Task SendCurrentDeviceData(GardenUserModel message);
         public Task NewDeviceStatus(DeveiceStatus message);
         public Task NewVersion();
         public Task SendRebootRequest();

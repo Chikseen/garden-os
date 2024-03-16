@@ -2,7 +2,7 @@
 
 namespace Shared.DeviceModels
 {
-    public class Device
+    public class GardenUserModel
     {
         [Required]
         public string DeviceId { get; init; }

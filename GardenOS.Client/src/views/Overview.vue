@@ -45,7 +45,7 @@ import Informations from "@/components/InformationsComponent.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
 import HubControll from "@/components/HubControll.vue"
 
-import { fetchGardenMeta, fetchUser } from "@/services/apiService.js"
+import { fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
 import { mapState, mapActions } from "vuex";
 
@@ -70,6 +70,7 @@ export default {
         },
         ...mapActions({
             fetchDevices: 'fetchDevices',
+            fetchGardenMeta: 'fetchGardenMeta',
             logout: 'logout'
         })
     },
@@ -88,7 +89,7 @@ export default {
         const gardenid = localStorage.getItem("selectedGarden")
         if (gardenid?.length > 0) {
             this.$store.commit("setUser", await fetchUser(gardenid))
-            this.$store.commit("setGardenList", await fetchGardenMeta())
+            this.fetchGardenMeta()
             this.fetchDevices()
             this.$hub.invoke("setUserToGarden", gardenid);
             this.isLoading = false

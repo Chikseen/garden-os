@@ -1,5 +1,5 @@
-using API.Interfaces;
 using API.Hub;
+using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Services.User;
@@ -15,25 +15,10 @@ namespace API.Controllers
     {
         private readonly UserService _userService = new();
 
-        [HttpPost("{gardenId}/detailed")]
-        public ActionResult<ResponseDevices> GetDetailed(string gardenId, TimeFrame timeFrame)
-        {
-            ResponseDevices response = _deviceService.GetDetailed(gardenId, timeFrame);
-            return Ok(response);
-        }
-
         [HttpGet("{gardenId}/users")]
         public ActionResult<UserList> GetUserList(string gardenId)
         {
             UserList response = _userService.GetUserList(gardenId);
-            return Ok(response);
-        }
-
-        [HttpGet("{gardenId}/info")]
-        public ActionResult<GardenInfo> GetGardenInfo(string gardenId)
-        {
-            GardenInfo response = _deviceService.GetGardenInfo(gardenId);
-
             return Ok(response);
         }
     }

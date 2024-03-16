@@ -41,24 +41,6 @@ export default {
 				}
 			}, 5000);
 		},
-		async load() {
-			this.isLoading = true
-			const response = await fetch(`${process.env.VUE_APP_PI_HOST}garden/${localStorage.getItem("selectedGarden")}/info`, {
-				method: "GET",
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
-				},
-			});
-			this.data = await response.json();
-
-			if (this.data?.garden_info.length > 1)
-				this.nextTile(1)
-
-			this.isLoading = false
-		}
-	},
-	mounted() {
-		this.load()
 	},
 }
 </script>

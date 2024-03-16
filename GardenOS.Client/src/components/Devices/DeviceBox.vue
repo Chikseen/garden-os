@@ -1,5 +1,5 @@
 <template>
-  <DeviceBarlabel :sensor="sensor" class="grid_item" />
+  <DeviceBarlabel :sensorData="sensor" class="grid_item" />
 </template>
 
 <script>
