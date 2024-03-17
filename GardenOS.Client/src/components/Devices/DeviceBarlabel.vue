@@ -1,8 +1,9 @@
 <template>
-	<div v-if="sensorData" @click="this.$router.push(`device/${sensorData.deviceId}`)" class="device_wrapper">
+	<div v-if="sensorData" @click="this.$router.push(`device/${sensorData.deviceId}`)"
+		:class="['device_wrapper', { 'device_wrapper_active': isAddnewValueActive }]">
 		<DynLogo v-if="sensorData.correctedValue" :displayId="sensorData.displayId"
 			:value="sensorData.correctedValue" />
-		<span v-if="isAddnewValueActive" class="device_wrapper_content" @click.stop="">
+		<span v-if="isAddnewValueActive" class="device_wrapper_contents_add" @click.stop="">
 			<input type="number" v-model="newValue">
 			<h1 class="device_wrapper_content_values_add" @click="submitNewValue">+</h1>
 		</span>
@@ -81,11 +82,20 @@ export default {
 			margin: auto 0;
 		}
 
+		&_active {
+			grid-column: 1 / 2;
+		}
 
 		&_content {
 			display: flex;
 			justify-content: center;
 			gap: 25px;
+
+			&_add {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-evenly;
+			}
 
 			&_values {
 				display: flex;

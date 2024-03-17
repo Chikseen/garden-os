@@ -1,6 +1,6 @@
 <template>
   <div v-if="data" class="detailed_wrapper">
-    <DeviceBox :sensor="getDeviceById()" />
+    <DeviceBarlabel :sensorData="getDeviceById()" class="grid_item" />
     <div class="detailed_timeframe_wrapper">
       <div class="detailed_timeframe">
         <div>
@@ -36,7 +36,7 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import 'chartjs-adapter-moment';
-import DeviceBox from "@/components/Devices/DeviceBox.vue"
+import DeviceBarlabel from "@/components/Devices/DeviceBarlabel.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 
 ChartJS.register(
@@ -56,7 +56,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   components: {
     Line,
-    DeviceBox,
+    DeviceBarlabel,
     LC,
   },
   data() {
