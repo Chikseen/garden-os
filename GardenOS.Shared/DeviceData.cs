@@ -1,5 +1,4 @@
 ﻿using API.Enums;
-using Shared.DeviceModels;
 
 namespace Shared.Models
 {
@@ -7,8 +6,8 @@ namespace Shared.Models
     {
         public bool IsManual { get; set; } = false;
         public int SortOrder { get; set; } = -1;
-        public string DeviceID { get; set; } = string.Empty;
-        public string EntryID { get; set; } = string.Empty;
+        public string DeviceId { get; set; } = string.Empty;
+        public string EntryId { get; set; } = string.Empty;
         public string GroupId { get; set; } = string.Empty;
         public string SpecialId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -28,8 +27,8 @@ namespace Shared.Models
 
             IsManual = DeviceStatic.GetBool(deviceMeta, DeviceStatic.IsManual, false);
             SortOrder = DeviceStatic.GetInt(deviceMeta, DeviceStatic.SortOrder, -1);
-            DeviceID = DeviceStatic.GetString(deviceMeta, DeviceStatic.DeviceId);
-            EntryID = DeviceStatic.GetString(deviceMeta, DeviceStatic.Id);
+            EntryId = DeviceStatic.GetString(deviceMeta, DeviceStatic.Id);
+            DeviceId = DeviceStatic.GetString(deviceMeta, DeviceStatic.DeviceId);
             GroupId = DeviceStatic.GetString(deviceMeta, DeviceStatic.GroupId);
             SpecialId = DeviceStatic.GetString(deviceMeta, DeviceStatic.SpecialId);
             Name = DeviceStatic.GetString(deviceMeta, DeviceStatic.DeviceName);
@@ -57,7 +56,7 @@ namespace Shared.Models
 
                         if (deviceBattery is null)
                         {
-                            Console.Error.WriteLine($"Device {DeviceID} is set as battery device but has no battery value!");
+                            Console.Error.WriteLine($"Device {DeviceId} is set as battery device but has no battery value!");
                             return;
                         }
 
@@ -109,7 +108,5 @@ namespace Shared.Models
             else
                 CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
         }
-
-
     }
 }

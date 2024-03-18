@@ -55,4 +55,19 @@ public static class QueryService
 			WHERE 
 				device_id = '{deviceId}'".Clean();
     }
+
+    public static string DeleteManualEntryQuery(string gardenId, string entryId)
+    {
+        return @$"
+			DELETE FROM
+				DATALOG{gardenId.Replace("-", "")}
+			WHERE		
+				upload_date IN (
+					SELECT 
+						upload_date 
+					FROM 
+						DATALOG{gardenId.Replace("-", "")}
+					WHERE 
+						id = '{entryId}')".Clean();
+    }
 }

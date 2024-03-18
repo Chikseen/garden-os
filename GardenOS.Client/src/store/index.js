@@ -60,8 +60,8 @@ export default createStore({
 		},
 	},
 	actions: {
-		async fetchDevices(context) {
-			if (!this.deviceMeta)
+		async fetchDevices(context, forceUpdate = false) {
+			if (!this.deviceMeta || forceUpdate)
 				context.commit("setAllDevicesData", this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden")));
 		},
 		async fetchGardenMeta(context) {

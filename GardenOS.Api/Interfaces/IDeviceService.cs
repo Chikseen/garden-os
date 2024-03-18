@@ -1,5 +1,4 @@
-﻿using ESP_sensor.Models;
-using Shared;
+﻿using Shared;
 using Shared.DeviceModels;
 using Shared.Enums;
 using Shared.Models;
@@ -12,7 +11,8 @@ namespace API.Interfaces
         void CreateNewDevice(DeviceCreateModel model);
         List<DeviceMeta> GetAllDevices(string gardenId);
         Device GetSensorValues(string gardenId, string deviceId, TimeFrameId timeFrameId);
-        List<Device> GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame);
+        DetailedChartData GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame);
         Device UploadNewValue(NewManualValueModel model);
+        void DeleteManualEntry(string gardenId, string entryId);
     }
 }

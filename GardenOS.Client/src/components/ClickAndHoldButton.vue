@@ -28,6 +28,7 @@ export default {
 
 <style lang="scss">
 .clickandholdanimation {
+	user-select: none;
 	position: relative;
 	overflow: hidden;
 	user-select: none;

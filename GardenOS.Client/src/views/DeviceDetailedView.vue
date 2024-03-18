@@ -20,6 +20,19 @@
   <div v-else class="lineChart_wrapper">
     <Line :data="data" :options="options" />
   </div>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th v-for="sensorName in chartData.sensorNames" :key="sensorName">{{ sensorName }}</th>
+    </tr>
+    <tr v-for="(yValue, i) in chartData.yAxis" :key="i">
+      <td>{{ convertDateTimeToString(chartData.xAxis[i]) }}</td>
+      <td v-for="(value, j) in yValue" :key="j + value">{{ value }}</td>
+      <td>
+        <ClickAndHoldButton style="width: 50px;" @trigger="removeEntry(i)" />
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script>
@@ -37,6 +50,7 @@ import {
 import { Line } from 'vue-chartjs'
 import 'chartjs-adapter-moment';
 import DeviceBarlabel from "@/components/Devices/DeviceBarlabel.vue"
+import ClickAndHoldButton from "@/components/ClickAndHoldButton.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 
 ChartJS.register(
@@ -50,7 +64,7 @@ ChartJS.register(
   TimeScale
 )
 
-import { toUTCISOString } from "@/dates.js"
+import { formatToDateTime } from "@/dates.js"
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -58,15 +72,16 @@ export default {
     Line,
     DeviceBarlabel,
     LC,
+    ClickAndHoldButton,
   },
   data() {
     return {
       isDataLoading: true,
+      chartData: {},
       timeframe: {
         start: null,
         end: null
       },
-      chartRawData: null,
       data: {
         labels: [],
         datasets: []
@@ -113,6 +128,24 @@ export default {
     getDeviceById() {
       return this.deviceData.find(d => d.id == this.$route.params.id)
     },
+    convertDateTimeToString(date) {
+      return formatToDateTime(date)
+    },
+    async removeEntry(i) {
+      const entryId = this.chartData.entryIds[i]
+      console.log("e", this.chartData.entryIds)
+      console.log("e", entryId)
+      await fetch(`${process.env.VUE_APP_PI_HOST}devices/${localStorage.getItem("selectedGarden")}/${entryId}`, {
+        method: "DELETE",
+        body: JSON.stringify(this.timeframe),
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      });
+      this.fetchData()
+    },
     async fetchData() {
       this.isDataLoading = true
       const response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${localStorage.getItem("selectedGarden")}/${this.$route.params.id}`, {
@@ -125,36 +158,20 @@ export default {
         },
       });
 
-      const chartData = await response.json()
-
-      // Refine Chart data
-      let labels = []
-      let dataSetsValues = {}
-
-      chartData.forEach(device => {
-        labels.push(device.date)
-        device.sensor.forEach(sensor => {
-          if (!dataSetsValues.hasOwnProperty(sensor.name))
-            dataSetsValues[sensor.name] = []
-          dataSetsValues[sensor.name].push(sensor.correctedValue)
-        })
-      });
-
-      console.log(dataSetsValues)
+      this.chartData = await response.json()
+      console.log(this.chartData)
 
       let dataSets = []
-
-      Object.keys(dataSetsValues).forEach(dataset => {
+      this.chartData.sensorNames.forEach((sensorName, i) => {
         dataSets.push({
-          label: dataset,
-          data: dataSetsValues[dataset],
+          label: sensorName,
+          data: this.chartData.yAxis.map(value => value[i]),
           //  hidden: ishidden,
           backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
         })
       });
 
-      this.data = { labels: labels, datasets: dataSets }
-      console.log(this.data)
+      this.data = { labels: this.chartData.xAxis, datasets: dataSets }
       this.isDataLoading = false
     },
     ...mapActions({

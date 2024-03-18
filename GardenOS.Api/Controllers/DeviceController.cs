@@ -47,9 +47,10 @@ public class DeviceController(
     }
 
     [HttpPost("{gardenId}/{deviceId}")]
-    public ActionResult<Device> GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame)
+    public ActionResult<DetailedChartData> GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame)
     {
-        return Ok(_deviceService.GetDetailedTimeFrame(gardenId, deviceId, timeFrame));
+        DetailedChartData chartData = _deviceService.GetDetailedTimeFrame(gardenId, deviceId, timeFrame);
+        return chartData;
     }
 
     [HttpPost("manual")]
@@ -57,5 +58,12 @@ public class DeviceController(
     {
         Device devices = _deviceService.UploadNewValue(model);
         return Ok(devices);
+    }
+
+    [HttpDelete("{gardenId}/{entryId}")]
+    public ActionResult DeleteManualEntry(string gardenId, string entryId)
+    {
+        _deviceService.DeleteManualEntry(gardenId, entryId);
+        return Ok();
     }
 }

@@ -6,6 +6,7 @@ using Shared;
 using Shared.DeviceModels;
 using Shared.Enums;
 using Shared.Models;
+using System.Reflection;
 
 namespace API.Services
 {
@@ -54,7 +55,7 @@ namespace API.Services
                 return new();
         }
 
-        public List<Device> GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame)
+        public DetailedChartData GetDetailedTimeFrame(string gardenId, string deviceId, TimeFrame timeFrame)
         {
             string query = ViewQueryService.DetailedViewQuery(gardenId, deviceId, timeFrame);
 
@@ -62,13 +63,15 @@ namespace API.Services
 
             var orderedListByDate = result.GroupBy(r => r[DeviceStatic.UploadDate].ToString()).ToList();
 
-            List<Device> response = new();
+            List<Device> devicesList = new();
             foreach (var date in orderedListByDate)
             {
-                response.Add(new(date.ToList()));
+                devicesList.Add(new(date.ToList()));
             }
-            response.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
-            return response;
+            devicesList.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+
+            DetailedChartData chartData = new(devicesList);
+            return chartData;
         }
 
         public Device UploadNewValue(NewManualValueModel model)
@@ -76,6 +79,12 @@ namespace API.Services
             string query = IncommingDataQuery.UploadNewValueQuery(model);
             MainDB.Query(query);
             return GetSensorValues(model.GardenId, model.DeviceId, 0);
+        }
+
+        public void DeleteManualEntry(string gardenId, string entryId)
+        {
+            string query = QueryService.DeleteManualEntryQuery(gardenId, entryId);
+            MainDB.Query(query);
         }
     }
 }

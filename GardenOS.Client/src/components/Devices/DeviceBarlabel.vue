@@ -27,6 +27,8 @@ import DynLogo from "@/components/DynIcons/DynLogo.vue"
 
 import { dynamicTimeDisplay } from "@/dates.js";
 import { uploadNewValue } from "@/services/apiService.js"
+import { mapActions } from "vuex";
+
 
 export default {
 	components: {
@@ -56,7 +58,11 @@ export default {
 		async submitNewValue() {
 			await uploadNewValue(localStorage.getItem("selectedGarden"), this.sensorData.deviceId, this.sensorData.sensorId, this.newValue);
 			this.isAddnewValueActive = false
-		}
+			this.fetchDevices(true)
+		},
+		...mapActions({
+			fetchDevices: 'fetchDevices',
+		})
 	},
 	async mounted() {
 		this.calcTime()

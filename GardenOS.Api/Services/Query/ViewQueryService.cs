@@ -9,10 +9,14 @@ public static class ViewQueryService
     {
         return @$"
 			SELECT
-				{GetDistinct(timeFrame)}
-				{GetSelect(timeFrame)}
-				DATALOG.{DeviceStatic.DeviceId} AS DEVICE_ID
+				DISTINCT ON (
+					UPLOAD_DATE
+					,DEVICE_ID
+					,DATALOG.SENSOR_ID)
+				DATALOG.DATE AS UPLOAD_DATE 
+				,DATALOG.{DeviceStatic.DeviceId} AS DEVICE_ID
 				,DATALOG.{DeviceStatic.Value} AS VALUE
+				,DATALOG.{DeviceStatic.Id}
 				,DEVICES.{DeviceStatic.DisplayId}
 				,DEVICES.{DeviceStatic.SortOrder}
 				,DEVICES.{DeviceStatic.GroupId}
@@ -28,15 +32,24 @@ public static class ViewQueryService
 			FROM
 				(
 					SELECT
-						{GetDataLogSelect(timeFrame)}
+						date_trunc('hour', UPLOAD_DATE) AS DATE
+						,ID
+						,AVG (value) AS VALUE
+						,DEVICE_ID, SENSOR_ID
 					FROM
 						DATALOG{gardenId.Replace("-", "")}
-					{GetWhere(timeFrame)}
+					WHERE 
+						UPLOAD_DATE 
+							BETWEEN 
+								'{timeFrame.Start.ConvertToPGString()}' 
+							AND 
+								'{timeFrame.End.ConvertToPGString()}'
 					GROUP BY
-						DATE,
-						DEVICE_ID,
-						SENSOR_ID,
-						VALUE
+						ID
+						,DATE
+						,DEVICE_ID
+						,SENSOR_ID
+						,VALUE
 					ORDER BY
 						SENSOR_ID, DATE DESC
 				) AS DATALOG
@@ -52,7 +65,8 @@ public static class ViewQueryService
 				DATALOG.SENSOR_ID = DEVICE_SENSORS.SENSOR_ID
 			AND
 				DATALOG.DEVICE_ID = '{deviceid}'
-			{GetOrder(timeFrame)}".Clean();
+			ORDER BY 
+				UPLOAD_DATE DESC ".Clean();
     }
 
     public static string GetSensorValuessQuery(string gardenId, string deviceId)
@@ -89,41 +103,6 @@ public static class ViewQueryService
 			ORDER BY 
 				DATALOG.SENSOR_ID, 
 				UPLOAD_DATE DESC".Clean();
-    }
-
-    private static string GetDistinct(TimeFrame? timeFrame)
-    {
-        if (timeFrame is null)
-            return " ";
-        return " DISTINCT ON (UPLOAD_DATE, DEVICE_ID, DATALOG.SENSOR_ID) ";
-    }
-
-    private static string GetSelect(TimeFrame? timeFrame)
-    {
-        if (timeFrame is null)
-            return " DISTINCT ON(DEVICE_SENSORS.SENSOR_ID) DATALOG.DATE AS UPLOAD_DATE, ";
-        return " DATALOG.DATE AS UPLOAD_DATE, ";
-    }
-
-    private static string GetDataLogSelect(TimeFrame? timeFrame)
-    {
-        if (timeFrame is null)
-            return " DISTINCT ON (SENSOR_ID) UPLOAD_DATE AS DATE, VALUE, DEVICE_ID, SENSOR_ID ";
-        return " date_trunc('hour', UPLOAD_DATE) AS DATE, AVG (value) AS VALUE, DEVICE_ID, SENSOR_ID ";
-    }
-
-    private static object GetWhere(TimeFrame? timeFrame)
-    {
-        if (timeFrame is null)
-            return "";
-        return @$" WHERE UPLOAD_DATE BETWEEN '{timeFrame.Start.ConvertToPGString()}' AND '{timeFrame.End.ConvertToPGString()}' ";
-    }
-
-    private static object GetOrder(TimeFrame? timeFrame)
-    {
-        if (timeFrame is null)
-            return "";
-        return @$" ORDER BY UPLOAD_DATE DESC ";
     }
 }
 
