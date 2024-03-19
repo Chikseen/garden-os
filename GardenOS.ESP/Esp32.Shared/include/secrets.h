@@ -17,4 +17,5 @@ std::string get_device_id();
 std::string get_garden_id();
 std::string get_api_key();
 std::string get_battery_id();
-std::string get_sensor_id();
+std::string get_first_sensor_id();
+std::string get_second_sensor_id();

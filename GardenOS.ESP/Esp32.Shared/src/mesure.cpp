@@ -32,8 +32,11 @@ void set_up()
 
 void mesureAndSend()
 {
+	gpio_hold_dis(sensorOutPut);
+
 	uint32_t batteryValue;
-	uint32_t sensorValue;
+	uint32_t firstSensorValue;
+	uint32_t secondSensorValue;
 
 	float multiplier = 0.1875F;
 
@@ -41,7 +44,7 @@ void mesureAndSend()
 	delay(10);
 	for (size_t i = 0; i < multisamplingLength; i++)
 	{
-		Serial.print("nnn111batteryValue: ");
+		Serial.print("batteryValue: ");
 		int16_t value = adc.readADC_SingleEnded(2);
 		Serial.print(" V: ");
 		Serial.print(value * 0.000125f);
@@ -54,14 +57,27 @@ void mesureAndSend()
 
 	for (size_t i = 0; i < multisamplingLength; i++)
 	{
-		Serial.print("nnn111sensorValue: ");
+		Serial.print("firstSensorValue: ");
 		int16_t value = adc.readADC_SingleEnded(0);
 		Serial.print(" V: ");
 		Serial.print(value * 0.000125f);
 		Serial.print(" T: ");
 		Serial.println(value);
 
-		sensorValue += value;
+		firstSensorValue += value;
+		delay(10);
+	}
+
+	for (size_t i = 0; i < multisamplingLength; i++)
+	{
+		Serial.print("secondSensorValue: ");
+		int16_t value = adc.readADC_SingleEnded(3);
+		Serial.print(" V: ");
+		Serial.print(value * 0.000125f);
+		Serial.print(" T: ");
+		Serial.println(value);
+
+		secondSensorValue += value;
 		delay(10);
 	}
 
@@ -69,22 +85,28 @@ void mesureAndSend()
 	gpio_hold_en(sensorOutPut);
 
 	batteryValue = batteryValue / multisamplingLength;
-	sensorValue = sensorValue / multisamplingLength;
+	firstSensorValue = firstSensorValue / multisamplingLength;
+	secondSensorValue = secondSensorValue / multisamplingLength;
 
 	Serial.print("batteryValue: ");
 	Serial.println(batteryValue);
 
-	Serial.print("sensorValue: ");
-	Serial.println(sensorValue);
+	Serial.print("firstSensorValue: ");
+	Serial.println(firstSensorValue);
 
-	uint32_t previousStoredBatteryValue = pref.getUInt("batteryVlaue", 0);
-	uint32_t previousStoredSensorValue = pref.getUInt("sensorValue", 0);
+	Serial.print("secondSensorValue: ");
+	Serial.println(secondSensorValue);
 
-	if ((((int)batteryValue - (int)previousStoredBatteryValue) > 20 || ((int)sensorValue - (int)previousStoredSensorValue) > 20) || (((int)batteryValue - (int)previousStoredBatteryValue) < -20 || ((int)sensorValue - (int)previousStoredSensorValue) < -20))
+	uint32_t previousStoredBatteryValue = pref.getUInt("bv", 0);
+	uint32_t previousStoredFirstSensorValue = pref.getUInt("fsv", 0);
+	uint32_t previousStoredSecondSensorValue = pref.getUInt("ssv", 0);
+
+	if ((((int)batteryValue - (int)previousStoredBatteryValue) > 20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) > 20 || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) > 20) || (((int)batteryValue - (int)previousStoredBatteryValue) < -20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) < -20) || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) < -20)
 	{
-		pref.putUInt("batteryVlaue", batteryValue);
-		pref.putUInt("sensorValue", sensorValue);
-		upload::send(batteryValue, sensorValue);
+		pref.putUInt("bv", batteryValue);
+		pref.putUInt("fsv", firstSensorValue);
+		pref.putUInt("ssv", secondSensorValue);
+		upload::send(batteryValue, firstSensorValue, secondSensorValue);
 	}
 
 	return;

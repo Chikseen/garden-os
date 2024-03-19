@@ -1,7 +1,7 @@
 #include <string>
 #include <secrets.h>
 
-bool isDev = false;
+bool isDev = true;
 
 bool GetIsDev()
 {
@@ -53,7 +53,7 @@ std::string get_api_key()
 std::string get_garden_id()
 {
 	if (GetIsDev())
-		return "accd30d2-7392-40b7-8a08-6d9ac9cc22b6";
+		return "d1526afc-9eba-4ee6-b933-c2bcd6c6ef92";
 	return "d1526afc-9eba-4ee6-b933-c2bcd6c6ef92";
 }
 
@@ -67,7 +67,12 @@ std::string get_battery_id()
 	return "33bed312-ad94-4a83-9a25-4969af3312b3";
 }
 
-std::string get_sensor_id()
+std::string get_first_sensor_id()
 {
 	return "b83d29c3-24fb-4435-b89c-ccf7d0c6b03d";
+}
+
+std::string get_second_sensor_id()
+{
+	return "63d85847-37af-4139-8b07-738722a609b1";
 }

@@ -99,6 +99,7 @@ namespace Shared.Models
             Date = DeviceStatic.GetDateTime(sensorData, DeviceStatic.UploadDate);
 
             SetValues();
+            CalculateTempertureValue();
         }
 
         public void SetValues()
@@ -107,6 +108,17 @@ namespace Shared.Models
                 CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
             else
                 CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
+        }
+
+        public void CalculateTempertureValue()
+        {
+            if (SensorTypeId == SensorTypeId.SoilTemperature)
+            {
+
+                double tKelvin = 1 / Value * (10000 / 25);
+                Console.WriteLine(tKelvin);
+                //  CorrectedValue = (float)tKelvin;
+            }
         }
     }
 }

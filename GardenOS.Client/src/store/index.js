@@ -38,7 +38,7 @@ export default createStore({
 		},
 		setDeviceData(state, payload) {
 			const devices = state.deviceData.devices;
-			devices.forEach(device => {
+			devices?.forEach(device => {
 				const sensorKeys = Object.keys(payload.sensor)
 				sensorKeys.forEach(sensorKey => {
 					if (device.sensor_id == sensorKey) {

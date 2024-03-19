@@ -43,7 +43,7 @@ if (app.Environment.IsDevelopment())
     );
     app.Urls.Add($"https://{GetLocalIPAddress()}:5083");
     app.Urls.Add($"https://localhost:5082");
-    app.Urls.Add($"http://{GetLocalIPAddress()}:5082");
+    app.Urls.Add($"http://192.168.2.100:5082");
 }
 else
 {

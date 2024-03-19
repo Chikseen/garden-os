@@ -6,5 +6,6 @@
         Battery = 0,
         SoilMoisture = 1,
         PH = 2,
+        SoilTemperature = 3,
     }
 }

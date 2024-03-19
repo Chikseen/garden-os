@@ -4,7 +4,7 @@
 
 namespace upload
 {
-	static void send(int16_t batteryValue, int16_t sensorValue)
+	static void send(int16_t batteryValue, int16_t firstSensorValue, int16_t secondSensorValue)
 	{
 		wifi_setup::connect();
 		Serial.println("Try to send data:");
@@ -12,6 +12,11 @@ namespace upload
 		if (WiFi.status() == WL_CONNECTED)
 		{
 			HTTPClient http;
+
+			Serial.print("host: ");
+			Serial.print(get_server_address().c_str());
+			Serial.print(get_server_port());
+			Serial.println(get_server_path().c_str());
 
 			// Specify the server and port
 			http.begin(get_server_address().c_str(), get_server_port(), get_server_path().c_str());
@@ -24,7 +29,8 @@ namespace upload
 				<< "\"DeviceId\" : \"" << get_device_id() << "\","
 				<< "\"Sensor\" : {"
 				<< "\"" << get_battery_id() << "\" : \"" << batteryValue << "\","
-				<< "\"" << get_sensor_id() << "\" : \"" << sensorValue << "\"}"
+				<< "\"" << get_first_sensor_id() << "\" : \"" << firstSensorValue << "\","
+				<< "\"" << get_second_sensor_id() << "\" : \"" << secondSensorValue << "\"}"
 				<< "}";
 
 			http.addHeader("Content-Type", "application/json");
