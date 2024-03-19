@@ -43,7 +43,6 @@ import WeatherBox from "@/components/WeatherBox.vue"
 import LC from "@/components/ui/LoadingComponent.vue"
 import Informations from "@/components/InformationsComponent.vue"
 import CTC from "@/assets/CopyToClipboardIcon.vue"
-import HubControll from "@/components/HubControll.vue"
 
 import { fetchUser } from "@/services/apiService.js"
 import { getRoleNameById } from "@/services/userroleService.js"
@@ -54,7 +53,6 @@ export default {
         DynamicGrid,
         DeviceList,
         WeatherBox,
-        HubControll,
         Informations,
         LC,
         CTC,

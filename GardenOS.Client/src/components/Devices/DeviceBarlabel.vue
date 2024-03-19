@@ -25,7 +25,7 @@
 <script>
 import DynLogo from "@/components/DynIcons/DynLogo.vue"
 
-import { dynamicTimeDisplay } from "@/dates.js";
+import { dynamicTimeDisplay } from "@/services/dates.js";
 import { uploadNewValue } from "@/services/apiService.js"
 import { mapActions } from "vuex";
 

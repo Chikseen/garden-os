@@ -18,7 +18,7 @@ namespace Shared
         List<List<float>> YAxis { get; set; } = [];
 
         [JsonInclude]
-        HashSet<string> SensorNames { get; set; } = [];
+        List<Sensor> Sensors { get; set; } = [];
 
         public DetailedChartData() { }
 
@@ -61,7 +61,8 @@ namespace Shared
 
                 foreach (Sensor sensor in device.Sensor)
                 {
-                    SensorNames.Add(sensor.Name);
+                    if (!Sensors.Any(s => s.SensorId == sensor.SensorId))
+                        Sensors.Add(sensor);
                 }
             }
         }

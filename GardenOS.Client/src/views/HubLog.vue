@@ -19,16 +19,14 @@
 
 <script>
 import LC from "@/components/ui/LoadingComponent.vue"
-import HubControll from "@/components/HubControll.vue"
 import List from "@/layout/ListLayout.vue";
 import StatusIcon from "@/assets/StatusIcon.vue"
 
-import { formatToDateTime } from "@/dates.js";
+import { formatToDateTime } from "@/services/dates.js";
 
 export default {
 	components: {
 		LC,
-		HubControll,
 		List,
 		StatusIcon,
 	},

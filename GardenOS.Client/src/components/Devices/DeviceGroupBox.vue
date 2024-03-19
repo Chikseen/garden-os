@@ -1,10 +1,11 @@
 <template>
-  <div class="grid_item group_wrapper" :style="`grid-row-start: span ${(devices.length + 1) / 2}`">
-    <h1> {{ group }} </h1>
+
+  <div class="grid_item group_wrapper" :style="`grid-row-start: span ${(deviceData.sesnor?.length + 1) / 2}`">
+    <h1> {{ deviceData.name }} </h1>
     <hr>
     <span class="group_items">
-      <div v-for="sensor in sensors.sort((a, b) => a.sortOrder - b.sortOrder)" :key="sensor.sensorId" class="group">
-        <DeviceBarlabel :device="sensor" />
+      <div v-for="sensor in deviceData.sensor" :key="sensor.sensorId" class="group">
+        <DeviceBarlabel :sensorData="sensor" />
       </div>
     </span>
   </div>
@@ -18,11 +19,10 @@ export default {
     DeviceBarlabel
   },
   props: {
-    sensors: {
-      type: Array,
-      default: () => []
+    deviceData: {
+      type: Object,
+      default: () => { }
     },
-    group: { type: String }
   },
 }
 </script>

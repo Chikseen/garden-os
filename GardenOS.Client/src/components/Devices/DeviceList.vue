@@ -1,7 +1,6 @@
 <template>
-  <!--<DeviceGroupBox v-for="group in groupList" :key="group" :devices="devices.filter(d => d.groupId == group)"
-    :group=group style="grid-column-start: span 2" />-->
-  <div v-for="sensor in sensors" :key="sensor.deviceId">
+  <DeviceGroupBox v-for="device in multiDeviceData" :key="device.deviceId" :deviceData="device" style="grid-column-start: span 2" />
+  <div v-for="sensor in singleDeviceData" :key="sensor.deviceId">
     <DeviceBarlabel :sensorData="sensor" class="grid_item" />
   </div>
 </template>
@@ -19,7 +18,8 @@ export default {
   },
   data() {
     return {
-      sensors: []
+      singleDeviceData: [],
+      multiDeviceData: [],
     }
   },
   props: {
@@ -31,9 +31,10 @@ export default {
   async mounted() {
     await this.devices.forEach(async device => {
       let deviceData = await fetchDeviceSensorLatestValues(localStorage.getItem("selectedGarden"), device.id)
-      deviceData.sensor.forEach(sensor => {
-        this.sensors.push(sensor)
-      });
+      if (deviceData.sensor?.length > 1)
+        this.multiDeviceData.push(deviceData)
+      else
+        this.singleDeviceData.push(deviceData)
     });
   }
 }

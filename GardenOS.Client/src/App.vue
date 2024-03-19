@@ -81,6 +81,25 @@ input {
   padding: 10px;
 }
 
+table {
+  max-width: 750px;
+  margin: 0 auto;
+  overflow-y: scroll;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+}
+
+th,
+td {
+  text-align: center;
+  padding: 5px;
+  border-bottom: 1px solid;
+}
+
 #app {
   position: relative;
   display: flex;
