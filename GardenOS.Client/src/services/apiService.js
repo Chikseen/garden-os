@@ -74,10 +74,10 @@ async function fetchDeviceSensorLatestValues(gardenId, deviceId) {
 	return res;
 }
 
-async function fetchDeviceSensorData(gardenId, deviceId, sesnorId) {
+async function fetchDeviceSensorMeta(gardenId, deviceId) {
 	let response;
 	if (localStorage.getItem("accessToken")) {
-		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/${gardenId}/${deviceId}/${sesnorId}`, {
+		response = await fetch(`${process.env.VUE_APP_PI_HOST}devices/sensor/${deviceId}`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -147,6 +147,6 @@ export {
 	fetchUser,
 	fetchDeviceMeta,
 	fetchDeviceSensorLatestValues,
-	fetchDeviceSensorData,
+	fetchDeviceSensorMeta,
 	uploadNewValue
 };

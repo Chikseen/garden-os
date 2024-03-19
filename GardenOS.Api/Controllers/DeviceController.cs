@@ -25,13 +25,6 @@ public class DeviceController(
         return Ok();
     }
 
-    [HttpPost("create")]
-    public ActionResult CreateNewDevice(DeviceCreateModel model)
-    {
-        _deviceService.CreateNewDevice(model);
-        return Ok();
-    }
-
     [HttpGet("{gardenId}")]
     public ActionResult<List<DeviceMeta>> GetAllDevices(string gardenId)
     {
@@ -53,6 +46,13 @@ public class DeviceController(
         return chartData;
     }
 
+    [HttpGet("sensor/{deviceId}")]
+    public ActionResult<List<Sensor>> GetSensorMeta(string deviceId)
+    {
+        List<Sensor> sensorData = _deviceService.GetSensorMeta(deviceId);
+        return sensorData;
+    }
+
     [HttpPost("manual")]
     public ActionResult<Device> PostNewManualValue(NewManualValueModel model)
     {
@@ -64,6 +64,20 @@ public class DeviceController(
     public ActionResult DeleteManualEntry(string gardenId, string entryId)
     {
         _deviceService.DeleteManualEntry(gardenId, entryId);
+        return Ok();
+    }
+
+    [HttpPost("create")]
+    public ActionResult CreateNewDevice(DeviceCreateModel model)
+    {
+        _deviceService.CreateNewDevice(model);
+        return Ok();
+    }
+
+    [HttpPost("create/sensor")]
+    public ActionResult CreateNewSensor(SensorCreateModel model)
+    {
+        _deviceService.CreateNewSensor(model);
         return Ok();
     }
 }

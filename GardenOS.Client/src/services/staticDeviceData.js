@@ -1,7 +1,5 @@
 
 function getColorByDevice(sensor) {
-	console.log(sensor)
-
 	switch (sensor.sensorTypeId) {
 		case 0:
 			return "#4cb269"

@@ -70,4 +70,37 @@ public static class QueryService
 					WHERE 
 						id = '{entryId}')".Clean();
     }
+
+    public static string GetSensorMetaQuery(string deviceId)
+    {
+        return @$"
+			SELECT 
+				*
+			FROM
+				DEVICE_SENSORS
+			WHERE 
+				DEVICE_ID = '{deviceId}'".Clean();
+    }
+
+    public static string CreateNewSensorQuery(SensorCreateModel model)
+    {
+        return @$"
+			INSERT INTO
+				device_sensors (
+					{DeviceStatic.DeviceId}
+					,{DeviceStatic.SensorId}
+					,{DeviceStatic.SensorName}
+					,{DeviceStatic.SensorTypeId}
+					,{DeviceStatic.UpperLimit}
+					,{DeviceStatic.LowerLimit}
+					,{DeviceStatic.Unit})
+			VALUES	(
+				'{model.DeviceId}'
+				,'{Guid.NewGuid()}'
+				,'{model.Name}'
+				,{model.SensorTypeId}
+				,{model.UpperLimit}
+				,{model.LowerLimit}
+				,'{model.Unit}')".Clean();
+    }
 }

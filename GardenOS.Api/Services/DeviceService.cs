@@ -41,6 +41,20 @@ namespace API.Services
             return response;
         }
 
+        public List<Sensor> GetSensorMeta(string deviceId)
+        {
+            string query = QueryService.GetSensorMetaQuery(deviceId);
+            MainDB.Query(query);
+            List<Dictionary<string, string>> result = MainDB.Query(query);
+
+            List<Sensor> response = [];
+            foreach (var sensor in result)
+            {
+                response.Add(new(sensor));
+            }
+            return response;
+        }
+
         public Device GetSensorValues(string gardenId, string deviceId, TimeFrameId timeFrameId)
         {
             string query = ViewQueryService.GetSensorValuessQuery(gardenId, deviceId);
@@ -84,6 +98,12 @@ namespace API.Services
         public void DeleteManualEntry(string gardenId, string entryId)
         {
             string query = QueryService.DeleteManualEntryQuery(gardenId, entryId);
+            MainDB.Query(query);
+        }
+
+        public void CreateNewSensor(SensorCreateModel model)
+        {
+            string query = QueryService.CreateNewSensorQuery(model);
             MainDB.Query(query);
         }
     }

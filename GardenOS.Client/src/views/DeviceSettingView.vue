@@ -38,17 +38,11 @@
 					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
-							<label>Group Id</label>
-							<h6>Devices with the same Group Id will be grouped in one box</h6>
-						</span>
-						<input type="text" v-model="device.groupId">
-					</div>
-					<div class="deviceSetting_list_item_row">
-						<span>
 							<label>Is Manual</label>
 						</span>
-						<input type="checkbox" v-model="device.isManual">
+						<p>{{ device.isManual }}</p>
 					</div>
+					<!--SENSOR-->
 					<div v-for="sensor in deviceSensorMeta[device.id]" :key="sensor.sensorId">
 						<span>
 							<input type="text" style="font-size: 1.5rem;" :placeholder="sensor.name" />
@@ -56,13 +50,62 @@
 						</span>
 						<div class="deviceSetting_list_item_row">
 							<span>
-								<label>Group Id</label>
-								<h6>Devices with the same Group Id will be grouped in one box</h6>
+								<label>Upper Limit</label>
 							</span>
-							<input type="text" v-model="device.groupId">
+							<input type="number" min="0" max="100" v-model="sensor.upperLimit">
+						</div>
+						<div class="deviceSetting_list_item_row">
+							<span>
+								<label>Lower Limit</label>
+							</span>
+							<input type="number" min="0" max="100" v-model="sensor.lowerLimit">
+						</div>
+						<div class="deviceSetting_list_item_row">
+							<span>
+								<label>Sensor Type Id </label>
+							</span>
+							<input type="number" min="0" max="2" v-model="sensor.sensorTypeId">
+						</div>
+						<div class="deviceSetting_list_item_row">
+							<span>
+								<label>Unit</label>
+							</span>
+							<input type="text" v-model="sensor.unit">
+						</div>
+						<div class="deviceSetting_list_item_row">
+							<span>
+								<label>Unit</label>
+							</span>
+							<p>{{ sensor.isManual }}</p>
 						</div>
 					</div>
+					<!--ADD SENSOR-->
+					<div class="grid_item item deviceSetting_list_item">
+						<h1>Add "{{ device.name }}" Sensor</h1>
+						<span>
+							<label for="newDeviceIsManual">Unit</label>
+							<input type="text" v-model="newSensor.Unit">
+						</span>
+						<span>
+							<label for="newDeviceName">Name</label>
+							<input id="newDeviceName" type="text" v-model="newSensor.Name">
+						</span>
+						<span>
+							<label for="newDeviceName">SensorTypeId</label>
+							<input id="newDeviceName" type="number" min="-1" max="2" v-model="newSensor.SensorTypeId">
+						</span>
+						<span>
+							<label for="newDeviceName">Upper Limit</label>
+							<input id="newDeviceName" type="number" v-model="newSensor.UpperLimit">
+						</span>
+						<span>
+							<label for="newDeviceName">Lower Limit</label>
+							<input id="newDeviceName" type="number" v-model="newSensor.LowerLimit">
+						</span>
+						<h1 @click="createNewSensor(device)">+</h1>
+					</div>
 				</div>
+				<!--ADD DEVICE-->
 				<div class="grid_item item deviceSetting_list_item">
 					<h1>Add Device</h1>
 					<span>
@@ -101,6 +144,13 @@ export default {
 			isLoading: true,
 			newDeviceIsManual: "",
 			newDeviceName: "",
+			newSensor: {
+				DeviceId: "",
+				Name: "",
+				Unit: "",
+				UpperLimit: 100,
+				LowerLimit: 0
+			}
 		}
 	},
 	methods: {
@@ -138,6 +188,20 @@ export default {
 					'Content-Type': 'application/json'
 				},
 			});
+		},
+		async createNewSensor(device) {
+			this.newSensor.DeviceId = device.id
+
+			await fetch(`${process.env.VUE_APP_PI_HOST}devices/create/sensor`, {
+				method: "POST",
+				body: JSON.stringify(this.newSensor),
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+			});
+			await this.fetchDevices()
 		},
 		async fetchDevices() {
 			this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden"))
@@ -178,11 +242,11 @@ export default {
 			grid-column-start: span 2;
 			display: flex;
 			flex-direction: column;
+			justify-content: start;
 			gap: 15px;
 
 			&_row {
 				display: flex;
-				justify-content: space-between;
 				gap: 15px;
 			}
 
