@@ -1,7 +1,7 @@
 #include <string>
 #include <secrets.h>
 
-bool isDev = true;
+bool isDev = false;
 
 bool GetIsDev()
 {
