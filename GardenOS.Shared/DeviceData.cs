@@ -99,28 +99,44 @@ namespace Shared.Models
             Date = DeviceStatic.GetLocalDateTime(sensorData, DeviceStatic.UploadDate);
 
             SetValues();
-            CalculateTempertureValue();
         }
 
         public void SetValues()
         {
-            if (IsInverted)
-                CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
-            else
-                CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
+
+            switch (SensorTypeId)
+            {
+                case SensorTypeId.SoilTemperature:
+                    {
+                        CalculateTempertureValue();
+
+                    }
+                    break;
+                default:
+                    {
+                        if (IsInverted)
+                            CorrectedValue = 100 - (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
+                        else
+
+                            CorrectedValue = (float)(Value - LowerLimit) * 100.0f / (UpperLimit - LowerLimit);
+                    }
+                    break;
+            };
         }
 
         public void CalculateTempertureValue()
         {
-            const double beta = 3950;
-            const double normalRoomTemp = 20;
-            const double resitanceWithRoomTempinKOhm = 10;
+            const double beta = 9000;
+            const double normalRoomTemp = 298.15d;
+            const double resitanceWithRoomTempinKOhm = 10000d;
+            const double balanceResistor = 9700;
+            const double maxAdcValue = 55560d;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
-                double voltage = Value * 0.000125d;
-                double tKelvin = (beta * normalRoomTemp) / (beta + (normalRoomTemp * Math.Log(voltage / resitanceWithRoomTempinKOhm)));
-                CorrectedValue = (float)tKelvin;
+                double rThermistor = balanceResistor * ((maxAdcValue / Value) - 1);
+                double tKelvin = (beta * normalRoomTemp) / (beta + (normalRoomTemp * Math.Log(rThermistor / resitanceWithRoomTempinKOhm)));
+                CorrectedValue = (float)(tKelvin - 273.15d);
             }
         }
     }
