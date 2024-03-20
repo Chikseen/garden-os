@@ -38,7 +38,7 @@ namespace Shared.Models
             TriggerdBy = DeviceStatic.GetString(data, DeviceStatic.TriggerdBy);
             Status = DeviceStatic.GetString(data, DeviceStatic.Status);
             Message = DeviceStatic.GetString(data, DeviceStatic.Message);
-            Date = DeviceStatic.GetDateTime(data, DeviceStatic.Date);
+            Date = DeviceStatic.GetLocalDateTime(data, DeviceStatic.Date);
             CurrentBuild = DeviceStatic.GetString(data, DeviceStatic.Build);
         }
 

@@ -1,3 +1,5 @@
+using System;
+
 namespace Shared.Models
 {
     public static class DeviceStatic
@@ -118,11 +120,13 @@ namespace Shared.Models
             return new TimeSpan(0, 10, 0);
         }
 
-        public static DateTime GetDateTime(Dictionary<string, string> dict, string key)
+        public static DateTime GetLocalDateTime(Dictionary<string, string> dict, string key)
         {
             if (dict.ContainsKey(key) && dict[key] != string.Empty)
             {
-                return DateTime.Parse(dict[key]);
+                DateTime utc = DateTime.Parse(dict[key]);
+                TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+                return TimeZoneInfo.ConvertTimeFromUtc(utc, timezone);
             }
             return DateTime.Now;
         }

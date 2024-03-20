@@ -34,7 +34,7 @@ namespace Shared.Models
             Name = DeviceStatic.GetString(deviceMeta, DeviceStatic.DeviceName);
             DisplayId = DeviceStatic.GetString(deviceMeta, DeviceStatic.DisplayId);
             DeviceTypeId = (DeviceTypeId)DeviceStatic.GetInt(deviceMeta, DeviceStatic.DeviceTypId)!;
-            Date = DeviceStatic.GetDateTime(deviceMeta, DeviceStatic.UploadDate);
+            Date = DeviceStatic.GetLocalDateTime(deviceMeta, DeviceStatic.UploadDate);
 
             foreach (var device in payload)
             {
@@ -96,7 +96,7 @@ namespace Shared.Models
             Name = DeviceStatic.GetString(sensorData, DeviceStatic.SensorName);
             Unit = DeviceStatic.GetString(sensorData, DeviceStatic.Unit);
             SensorTypeId = (SensorTypeId)DeviceStatic.GetInt(sensorData, DeviceStatic.SensorTypeId)!;
-            Date = DeviceStatic.GetDateTime(sensorData, DeviceStatic.UploadDate);
+            Date = DeviceStatic.GetLocalDateTime(sensorData, DeviceStatic.UploadDate);
 
             SetValues();
             CalculateTempertureValue();
