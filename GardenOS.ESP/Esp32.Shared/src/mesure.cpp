@@ -101,7 +101,7 @@ void mesureAndSend()
 	uint32_t previousStoredFirstSensorValue = pref.getUInt("fsv", 0);
 	uint32_t previousStoredSecondSensorValue = pref.getUInt("ssv", 0);
 
-	if ((((int)batteryValue - (int)previousStoredBatteryValue) > 20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) > 20 || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) > 20) || (((int)batteryValue - (int)previousStoredBatteryValue) < -20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) < -20) || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) < -20)
+	if ((((int)batteryValue - (int)previousStoredBatteryValue) > 20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) > 20 || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) > 100) || (((int)batteryValue - (int)previousStoredBatteryValue) < -20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) < -20) || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) < -100)
 	{
 		pref.putUInt("bv", batteryValue);
 		pref.putUInt("fsv", firstSensorValue);

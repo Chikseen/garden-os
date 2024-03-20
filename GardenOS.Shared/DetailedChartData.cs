@@ -15,7 +15,7 @@ namespace Shared
         List<string> EntryIds { get; set; } = [];
 
         [JsonInclude]
-        List<List<float>> YAxis { get; set; } = [];
+        List<List<float?>> YAxis { get; set; } = [];
 
         [JsonInclude]
         List<Sensor> Sensors { get; set; } = [];
@@ -25,8 +25,8 @@ namespace Shared
         public DetailedChartData(List<Device> devices)
         {
             SetXAxis(devices);
-            SetYAxis(devices);
             SetNames(devices);
+            SetYAxis(devices);
         }
 
         private void SetXAxis(List<Device> devices)
@@ -46,7 +46,15 @@ namespace Shared
                 if (device is null)
                     continue;
 
-                List<float> sensorData = device.Sensor.Select(d => d.CorrectedValue).ToList();
+                List<float?> sensorData = [];
+                foreach (Sensor sensor in Sensors)
+                {
+                    Sensor? sensorFromDevice = device.Sensor.Find(s => s.SensorId == sensor.SensorId);
+                    if (sensorFromDevice is null)
+                        sensorData.Add(null);
+                    else
+                        sensorData.Add(sensorFromDevice.CorrectedValue);
+                }
 
                 YAxis.Add(sensorData);
             }

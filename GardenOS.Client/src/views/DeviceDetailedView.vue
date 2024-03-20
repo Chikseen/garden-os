@@ -29,7 +29,7 @@
       </tr>
       <tr v-for="(yValue, i) in chartData.yAxis" :key="i">
         <td>{{ convertDateTimeToString(chartData.xAxis[i]) }}</td>
-        <td v-for="(value, j) in yValue" :key="j + value">{{ value.toFixed(1) }}</td>
+        <td v-for="(value, j) in yValue" :key="j + value">{{ value?.toFixed(1) }}</td>
         <td v-if="getDeviceById()?.isManual">
           <ClickAndHoldButton style="width: 50px;" @trigger="removeEntry(i)" />
         </td>

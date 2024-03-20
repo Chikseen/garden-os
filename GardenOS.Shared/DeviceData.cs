@@ -112,12 +112,15 @@ namespace Shared.Models
 
         public void CalculateTempertureValue()
         {
+            const double beta = 3950;
+            const double normalRoomTemp = 20;
+            const double resitanceWithRoomTempinKOhm = 10;
+
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
-
-                double tKelvin = 1 / Value * (10000 / 25);
-                Console.WriteLine(tKelvin);
-                //  CorrectedValue = (float)tKelvin;
+                double voltage = Value * 0.000125d;
+                double tKelvin = (beta * normalRoomTemp) / (beta + (normalRoomTemp * Math.Log(voltage / resitanceWithRoomTempinKOhm)));
+                CorrectedValue = (float)tKelvin;
             }
         }
     }
