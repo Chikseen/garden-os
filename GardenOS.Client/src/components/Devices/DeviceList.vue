@@ -1,7 +1,8 @@
 <template>
-  <DeviceGroupBox v-for="device in multiDeviceData" :key="device.deviceId" :deviceData="device" style="grid-column-start: span 2" />
-  <div v-for="sensor in singleDeviceData" :key="sensor.deviceId">
-    <DeviceBarlabel :sensorData="sensor" class="grid_item" />
+  <DeviceGroupBox v-for="device in multiDeviceData" :key="device.deviceId" :deviceData="device"
+    style="grid-column-start: span 2" />
+  <div v-for="device in singleDeviceData" :key="device.deviceId">
+    <DeviceBarlabel :sensorData="device.sensor[0]" class="grid_item" />
   </div>
 </template>
 

@@ -60,7 +60,7 @@ namespace Shared.Models
                             return;
                         }
 
-                        sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.715f);
+                        sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
                         sensor.SetValues();
                     }
                 }
@@ -109,7 +109,6 @@ namespace Shared.Models
                 case SensorTypeId.SoilTemperature:
                     {
                         CalculateTempertureValue();
-
                     }
                     break;
                 default:
@@ -126,16 +125,16 @@ namespace Shared.Models
 
         public void CalculateTempertureValue()
         {
-            const double beta = 9000;
-            const double normalRoomTemp = 298.15d;
-            const double resitanceWithRoomTempinKOhm = 10000d;
-            const double balanceResistor = 9700;
-            const double maxAdcValue = 55560d;
+            const double beta = 3950d;
+            const double tConstantRoom = 298.15d;
+            const double rInTConstant = 10000d;
+            const double rBalance = 9800d;
+            const double vMax = 22560d;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
-                double rThermistor = balanceResistor * ((maxAdcValue / Value) - 1);
-                double tKelvin = (beta * normalRoomTemp) / (beta + (normalRoomTemp * Math.Log(rThermistor / resitanceWithRoomTempinKOhm)));
+                double rThermistor = rBalance * ((vMax / Value) - 1);
+                double tKelvin = (beta * tConstantRoom) / (beta + (tConstantRoom * Math.Log(rThermistor / rInTConstant)));
                 CorrectedValue = (float)(tKelvin - 273.15d);
             }
         }

@@ -14,7 +14,7 @@
 				</h3>
 				<h5 v-if="sensorData.date"> {{ timeLabel }} </h5>
 			</span>
-			<span v-if="sensorData.isManual" class="device_wrapper_content_values"
+			<span v-if="sensorData.isManual && sensorData.sensorId" class="device_wrapper_content_values"
 				@click.stop="isAddnewValueActive = !isAddnewValueActive">
 				<h1 class="device_wrapper_content_values_add">+</h1>
 			</span>
