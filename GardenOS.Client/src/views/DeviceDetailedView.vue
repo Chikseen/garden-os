@@ -93,13 +93,17 @@ export default {
       options: {
         backgroundColor: '#ffffff',
         responsive: true,
-        pointHitRadius: 99,
+        pointHitRadius: 1000,
         pointRadius: 0,
         maintainAspectRatio: false,
         plugins: {
           title: {
             display: false
           }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'index'
         },
         scales: {
           x: {

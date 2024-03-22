@@ -4,6 +4,6 @@
     {
         None = -1,
         Debug = 0,
-        SoilMoistureBattery = 1,
+        SoilTempAndMoistureBatteryDevice = 1,
     }
 }

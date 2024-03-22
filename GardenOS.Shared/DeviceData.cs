@@ -41,28 +41,27 @@ namespace Shared.Models
                 Sensor.Add(new(device));
             }
 
-            AdjustValueIfBatteryDevice();
+            AdjustValues();
         }
 
-        private void AdjustValueIfBatteryDevice()
+        private void AdjustValues()
         {
-            if (DeviceTypeId == DeviceTypeId.SoilMoistureBattery)
+            if (DeviceTypeId == DeviceTypeId.SoilTempAndMoistureBatteryDevice)
             {
                 foreach (Sensor sensor in Sensor)
                 {
-                    if (sensor.SensorTypeId == SensorTypeId.SoilMoisture)
+                    Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
+
+                    switch (sensor.SensorTypeId)
                     {
-                        Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
-
-                        if (deviceBattery is null)
-                        {
-                            Console.Error.WriteLine($"Device {DeviceId} is set as battery device but has no battery value!");
-                            return;
-                        }
-
-                        sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
-                        sensor.SetValues();
+                        case SensorTypeId.SoilMoisture:
+                            {
+                                if (deviceBattery is not null)
+                                    sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
+                            }
+                            break;
                     }
+                    sensor.CorrectValues();
                 }
             }
         }
@@ -97,13 +96,10 @@ namespace Shared.Models
             Unit = DeviceStatic.GetString(sensorData, DeviceStatic.Unit);
             SensorTypeId = (SensorTypeId)DeviceStatic.GetInt(sensorData, DeviceStatic.SensorTypeId)!;
             Date = DeviceStatic.GetLocalDateTime(sensorData, DeviceStatic.UploadDate);
-
-            SetValues();
         }
 
-        public void SetValues()
+        public void CorrectValues()
         {
-
             switch (SensorTypeId)
             {
                 case SensorTypeId.SoilTemperature:
@@ -121,9 +117,11 @@ namespace Shared.Models
                     }
                     break;
             };
+            if (float.IsInfinity(CorrectedValue) || float.IsNegativeInfinity(CorrectedValue) || float.IsNaN(CorrectedValue))
+                CorrectedValue = 0;
         }
 
-        public void CalculateTempertureValue()
+        private void CalculateTempertureValue()
         {
             const double beta = 3950d;
             const double tConstantRoom = 298.15d;
