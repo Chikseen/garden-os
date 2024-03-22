@@ -46,23 +46,36 @@ namespace Shared.Models
 
         private void AdjustValues()
         {
-            if (DeviceTypeId == DeviceTypeId.SoilTempAndMoistureBatteryDevice)
+            switch (DeviceTypeId)
             {
-                foreach (Sensor sensor in Sensor)
-                {
-                    Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
-
-                    switch (sensor.SensorTypeId)
+                case DeviceTypeId.SoilTempAndMoistureBatteryDevice:
                     {
-                        case SensorTypeId.SoilMoisture:
+                        foreach (Sensor sensor in Sensor)
+                        {
+                            Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
+
+                            switch (sensor.SensorTypeId)
                             {
-                                if (deviceBattery is not null)
-                                    sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
+                                case SensorTypeId.SoilMoisture:
+                                    {
+                                        if (deviceBattery is not null)
+                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
+                                    }
+                                    break;
                             }
-                            break;
+                            sensor.CorrectValues();
+                        }
                     }
-                    sensor.CorrectValues();
-                }
+                    break;
+                default:
+                    {
+                        foreach (Sensor sensor in Sensor)
+                        {
+                            sensor.CorrectValues();
+
+                        }
+                    }
+                    break;
             }
         }
     }
