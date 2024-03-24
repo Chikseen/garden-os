@@ -4,9 +4,11 @@
 		<LC v-if="isLoading" />
 		<div v-else>
 			<Grid>
+				<!-- DEVICE -->
 				<div v-for="device in deviceMeta" :key="device.id" class="grid_item item deviceSetting_list_item">
 					<span>
-						<input type="text" v-model="device.name" style="font-size: 1.5rem;" />
+						<input type="text" v-model="device.name" style="font-size: 1.5rem;"
+							@change="updateDeviceProperty(device, 'name', 'device_name')" />
 						<h4>{{ device.id }}</h4>
 					</span>
 					<div class="deviceSetting_list_item_row">
@@ -14,7 +16,8 @@
 							<label>Display Id</label>
 							<h6>The display id will define the logo</h6>
 						</span>
-						<select v-model="device.displayId">
+						<select v-model="device.displayId"
+							@change="updateDeviceProperty(device, 'displayId', 'display_id')">
 							<option value="soil_moisture">Soil Moisture</option>
 							<option value="uv_index">UV Index</option>
 							<option value="temperature">Temperature</option>
@@ -34,7 +37,8 @@
 							<label>Sort Order</label>
 							<h6>Lower Number will be show before devices with a higher Number</h6>
 						</span>
-						<input type="number" min="0" max="100" v-model="device.sortOrder">
+						<input type="number" min="0" max="100" v-model="device.sortOrder"
+							@change="updateDeviceProperty(device, 'sortOrder', 'sort_order')">
 					</div>
 					<div class="deviceSetting_list_item_row">
 						<span>
@@ -43,79 +47,86 @@
 						<p>{{ device.isManual }}</p>
 					</div>
 					<!--SENSOR-->
-					<div v-for="sensor in deviceSensorMeta[device.id]" :key="sensor.sensorId">
+					<div v-for="sensor in deviceSensorMeta[device.id]" :key="sensor.sensorId"
+						class="grid_item item deviceSetting_list_item">
 						<span>
-							<input type="text" style="font-size: 1.5rem;" :placeholder="sensor.name" />
+							<input type="text" style="font-size: 1.5rem;" v-model="sensor.name"
+								@change="updateSensorProperty(sensor, 'name', 'sensor_name')" />
 							<h4>{{ sensor?.sensorId }}</h4>
 						</span>
 						<div class="deviceSetting_list_item_row">
 							<span>
 								<label>Upper Limit</label>
 							</span>
-							<input type="number" min="0" max="100" v-model="sensor.upperLimit">
+							<input type="number" min="0" max="100" v-model="sensor.upperLimit"
+								@change="updateSensorProperty(sensor, 'upperLimit', 'upper_limit')">
 						</div>
 						<div class="deviceSetting_list_item_row">
 							<span>
 								<label>Lower Limit</label>
 							</span>
-							<input type="number" min="0" max="100" v-model="sensor.lowerLimit">
+							<input type="number" min="0" max="100" v-model="sensor.lowerLimit"
+								@change="updateSensorProperty(sensor, 'lowerLimit', 'lower_limit')">
 						</div>
 						<div class="deviceSetting_list_item_row">
 							<span>
 								<label>Sensor Type Id </label>
 							</span>
-							<input type="number" min="0" max="2" v-model="sensor.sensorTypeId">
+							<input type="number" min="0" max="2" v-model="sensor.sensorTypeId"
+								@change="updateSensorProperty(sensor, 'sensorTypeId', 'sensor_type_id')">
 						</div>
 						<div class="deviceSetting_list_item_row">
 							<span>
 								<label>Unit</label>
 							</span>
-							<input type="text" v-model="sensor.unit">
+							<input type="text" v-model="sensor.unit"
+								@change="updateSensorProperty(sensor, 'unit', 'unit')">
 						</div>
 						<div class="deviceSetting_list_item_row">
 							<span>
-								<label>Unit</label>
+								<label>Is Manual</label>
 							</span>
-							<p>{{ sensor.isManual }}</p>
+							<input type="checkbox" v-model="sensor.isManual"
+								@change="updateSensorProperty(sensor, 'isManual', 'is_manual')" />
 						</div>
 					</div>
 					<!--ADD SENSOR-->
 					<div class="grid_item item deviceSetting_list_item">
 						<h1>Add "{{ device.name }}" Sensor</h1>
-						<span>
-							<label for="newDeviceIsManual">Unit</label>
-							<input type="text" v-model="newSensor.Unit">
-						</span>
-						<span>
+						<div class="deviceSetting_list_item_row">
 							<label for="newDeviceName">Name</label>
 							<input id="newDeviceName" type="text" v-model="newSensor.Name">
-						</span>
-						<span>
+						</div>
+						<div class="deviceSetting_list_item_row">
+							<label for="newDeviceIsManual">Unit</label>
+							<input type="text" v-model="newSensor.Unit">
+						</div>
+						<div class="deviceSetting_list_item_row">
 							<label for="newDeviceName">SensorTypeId</label>
 							<input id="newDeviceName" type="number" min="-1" max="2" v-model="newSensor.SensorTypeId">
-						</span>
-						<span>
+						</div>
+						<div class="deviceSetting_list_item_row">
 							<label for="newDeviceName">Upper Limit</label>
 							<input id="newDeviceName" type="number" v-model="newSensor.UpperLimit">
-						</span>
-						<span>
+						</div>
+						<div class="deviceSetting_list_item_row">
 							<label for="newDeviceName">Lower Limit</label>
 							<input id="newDeviceName" type="number" v-model="newSensor.LowerLimit">
-						</span>
+						</div>
 						<h1 @click="createNewSensor(device)">+</h1>
 					</div>
 				</div>
 				<!--ADD DEVICE-->
 				<div class="grid_item item deviceSetting_list_item">
 					<h1>Add Device</h1>
-					<span>
+					<div class="deviceSetting_list_item_row">
 						<label for="newDeviceIsManual">Is Manual</label>
 						<input id="newDeviceIsManual" type="checkbox" v-model="newDeviceIsManual">
-					</span>
-					<span>
+					</div>
+					<div class="deviceSetting_list_item_row">
 						<label for="newDeviceName">Name</label>
 						<input id="newDeviceName" type="text" v-model="newDeviceName">
-					</span>
+					</div>
 					<h1 @click="creatNewDevice">+</h1>
 				</div>
 			</Grid>
@@ -142,7 +153,7 @@ export default {
 			deviceMeta: null,
 			deviceSensorMeta: {},
 			isLoading: true,
-			newDeviceIsManual: "",
+			newDeviceIsManual: false,
 			newDeviceName: "",
 			newSensor: {
 				DeviceId: "",
@@ -174,6 +185,13 @@ export default {
 				},
 			});
 		},
+		async fetchDevices() {
+			this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden"))
+			this.deviceMeta.forEach(async device => {
+				let sensorData = await fetchDeviceSensorMeta(localStorage.getItem("selectedGarden"), device.id)
+				this.deviceSensorMeta[device.id] = sensorData;
+			});
+		},
 		async creatNewDevice() {
 			await fetch(`${process.env.VUE_APP_PI_HOST}devices/create`, {
 				method: "POST",
@@ -188,6 +206,7 @@ export default {
 					'Content-Type': 'application/json'
 				},
 			});
+			await this.fetchDevices()
 		},
 		async createNewSensor(device) {
 			this.newSensor.DeviceId = device.id
@@ -203,13 +222,28 @@ export default {
 			});
 			await this.fetchDevices()
 		},
-		async fetchDevices() {
-			this.deviceMeta = await fetchDeviceMeta(localStorage.getItem("selectedGarden"))
-			this.deviceMeta.forEach(async device => {
-				let sensorData = await fetchDeviceSensorMeta(localStorage.getItem("selectedGarden"), device.id)
-				this.deviceSensorMeta[device.id] = sensorData;
+		async updateSensorProperty(sensor, propertyName, dbName) {
+			await fetch(`${process.env.VUE_APP_PI_HOST}devices/edit/sensor/${sensor.sensorId}/${dbName}/${sensor[propertyName]}`, {
+				method: "PATCH",
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
 			});
-		}
+			await this.fetchDevices()
+		},
+		async updateDeviceProperty(device, propertyName, dbName) {
+			await fetch(`${process.env.VUE_APP_PI_HOST}devices/edit/device/${device.id}/${dbName}/${device[propertyName]}`, {
+				method: "PATCH",
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+			});
+			await this.fetchDevices()
+		},
 	},
 	computed: {
 		...mapState({
@@ -247,7 +281,12 @@ export default {
 
 			&_row {
 				display: flex;
+				justify-content: space-between;
 				gap: 15px;
+
+				input {
+					width: 50%
+				}
 			}
 
 			span {

@@ -7,6 +7,7 @@ using Shared;
 using Shared.DeviceModels;
 using Shared.Enums;
 using Shared.Models;
+using System.Reflection;
 
 namespace API.Controllers;
 
@@ -78,6 +79,20 @@ public class DeviceController(
     public ActionResult CreateNewSensor(SensorCreateModel model)
     {
         _deviceService.CreateNewSensor(model);
+        return Ok();
+    }
+
+    [HttpPatch("edit/sensor/{sensorId}/{propertyName}/{propertyValue}")]
+    public ActionResult EditSensor(string sensorId, string propertyName, string propertyValue)
+    {
+        _deviceService.EditSensor(sensorId, propertyName, propertyValue);
+        return Ok();
+    }
+
+    [HttpPatch("edit/device/{deviceId}/{propertyName}/{propertyValue}")]
+    public ActionResult EditDevice(string deviceId, string propertyName, string propertyValue)
+    {
+        _deviceService.EditDevice(deviceId, propertyName, propertyValue);
         return Ok();
     }
 }

@@ -6,7 +6,6 @@ using Shared;
 using Shared.DeviceModels;
 using Shared.Enums;
 using Shared.Models;
-using System.Reflection;
 
 namespace API.Services
 {
@@ -36,7 +35,8 @@ namespace API.Services
             List<DeviceMeta> response = new();
             foreach (var device in result)
             {
-                response.Add(new(device));
+                List<Sensor> sensor = GetSensorMeta(DeviceStatic.GetString(device, DeviceStatic.Id));
+                response.Add(new(device, sensor));
             }
             return response;
         }
@@ -104,6 +104,18 @@ namespace API.Services
         public void CreateNewSensor(SensorCreateModel model)
         {
             string query = QueryService.CreateNewSensorQuery(model);
+            MainDB.Query(query);
+        }
+
+        public void EditSensor(string sensorId, string propertyName, string propertyValue)
+        {
+            string query = QueryService.EditSensorQuery(sensorId, propertyName, propertyValue);
+            MainDB.Query(query);
+        }
+
+        public void EditDevice(string deviceId, string propertyName, string propertyValue)
+        {
+            string query = QueryService.EditDeviceQuery(deviceId, propertyName, propertyValue);
             MainDB.Query(query);
         }
     }

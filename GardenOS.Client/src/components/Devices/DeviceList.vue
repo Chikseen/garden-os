@@ -30,9 +30,17 @@ export default {
     }
   },
   async mounted() {
+    console.log("a", this.devices)
     await this.devices.forEach(async device => {
       let deviceData = await fetchDeviceSensorLatestValues(localStorage.getItem("selectedGarden"), device.id)
-      if (deviceData.sensor?.length > 1)
+      
+      device.sensor.forEach(sensor => {
+        const foundSensor = deviceData.sensor.find(s => s.sensorId == sensor.sensorId)
+        if (!foundSensor)
+          deviceData.sensor.push(sensor)
+      })
+
+      if (device.sensor?.length > 1)
         this.multiDeviceData.push(deviceData)
       else
         this.singleDeviceData.push(deviceData)

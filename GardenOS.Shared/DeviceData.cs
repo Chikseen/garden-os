@@ -46,36 +46,42 @@ namespace Shared.Models
 
         private void AdjustValues()
         {
-            switch (DeviceTypeId)
+            foreach (Sensor sensor in Sensor)
             {
-                case DeviceTypeId.SoilTempAndMoistureBatteryDevice:
-                    {
-                        foreach (Sensor sensor in Sensor)
+                switch (DeviceTypeId)
+                {
+                    case DeviceTypeId.SoilTempAndMoistureBatteryDevice:
                         {
-                            Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
-
                             switch (sensor.SensorTypeId)
                             {
                                 case SensorTypeId.SoilMoisture:
                                     {
+                                        Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
                                         if (deviceBattery is not null)
-                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value));
+                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 1.55f);
+
+                                        Sensor? deviceTemp = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.SoilTemperature);
+                                        if (deviceTemp is not null)
+                                        {
+                                            const float baseTemp = 25f;
+
+                                            float temp = deviceTemp.CalculateTempertureValue();
+                                            float adjustedTemp = baseTemp - temp;
+
+                                            sensor.Value = sensor.Value + (adjustedTemp * 30);
+                                        }
                                     }
                                     break;
                             }
                             sensor.CorrectValues();
                         }
-                    }
-                    break;
-                default:
-                    {
-                        foreach (Sensor sensor in Sensor)
+                        break;
+                    default:
                         {
                             sensor.CorrectValues();
-
                         }
-                    }
-                    break;
+                        break;
+                }
             }
         }
     }
@@ -117,7 +123,7 @@ namespace Shared.Models
             {
                 case SensorTypeId.SoilTemperature:
                     {
-                        CalculateTempertureValue();
+                        CorrectedValue = CalculateTempertureValue();
                     }
                     break;
                 default:
@@ -134,20 +140,21 @@ namespace Shared.Models
                 CorrectedValue = 0;
         }
 
-        private void CalculateTempertureValue()
+        public float CalculateTempertureValue()
         {
             const double beta = 3950d;
             const double tConstantRoom = 298.15d;
             const double rInTConstant = 10000d;
             const double rBalance = 9800d;
-            const double vMax = 22560d;
+            const double vMax = 24260d;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
                 double rThermistor = rBalance * ((vMax / Value) - 1);
                 double tKelvin = (beta * tConstantRoom) / (beta + (tConstantRoom * Math.Log(rThermistor / rInTConstant)));
-                CorrectedValue = (float)(tKelvin - 273.15d);
+                return (float)(tKelvin - 273.15d);
             }
+            return 0f;
         }
     }
 }

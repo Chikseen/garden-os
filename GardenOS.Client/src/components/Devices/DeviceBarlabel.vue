@@ -50,7 +50,7 @@ export default {
 			return dynamicTimeDisplay(d)
 		},
 		calcTime() {
-			this.timeLabel = this.formatTime(this.sensorData.date)
+			this.timeLabel = this.formatTime(this.sensorData?.date)
 			this.timer = setTimeout(() => {
 				this.calcTime()
 			}, 1000);

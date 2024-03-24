@@ -13,17 +13,20 @@ namespace Shared.DeviceModels
         public int SortOrder { get; set; }
         public string GroupId { get; set; }
         public bool IsManual { get; set; }
+        public List<Sensor> Sensor { get; set; } = [];
 
-        public DeviceMeta(Dictionary<string, string> payload)
+        public DeviceMeta(Dictionary<string, string> devicePayload, List<Sensor> sensorMeta)
         {
-            Id = DeviceStatic.GetString(payload, DeviceStatic.Id);
-            Name = DeviceStatic.GetString(payload, DeviceStatic.DeviceName);
-            GardenId = DeviceStatic.GetString(payload, DeviceStatic.GardenID);
-            DeviceTypeId = (DeviceTypeId)DeviceStatic.GetInt(payload, DeviceStatic.DeviceTypId, 0);
-            DisplayId = DeviceStatic.GetString(payload, DeviceStatic.DisplayId);
-            SortOrder = DeviceStatic.GetInt(payload, DeviceStatic.SortOrder, 0);
-            GroupId = DeviceStatic.GetString(payload, DeviceStatic.GroupId);
-            IsManual = DeviceStatic.GetBool(payload, DeviceStatic.IsManual);
+            Id = DeviceStatic.GetString(devicePayload, DeviceStatic.Id);
+            Name = DeviceStatic.GetString(devicePayload, DeviceStatic.DeviceName);
+            GardenId = DeviceStatic.GetString(devicePayload, DeviceStatic.GardenID);
+            DeviceTypeId = (DeviceTypeId)DeviceStatic.GetInt(devicePayload, DeviceStatic.DeviceTypId, 0);
+            DisplayId = DeviceStatic.GetString(devicePayload, DeviceStatic.DisplayId);
+            SortOrder = DeviceStatic.GetInt(devicePayload, DeviceStatic.SortOrder, 0);
+            GroupId = DeviceStatic.GetString(devicePayload, DeviceStatic.GroupId);
+            IsManual = DeviceStatic.GetBool(devicePayload, DeviceStatic.IsManual);
+
+            Sensor = sensorMeta;
         }
     }
 }

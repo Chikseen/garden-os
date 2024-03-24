@@ -16,5 +16,7 @@ namespace API.Interfaces
         void DeleteManualEntry(string gardenId, string entryId);
         void CreateNewDevice(DeviceCreateModel model);
         void CreateNewSensor(SensorCreateModel model);
+        void EditSensor(string sensorId, string propertyName, string propertyValue);
+        void EditDevice(string deviceId, string propertyName, string propertyValue);
     }
 }

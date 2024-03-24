@@ -23,7 +23,7 @@ public static class QueryService
 			INSERT INTO 
 				devices(
 					{DeviceStatic.Id},
-					{DeviceStatic.Name},
+					{DeviceStatic.DeviceName},
 					{DeviceStatic.GardenID},
 					{DeviceStatic.IsManual})
 			VALUES (
@@ -102,5 +102,27 @@ public static class QueryService
 				,{model.UpperLimit}
 				,{model.LowerLimit}
 				,'{model.Unit}')".Clean();
+    }
+
+    public static string EditSensorQuery(string sensorId, string propertyName, string propertyValue)
+    {
+        return @$"
+			UPDATE 
+				DEVICE_SENSORS
+			SET 
+				{propertyName} = '{propertyValue}'
+			WHERE 
+				{DeviceStatic.SensorId} = '{sensorId}'".Clean();
+    }
+
+    public static string EditDeviceQuery(string deviceId, string propertyName, string propertyValue)
+    {
+        return @$"
+			UPDATE 
+				DEVICEs
+			SET 
+				{propertyName} = '{propertyValue}'
+			WHERE 
+				{DeviceStatic.Id} = '{deviceId}'".Clean();
     }
 }
