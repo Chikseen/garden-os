@@ -58,7 +58,7 @@ namespace Shared.Models
                                     {
                                         Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
                                         if (deviceBattery is not null)
-                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 1.55f);
+                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.825f);
 
                                         Sensor? deviceTemp = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.SoilTemperature);
                                         if (deviceTemp is not null)
