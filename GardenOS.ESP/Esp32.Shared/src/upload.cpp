@@ -61,5 +61,8 @@ namespace upload
 			Serial.println("WiFi Disconnected. Reconnecting...");
 			WiFi.reconnect();
 		}
+
+		WiFi.disconnect(true);
+		WiFi.mode(WIFI_OFF);
 	}
 }

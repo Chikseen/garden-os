@@ -3,7 +3,7 @@
 #include <secrets.h>
 
 #define uS_TO_S_FACTOR 1000000LL /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP 400LL       /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP 400LL      /* Time ESP32 will go to sleep (in seconds) */
 
 void setup()
 {

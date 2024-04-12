@@ -5,8 +5,8 @@ namespace wifi_setup
 	static void connect()
 	{
 		get_api_key();
-
-		// Connect to Wi-Fi
+		WiFi.disconnect(false);
+		WiFi.mode(WIFI_STA);
 		WiFi.begin(get_wifi_ssid().c_str(), get_wifi_password().c_str());
 		Serial.print("Connecting to ");
 		Serial.println(get_wifi_ssid().c_str());
