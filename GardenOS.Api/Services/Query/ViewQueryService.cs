@@ -32,7 +32,7 @@ public static class ViewQueryService
 			FROM
 				(
 					SELECT
-						date_trunc('hour', UPLOAD_DATE) AS DATE
+						UPLOAD_DATE AS DATE
 						,ID
 						,AVG (value) AS VALUE
 						,DEVICE_ID, SENSOR_ID

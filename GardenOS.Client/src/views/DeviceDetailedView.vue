@@ -125,7 +125,8 @@ export default {
           line: {
             tension: 0.3
           }
-        }
+        },
+        spanGaps: true,
       }
     }
   },
@@ -141,6 +142,36 @@ export default {
     },
     convertDateTimeToString(date) {
       return formatToDateTime(date)
+    },
+    adjustColor(col, i) {
+      let amt = -38
+      if (i % 2)
+        amt = (amt * i) * -1
+
+      var usePound = false;
+      if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+      }
+
+      var num = parseInt(col, 16);
+
+      var r = (num >> 16) + amt;
+
+      if (r > 255) r = 255;
+      else if (r < 0) r = 0;
+
+      var b = ((num >> 8) & 0x00FF) + amt;
+
+      if (b > 255) b = 255;
+      else if (b < 0) b = 0;
+
+      var g = (num & 0x0000FF) + amt;
+
+      if (g > 255) g = 255;
+      else if (g < 0) g = 0;
+
+      return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
     },
     async removeEntry(i) {
       const entryId = this.chartData.entryIds[i]
@@ -170,9 +201,15 @@ export default {
       this.chartData = await response.json()
 
       let dataSets = []
+      let deviceTypeCount = {}
       this.chartData.sensors.forEach((sensor, i) => {
 
-        const color = getColorByDevice(sensor)
+        if (!deviceTypeCount[sensor.sensorTypeId])
+          deviceTypeCount[sensor.sensorTypeId] = 0
+        deviceTypeCount[sensor.sensorTypeId]++
+
+        let color = getColorByDevice(sensor)
+        color = this.adjustColor(color, deviceTypeCount[sensor.sensorTypeId])
 
         dataSets.push({
           label: sensor.name,
