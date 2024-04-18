@@ -59,7 +59,6 @@ namespace Shared.Models
                                         Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
                                         if (deviceBattery is not null)
                                             sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.825f);
-
                                         Sensor? deviceTemp = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.SoilTemperature);
                                         if (deviceTemp is not null)
                                         {
@@ -68,7 +67,7 @@ namespace Shared.Models
                                             float temp = deviceTemp.CalculateTempertureValue();
                                             float adjustedTemp = baseTemp - temp;
 
-                                            sensor.Value = sensor.Value + (adjustedTemp * 30);
+                                            sensor.Value = sensor.Value + (adjustedTemp * 20);
                                         }
                                     }
                                     break;
@@ -145,8 +144,8 @@ namespace Shared.Models
             const double beta = 3950d;
             const double tConstantRoom = 298.15d;
             const double rInTConstant = 10000d;
-            const double rBalance = 9800d;
-            const double vMax = 24260d;
+            const double rBalance = 850;
+            const double vMax = 28400d;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
