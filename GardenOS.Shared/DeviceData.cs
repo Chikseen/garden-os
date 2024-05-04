@@ -54,12 +54,12 @@ namespace Shared.Models
                         {
                             switch (sensor.SensorTypeId)
                             {
-                                /*case SensorTypeId.SoilMoisture:
+                                case SensorTypeId.SoilMoisture:
                                     {
                                         Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
                                         if (deviceBattery is not null)
-                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 0.825f);
-                                        Sensor? deviceTemp = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.SoilTemperature);
+                                            sensor.Value = sensor.Value + ((deviceBattery.UpperLimit - deviceBattery.Value) * 2.175f);
+                                       /* Sensor? deviceTemp = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.SoilTemperature);
                                         if (deviceTemp is not null)
                                         {
                                             const float baseTemp = 25f;
@@ -68,9 +68,9 @@ namespace Shared.Models
                                             float adjustedTemp = baseTemp - temp;
 
                                             sensor.Value = sensor.Value + (adjustedTemp * 20);
-                                        }
+                                        }*/
                                     }
-                                    break;*/
+                                    break;
                             }
                             sensor.CorrectValues();
                         }
@@ -145,12 +145,14 @@ namespace Shared.Models
             const double tConstantRoom = 298.15d;
             const double rInTConstant = 10000d;
             const double rBalance = 9800d;
-            const double vMax = 25600d;
+            const double vMax = 8750;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
                 double rThermistor = rBalance * ((vMax / Value) - 1);
                 double tKelvin = (beta * tConstantRoom) / (beta + (tConstantRoom * Math.Log(rThermistor / rInTConstant)));
+                if (double.IsNaN(tKelvin))
+                    return 0.0f;
                 return (float)(tKelvin - 273.15d);
             }
             return 0f;
