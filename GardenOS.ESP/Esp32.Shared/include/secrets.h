@@ -1,6 +1,6 @@
 #include <string>
 
-bool GetIsDev();
+bool is_dev();
 void SetIsDev(bool value);
 
 // WIFI
@@ -16,6 +16,7 @@ std::string get_server_path();
 std::string get_device_id();
 std::string get_garden_id();
 std::string get_api_key();
-std::string get_battery_id();
-std::string get_first_sensor_id();
-std::string get_second_sensor_id();
+std::string get_0_value_id();
+std::string get_1_value_id();
+std::string get_2_value_id();
+std::string get_3_value_id();

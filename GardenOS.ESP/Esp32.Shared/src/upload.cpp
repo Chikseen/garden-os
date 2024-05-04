@@ -1,22 +1,17 @@
 #include <main.h>
 #include <secrets.h>
 #include <wifi_setup.cpp>
+#include "ValuesModel.h"
 
 namespace upload
 {
-	static void send(int16_t batteryValue, int16_t firstSensorValue, int16_t secondSensorValue)
+	static void post_values(ValuesModel values)
 	{
 		wifi_setup::connect();
-		Serial.println("Try to send data:");
 
 		if (WiFi.status() == WL_CONNECTED)
 		{
 			HTTPClient http;
-
-			Serial.print("host: ");
-			Serial.print(get_server_address().c_str());
-			Serial.print(get_server_port());
-			Serial.println(get_server_path().c_str());
 
 			// Specify the server and port
 			http.begin(get_server_address().c_str(), get_server_port(), get_server_path().c_str());
@@ -27,11 +22,22 @@ namespace upload
 				<< "{\"ApiKey\" : \"" << get_api_key() << "\","
 				<< "\"GardenId\" : \"" << get_garden_id() << "\","
 				<< "\"DeviceId\" : \"" << get_device_id() << "\","
-				<< "\"Sensor\" : {"
-				<< "\"" << get_battery_id() << "\" : \"" << batteryValue << "\","
-				<< "\"" << get_first_sensor_id() << "\" : \"" << firstSensorValue << "\","
-				<< "\"" << get_second_sensor_id() << "\" : \"" << secondSensorValue << "\"}"
-				<< "}";
+				<< "\"Sensor\" : {";
+
+			if (get_0_value_id() != "")
+			{
+				payload << "\"" << get_0_value_id() << "\" : \"" << values.v_one << "\",";
+			}
+			if (get_1_value_id() != "")
+			{
+				payload << "\"" << get_1_value_id() << "\" : \"" << values.v_two << "\",";
+			}
+			if (get_2_value_id() != "")
+			{
+				payload << "\"" << get_2_value_id() << "\" : \"" << values.v_three << "\"}";
+			}
+
+			payload << "}";
 
 			http.addHeader("Content-Type", "application/json");
 

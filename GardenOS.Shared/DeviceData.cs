@@ -54,7 +54,7 @@ namespace Shared.Models
                         {
                             switch (sensor.SensorTypeId)
                             {
-                                case SensorTypeId.SoilMoisture:
+                                /*case SensorTypeId.SoilMoisture:
                                     {
                                         Sensor? deviceBattery = Sensor.FirstOrDefault(sensor => sensor.SensorTypeId == SensorTypeId.Battery);
                                         if (deviceBattery is not null)
@@ -70,7 +70,7 @@ namespace Shared.Models
                                             sensor.Value = sensor.Value + (adjustedTemp * 20);
                                         }
                                     }
-                                    break;
+                                    break;*/
                             }
                             sensor.CorrectValues();
                         }
@@ -145,7 +145,7 @@ namespace Shared.Models
             const double tConstantRoom = 298.15d;
             const double rInTConstant = 10000d;
             const double rBalance = 9800d;
-            const double vMax = 28400d;
+            const double vMax = 25600d;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {

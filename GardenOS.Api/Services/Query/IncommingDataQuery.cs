@@ -9,7 +9,7 @@ public static class IncommingDataQuery
     public static string InsertNewDataQuery(DeviceInput data)
     {
         string query = string.Empty;
-        foreach (KeyValuePair<string, int> sensor in data.Sensor)
+        foreach (KeyValuePair<string, uint> sensor in data.Sensor)
         {
             query += GetQuery(data, sensor);
         }
@@ -34,7 +34,7 @@ public static class IncommingDataQuery
                 {model.Value.ToString("G", CultureInfo.InvariantCulture)});".Clean();
     }
 
-    private static string GetQuery(DeviceInput data, KeyValuePair<string, int> sensor)
+    private static string GetQuery(DeviceInput data, KeyValuePair<string, uint> sensor)
     {
         return @$"
 			SET TIMEZONE = 'UTC';

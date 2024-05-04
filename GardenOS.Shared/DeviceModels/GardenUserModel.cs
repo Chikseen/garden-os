@@ -8,7 +8,7 @@ namespace Shared.DeviceModels
         public string DeviceId { get; init; }
 
         [Required]
-        public Dictionary<string, int> Sensor { get; init; }
+        public Dictionary<string, uint> Sensor { get; init; }
 
         [Required]
         public string GardenId { get; init; }

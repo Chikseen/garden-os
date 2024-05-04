@@ -3,7 +3,7 @@
 
 bool isDev = false;
 
-bool GetIsDev()
+bool is_dev()
 {
 	return isDev;
 }
@@ -27,14 +27,14 @@ std::string get_wifi_password()
 // CONNECTION
 std::string get_server_address()
 {
-	if (GetIsDev())
+	if (is_dev())
 		return "192.168.2.100";
 	return "157.90.170.184";
 }
 
 int get_server_port()
 {
-	if (GetIsDev())
+	if (is_dev())
 		return 5082;
 	return 9992;
 }
@@ -52,7 +52,7 @@ std::string get_api_key()
 
 std::string get_garden_id()
 {
-	if (GetIsDev())
+	if (is_dev())
 		return "d1526afc-9eba-4ee6-b933-c2bcd6c6ef92";
 	return "d1526afc-9eba-4ee6-b933-c2bcd6c6ef92";
 }
@@ -62,17 +62,22 @@ std::string get_device_id()
 	return "1168cb69-c251-4f79-9886-276ddab34831";
 }
 
-std::string get_battery_id()
+std::string get_0_value_id()
 {
 	return "33bed312-ad94-4a83-9a25-4969af3312b3";
 }
 
-std::string get_first_sensor_id()
+std::string get_1_value_id()
 {
 	return "b83d29c3-24fb-4435-b89c-ccf7d0c6b03d";
 }
 
-std::string get_second_sensor_id()
+std::string get_2_value_id()
 {
 	return "63d85847-37af-4139-8b07-738722a609b1";
+}
+
+std::string get_3_value_id()
+{
+	return "";
 }

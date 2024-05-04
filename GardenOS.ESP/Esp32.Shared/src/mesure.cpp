@@ -4,110 +4,100 @@
 
 static const int multisamplingLength = 10;
 
-static const gpio_num_t analogInputPin = GPIO_NUM_34;
-static const gpio_num_t sensorOutPut = GPIO_NUM_17;
-static const gpio_num_t isDevInput = GPIO_NUM_23;
+static const gpio_num_t adcPowerPin = GPIO_NUM_12;
+static const gpio_num_t tempPowerPin = GPIO_NUM_16;
+static const gpio_num_t soilPowerPin = GPIO_NUM_5;
 
 Adafruit_ADS1115 adc;
 Preferences pref;
 
-void set_up()
+void set_output_pins()
 {
-	pref.begin("Relay-State", false);
-	gpio_hold_dis(sensorOutPut);
-	pinMode(analogInputPin, ANALOG);
-	pinMode(sensorOutPut, OUTPUT);
-	pinMode(isDevInput, INPUT_PULLUP);
+	// pref.begin("Relay-State", false);
+	gpio_hold_dis(adcPowerPin);
+	gpio_hold_dis(tempPowerPin);
+	gpio_hold_dis(soilPowerPin);
 
+	pinMode(adcPowerPin, OUTPUT);
+	pinMode(tempPowerPin, OUTPUT);
+	pinMode(soilPowerPin, OUTPUT);
+
+	digitalWrite(adcPowerPin, HIGH);
+	digitalWrite(tempPowerPin, HIGH);
+	digitalWrite(soilPowerPin, HIGH);
+}
+
+void set_up_mesure()
+{
+	set_output_pins();
 	adc.setGain(GAIN_ONE);
 
-	digitalWrite(sensorOutPut, LOW);
-	if (!adc.begin())
+	while (!adc.begin())
 	{
 		Serial.println("Failed to initialize ADS.");
-		esp_deep_sleep_start();
+		Serial.println("Retry in one sec");
+		delay(1000);
 	}
 	return;
 }
 
-void mesureAndSend()
+uint mesure_value(size_t pin)
 {
-	gpio_hold_dis(sensorOutPut);
+	delay(50);
 
-	uint32_t batteryValue;
-	uint32_t firstSensorValue;
-	uint32_t secondSensorValue;
+	int16_t value = adc.readADC_SingleEnded(pin);
 
-	float multiplier = 0.1875F;
+	Serial.print("pin: ");
+	Serial.print(pin);
+	Serial.print(" value: ");
+	Serial.print(value);
+	Serial.print(" : ");
+	Serial.print(value * 0.000125f);
+	Serial.println("V");
+	return value;
+}
 
-	digitalWrite(sensorOutPut, LOW);
-	delay(10);
-	for (size_t i = 0; i < multisamplingLength; i++)
+int16_t mesure_multisample_value(size_t pin)
+{
+	uint64_t values = 0;
+
+	for (size_t multisampleIndex = 0; multisampleIndex < multisamplingLength; multisampleIndex++)
 	{
-		Serial.print("batteryValue: ");
-		int16_t value = adc.readADC_SingleEnded(2);
-		Serial.print(" V: ");
-		Serial.print(value * 0.000125f);
-		Serial.print(" T: ");
-		Serial.println(value);
-
-		batteryValue += value;
-		delay(10);
+		values = values + mesure_value(pin);
 	}
 
-	for (size_t i = 0; i < multisamplingLength; i++)
-	{
-		Serial.print("firstSensorValue: ");
-		int16_t value = adc.readADC_SingleEnded(0);
-		Serial.print(" V: ");
-		Serial.print(value * 0.000125f);
-		Serial.print(" T: ");
-		Serial.println(value);
+	Serial.println("A");
+	Serial.println(values);
 
-		firstSensorValue += value;
-		delay(10);
-	}
+	int16_t sampledValue = values / multisamplingLength;
 
-	for (size_t i = 0; i < multisamplingLength; i++)
-	{
-		Serial.print("secondSensorValue: ");
-		int16_t value = adc.readADC_SingleEnded(3);
-		Serial.print(" V: ");
-		Serial.print(value * 0.000125f);
-		Serial.print(" T: ");
-		Serial.println(value);
+	Serial.println("s");
+	Serial.println(sampledValue);
 
-		secondSensorValue += value;
-		delay(10);
-	}
+	return sampledValue;
+}
 
-	digitalWrite(sensorOutPut, HIGH);
-	gpio_hold_en(sensorOutPut);
+void prepare_pins_for_sleep()
+{
+	digitalWrite(adcPowerPin, LOW);
+	digitalWrite(tempPowerPin, LOW);
+	digitalWrite(soilPowerPin, LOW);
 
-	batteryValue = batteryValue / multisamplingLength;
-	firstSensorValue = firstSensorValue / multisamplingLength;
-	secondSensorValue = secondSensorValue / multisamplingLength;
+	gpio_hold_en(adcPowerPin);
+	gpio_hold_en(tempPowerPin);
+	gpio_hold_en(soilPowerPin);
+}
 
-	Serial.print("batteryValue: ");
-	Serial.println(batteryValue);
+ValuesModel mesure_adc_all_values()
+{
+	ValuesModel values;
 
-	Serial.print("firstSensorValue: ");
-	Serial.println(firstSensorValue);
+	values.v_one = mesure_multisample_value(0);
+	values.v_two = mesure_multisample_value(1);
+	values.v_three = mesure_multisample_value(2);
+	values.v_four = mesure_multisample_value(3);
 
-	Serial.print("secondSensorValue: ");
-	Serial.println(secondSensorValue);
+	prepare_pins_for_sleep();
 
-	uint32_t previousStoredBatteryValue = pref.getUInt("bv", 0);
-	uint32_t previousStoredFirstSensorValue = pref.getUInt("fsv", 0);
-	uint32_t previousStoredSecondSensorValue = pref.getUInt("ssv", 0);
-
-	if ((((int)batteryValue - (int)previousStoredBatteryValue) > 20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) > 20 || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) > 100) || (((int)batteryValue - (int)previousStoredBatteryValue) < -20 || ((int)firstSensorValue - (int)previousStoredFirstSensorValue) < -20) || ((int)secondSensorValue - (int)previousStoredSecondSensorValue) < -100)
-	{
-		pref.putUInt("bv", batteryValue);
-		pref.putUInt("fsv", firstSensorValue);
-		pref.putUInt("ssv", secondSensorValue);
-		upload::send(batteryValue, firstSensorValue, secondSensorValue);
-	}
-
-	return;
+	return values;
 }

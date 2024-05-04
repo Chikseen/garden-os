@@ -490,3 +490,4 @@ ESP.Modules/Esp32.Shared/src/secrets.cpp
 .vscode/ipch
 GardenOS.ESP/Esp32.Shared/src/secrets.cpp
 GardenOS.ESP/Esp32.Shared/src/secrets.cpp
+GardenOS.ESP/Esp32.Shared/src/secrets.cpp
