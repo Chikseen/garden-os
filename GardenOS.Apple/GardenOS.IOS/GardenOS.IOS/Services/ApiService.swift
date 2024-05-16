@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 class ApiService {
-    private let url = "https://gardenapi.drunc.net"
+    private let url = "https://api.garden-os.com"
     
     func Get(path: String) async throws -> Data {
         let url = URL(string: "\(url)\(path)")!

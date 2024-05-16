@@ -48,7 +48,7 @@ final class LoginViewModel: ObservableObject {
          URLQueryItem(name: "username", value: loginFormModel.email),
          URLQueryItem(name: "password", value: loginFormModel.password)]
         
-        let url = URL(string: "https://auth.drunc.net/realms/GardenOS-PROD/protocol/openid-connect/token")!
+        let url = URL(string: "https://auth.garden-os.com/realms/GardenOS-PROD/protocol/openid-connect/token")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = requestHeaders

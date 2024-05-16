@@ -38,7 +38,7 @@ namespace Services.User
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.PostAsync($"https://auth.drunc.net/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
+            var response = await client.PostAsync($"https://auth.garden-os.com/realms/{realm}/protocol/openid-connect/userinfo", new FormUrlEncodedContent(data));
             var contents = await response.Content.ReadAsStringAsync();
 
             return new UserData(contents);

@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 DotEnv.Load();
 var authenticationOptions = new KeycloakAuthenticationOptions
 {
-    AuthServerUrl = "https://auth.drunc.net/",
+    AuthServerUrl = "https://auth.garden-os.com/",
     Realm = Environment.GetEnvironmentVariable("AUTH_REALM")!,
     Resource = Environment.GetEnvironmentVariable("client")!,
 };
@@ -50,7 +50,7 @@ else
 {
     app.UseCors(builder =>
         builder
-            .WithOrigins("https://gardenos.drunc.net/", "https://gardenos.drunc.net")
+            .WithOrigins("garden-os.com/", "garden-os.com")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()

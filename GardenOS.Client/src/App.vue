@@ -22,7 +22,7 @@ export default {
   },
   async mounted() {
     const keycloak = new Keycloak({
-      url: "https://auth.drunc.net",
+      url: "https://auth.garden-os.com",
       realm: process.env.VUE_APP_AUTH_REALM,
       clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
     });
