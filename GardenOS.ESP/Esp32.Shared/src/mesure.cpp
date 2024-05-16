@@ -30,7 +30,7 @@ void set_output_pins()
 void set_up_mesure()
 {
 	set_output_pins();
-	adc.setGain(GAIN_ONE);
+	adc.setGain(GAIN_TWOTHIRDS);
 
 	while (!adc.begin())
 	{
@@ -52,7 +52,7 @@ uint mesure_value(size_t pin)
 	Serial.print(" value: ");
 	Serial.print(value);
 	Serial.print(" : ");
-	Serial.print(value * 0.000125f);
+	Serial.print(value * 0.000375f);
 	Serial.println("V");
 	return value;
 }
@@ -96,6 +96,16 @@ ValuesModel mesure_adc_all_values()
 	values.v_two = mesure_multisample_value(1);
 	values.v_three = mesure_multisample_value(2);
 	values.v_four = mesure_multisample_value(3);
+
+	int batteryPin = 2;
+
+	int batteryValue = values.v_three;
+
+	Serial.print("old value:");
+	Serial.print(values.v_one);
+
+	Serial.print("new value:");
+	Serial.print(values.v_one);
 
 	prepare_pins_for_sleep();
 
