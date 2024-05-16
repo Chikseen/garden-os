@@ -50,7 +50,7 @@ else
 {
     app.UseCors(builder =>
         builder
-            .WithOrigins("garden-os.com/", "garden-os.com")
+            .WithOrigins("https://garden-os.com/", "https://garden-os.com")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
