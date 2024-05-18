@@ -30,11 +30,7 @@ namespace upload
 			}
 			if (get_1_value_id() != "")
 			{
-				payload << "\"" << get_1_value_id() << "\" : \"" << values.v_two << "\",";
-			}
-			if (get_2_value_id() != "")
-			{
-				payload << "\"" << get_2_value_id() << "\" : \"" << values.v_three << "\"}";
+				payload << "\"" << get_1_value_id() << "\" : \"" << values.v_two << "\"}";
 			}
 
 			payload << "}";

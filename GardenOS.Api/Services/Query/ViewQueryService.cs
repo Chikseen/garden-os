@@ -1,6 +1,4 @@
 using ExtensionMethods;
-using Shared;
-using Shared.DeviceModels;
 using Shared.Models;
 
 public static class ViewQueryService
@@ -8,6 +6,8 @@ public static class ViewQueryService
     public static string DetailedViewQuery(string gardenId, string deviceid, TimeFrame timeFrame)
     {
         return @$"
+			{CreateTableIfNotExists(gardenId)}
+
 			SELECT
 				DISTINCT ON (
 					UPLOAD_DATE
@@ -72,6 +72,8 @@ public static class ViewQueryService
     public static string GetSensorValuessQuery(string gardenId, string deviceId)
     {
         return @$"
+			{CreateTableIfNotExists(gardenId)}
+
 			SELECT
 				DISTINCT ON(DATALOG.SENSOR_ID)
 				DATALOG.{DeviceStatic.Id}
@@ -102,7 +104,37 @@ public static class ViewQueryService
 				DATALOG.{DeviceStatic.DeviceId} = '{deviceId}'
 			ORDER BY 
 				DATALOG.SENSOR_ID, 
-				UPLOAD_DATE DESC".Clean();
+				UPLOAD_DATE DESC
+        ".Clean();
+    }
+
+    private static string CreateTableIfNotExists(string gardenId)
+    {
+        return @$"
+			CREATE TABLE IF NOT EXISTS public.datalog{gardenId.Replace("-", "")}
+			(
+				id character varying(36) COLLATE pg_catalog.""default"" NOT NULL,
+				value real NOT NULL,
+				upload_date timestamp without time zone NOT NULL,
+				device_id character varying(36) COLLATE pg_catalog.""default"" NOT NULL,
+				sensor_id character varying(36) COLLATE pg_catalog.""default"" NOT NULL,
+				CONSTRAINT datalog{gardenId.Replace("-", "")}_pkey PRIMARY KEY (id),
+				CONSTRAINT device_id FOREIGN KEY (device_id)
+					REFERENCES public.devices(id) MATCH SIMPLE
+
+						ON UPDATE CASCADE
+						ON DELETE CASCADE
+
+						NOT VALID,
+					CONSTRAINT sensor_id FOREIGN KEY(sensor_id)
+
+						REFERENCES public.device_sensors(sensor_id) MATCH SIMPLE
+
+						ON UPDATE CASCADE
+						ON DELETE CASCADE
+
+						NOT VALID
+			);".Clean();
     }
 }
 

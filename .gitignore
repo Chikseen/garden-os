@@ -488,6 +488,3 @@ ESP.Modules/Esp32.Shared/src/secrets.cpp
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-GardenOS.ESP/Esp32.Shared/src/secrets.cpp
-GardenOS.ESP/Esp32.Shared/src/secrets.cpp
-GardenOS.ESP/Esp32.Shared/src/secrets.cpp

@@ -113,7 +113,7 @@ namespace Shared.Models
             const double tConstantRoom = 298.15d;
             const double rInTConstant = 10000d;
             const double rBalance = 9800d;
-            const double vMax = 10500;
+            const double vMax = 19250;
 
             if (SensorTypeId == SensorTypeId.SoilTemperature)
             {
