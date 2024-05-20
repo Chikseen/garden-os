@@ -1,4 +1,5 @@
 ﻿using API.Enums;
+using Shared.Services;
 
 namespace Shared.Models
 {
@@ -90,7 +91,7 @@ namespace Shared.Models
             {
                 case SensorTypeId.SoilTemperature:
                     {
-                        CorrectedValue = CalculateTempertureValue();
+                        CorrectedValue = TemperatureCalculationService.CalculateTemperatureCelsius(Value);
                     }
                     break;
                 default:
@@ -105,25 +106,6 @@ namespace Shared.Models
             };
             if (float.IsInfinity(CorrectedValue) || float.IsNegativeInfinity(CorrectedValue) || float.IsNaN(CorrectedValue))
                 CorrectedValue = 0;
-        }
-
-        public float CalculateTempertureValue()
-        {
-            const double beta = 3950d;
-            const double tConstantRoom = 298.15d;
-            const double rInTConstant = 10000d;
-            const double rBalance = 9800d;
-            const double vMax = 19250;
-
-            if (SensorTypeId == SensorTypeId.SoilTemperature)
-            {
-                double rThermistor = rBalance * ((vMax / Value) - 1);
-                double tKelvin = (beta * tConstantRoom) / (beta + (tConstantRoom * Math.Log(rThermistor / rInTConstant)));
-                if (double.IsNaN(tKelvin))
-                    return 0.0f;
-                return (float)(tKelvin - 273.15d);
-            }
-            return 0f;
         }
     }
 }
