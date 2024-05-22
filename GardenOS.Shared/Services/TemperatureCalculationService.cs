@@ -5,6 +5,7 @@
         private const double A = 1.009249522e-03;
         private const double B = 2.378405444e-04;
         private const double C = 2.019202697e-07;
+        private const float TempCorrection = -1.3f;
 
         private static float ResistanceToTemperature(float resistance)
         {
@@ -29,7 +30,7 @@
 
             float temperatureCelsius = ResistanceToTemperature(thermistorResitance);
 
-            return temperatureCelsius;
+            return temperatureCelsius + TempCorrection;
         }
     }
 }
